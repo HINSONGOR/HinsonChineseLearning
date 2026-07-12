@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>HINSON 中文冒險王國</title>
+<link rel="stylesheet" href="style.css?v=15">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     LOADING SCREEN
+══════════════════════════════════════════════ -->
+<div id="screen-loading" class="screen active">
+  <div class="loading-sky">
+    <div class="sun-anim">☀️</div>
+    <div class="cloud-anim c1">☁️</div>
+    <div class="cloud-anim c2">☁️</div>
+  </div>
+  <div class="loading-center">
+    <div class="logo-blocks">
+      <span class="logo-block">中</span>
+      <span class="logo-block">文</span>
+      <span class="logo-block">王</span>
+    </div>
+    <h1 class="game-main-title">HINSON 中文冒險王國</h1>
+    <p class="game-sub-title">小六中文練習平台</p>
+    <div class="load-track">
+      <div class="load-fill" id="load-fill" style="width:0%;height:100%;background:linear-gradient(90deg,#5D9C28,#90D640);animation:cssLoadFill 2.5s ease forwards;"></div>
+    </div>
+    <style>@keyframes cssLoadFill{0%{width:0%}60%{width:75%}100%{width:100%}}</style>
+    <p class="load-msg" id="load-msg">正在建造王國...</p>
+  </div>
+  <div class="loading-ground">
+    <span>🌲</span><span>🌳</span><span>🌿</span><span>🌲</span><span>🌳</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="screen-dashboard" class="screen">
+
+  <header class="top-bar">
+    <div class="tb-left">
+      <span class="tb-logo">🏰</span>
+      <div>
+        <div class="tb-title">中文冒險王國</div>
+        <div class="tb-brand">HINSON</div>
+      </div>
+    </div>
+    <div class="tb-stats">
+      <div class="stat-pill xp-pill">⚡<span id="s-xp">0</span>XP</div>
+      <div class="stat-pill coin-pill">🪙<span id="s-coins">0</span></div>
+      <div class="stat-pill lv-pill">Lv.<span id="s-lv">1</span></div>
+    </div>
+    <div class="tb-btns">
+      <button class="tbtn" id="music-btn" onclick="toggleMusic()" title="音樂">🎵</button>
+      <button class="tbtn" onclick="openSettingsModal()" title="設定">⚙️</button>
+      <button class="tbtn" onclick="openParentPin()" title="家長模式">👨‍👩‍👧</button>
+    </div>
+  </header>
+
+  <div class="xp-track-wrap">
+    <div class="xp-track">
+      <div class="xp-fill" id="xp-fill"></div>
+    </div>
+    <span class="xp-label" id="xp-label">0 / 100 XP → Lv.2</span>
+  </div>
+
+  <div class="welcome-bar">
+    <div class="welcome-left">
+      <span class="avatar-icon">🧑‍🎓</span>
+      <div>
+        <div class="welcome-name">歡迎，<span id="player-name-display">冒險者</span>！</div>
+        <div class="streak-line">🔥 連續登入 <span id="streak-count">0</span> 天</div>
+      </div>
+    </div>
+    <button class="daily-btn" id="daily-btn" onclick="tryShowDaily()">🎁 每日獎勵</button>
+  </div>
+
+  <h2 class="section-hd">⚔️ 選擇學習模組</h2>
+
+  <div class="modules-grid">
+    <button class="mod-card mc-green" onclick="launchModule('reading')">
+      <div class="mc-icon">📖</div>
+      <div class="mc-name">閱讀理解王國</div>
+      <div class="mc-xp">+10 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-reading"></div></div>
+    </button>
+    <button class="mod-card mc-blue" onclick="launchModule('rhetoric')">
+      <div class="mc-icon">✍️</div>
+      <div class="mc-name">修辭大師訓練營</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-rhetoric"></div></div>
+    </button>
+    <button class="mod-card mc-red" onclick="launchModule('idiom')">
+      <div class="mc-icon">🏮</div>
+      <div class="mc-name">成語挑戰賽</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-idiom"></div></div>
+    </button>
+    <button class="mod-card mc-purple" onclick="launchModule('vocab')">
+      <div class="mc-icon">📚</div>
+      <div class="mc-name">詞語運用中心</div>
+      <div class="mc-xp">+6 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-vocab"></div></div>
+    </button>
+    <button class="mod-card mc-orange" onclick="launchModule('punctuation')">
+      <div class="mc-icon">✏️</div>
+      <div class="mc-name">標點符號特訓</div>
+      <div class="mc-xp">+6 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-punctuation"></div></div>
+    </button>
+    <button class="mod-card mc-gold tsa-glow" onclick="launchModule('tsa')">
+      <div class="mc-icon">🎯</div>
+      <div class="mc-name">呈分試挑戰模式</div>
+      <div class="mc-xp">+15 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-tsa"></div></div>
+    </button>
+    <button class="mod-card mc-blue" onclick="launchModule('order')">
+      <div class="mc-icon">🔢</div>
+      <div class="mc-name">排句成段</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-order"></div></div>
+    </button>
+    <button class="mod-card mc-purple" onclick="launchModule('reorder')">
+      <div class="mc-icon">🔀</div>
+      <div class="mc-name">重組句子</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-reorder"></div></div>
+    </button>
+    <button class="mod-card mc-green" onclick="launchModule('paragraph')">
+      <div class="mc-icon">📝</div>
+      <div class="mc-name">段義理解</div>
+      <div class="mc-xp">+10 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-paragraph"></div></div>
+    </button>
+    <button class="mod-card mc-orange" onclick="launchModule('wordmean')">
+      <div class="mc-icon">🔍</div>
+      <div class="mc-name">詞義辨析</div>
+      <div class="mc-xp">+6 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-wordmean"></div></div>
+    </button>
+    <button class="mod-card mc-teal" onclick="launchModule('fillin')">
+      <div class="mc-icon">✍️</div>
+      <div class="mc-name">詞語填充訓練</div>
+      <div class="mc-xp">+7 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-fillin"></div></div>
+    </button>
+    <button class="mod-card mc-indigo" onclick="launchModule('synword')">
+      <div class="mc-icon">🔄</div>
+      <div class="mc-name">以詞代意</div>
+      <div class="mc-xp">+7 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-synword"></div></div>
+    </button>
+    <button class="mod-card mc-dark" onclick="launchModule('wrong')">
+      <div class="mc-icon">🏆</div>
+      <div class="mc-name">錯題重溫中心</div>
+      <div class="mc-xp">+12 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-wrong"></div></div>
+    </button>
+    <button class="mod-card mc-teal" onclick="showReport()">
+      <div class="mc-icon">📈</div>
+      <div class="mc-name">學習報告中心</div>
+      <div class="mc-xp">查看進度</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:100%"></div></div>
+    </button>
+  </div>
+
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     QUIZ SCREEN (universal)
+══════════════════════════════════════════════ -->
+<div id="screen-quiz" class="screen">
+
+  <div class="quiz-bar">
+    <button class="back-btn" onclick="confirmExitQuiz()">← 返回</button>
+    <div class="quiz-mod-name" id="quiz-mod-name">模組</div>
+    <div class="quiz-prog" id="quiz-prog">1 / 10</div>
+  </div>
+
+  <div class="quiz-live-stats">
+    <span>⚡ <b id="qlive-xp">0</b> XP</span>
+    <span>🪙 <b id="qlive-coins">0</b></span>
+    <span class="combo-badge hidden" id="combo-badge">🔥 連擊！</span>
+    <button class="timer-toggle-btn" id="timer-toggle-btn" onclick="cycleTimer()" title="點擊調整計時器">⏱ 關</button>
+  </div>
+
+  <!-- COUNTDOWN TIMER (TSA mode) -->
+  <div class="timer-wrap hidden" id="timer-wrap">
+    <div class="timer-track">
+      <div class="timer-fill" id="timer-fill"></div>
+    </div>
+    <span class="timer-label" id="timer-label">30s</span>
+    <span class="timer-bonus hidden" id="timer-bonus">⚡ 速答獎勵！</span>
+  </div>
+
+  <div class="quiz-body">
+
+    <!-- PASSAGE (reading only) -->
+    <div class="passage-panel hidden" id="passage-panel">
+      <div class="passage-top-row">
+        <span class="passage-title-tag" id="passage-title-tag">文章</span>
+        <button class="speak-btn" onclick="speakText('passage')">🔊 朗讀文章</button>
+      </div>
+      <div class="passage-text" id="passage-text"></div>
+    </div>
+
+    <!-- QUESTION + ANSWERS (scrollable area below passage) -->
+    <div class="quiz-questions-area">
+
+      <!-- QUESTION CARD -->
+      <div class="q-card">
+        <div class="q-card-row1">
+          <span class="q-num-tag" id="q-num-tag">第 1 題</span>
+          <span class="q-type-tag" id="q-type-tag"></span>
+          <button class="speak-btn-sm" onclick="speakText('question')" title="朗讀題目">🔊</button>
+        </div>
+        <div class="q-text" id="q-text">載入中...</div>
+
+        <!-- FILL IN BLANK (inside card so always visible) -->
+        <div class="fill-section hidden" id="fill-section">
+          <input type="text" id="fill-input" class="fill-box" placeholder="填寫答案（可從文章複製貼上）...">
+          <button class="submit-fill-btn" onclick="submitFill()">✓ 提交</button>
+          <button class="skip-fill-btn" onclick="checkAnswer('fill-no')">跳過</button>
+        </div>
+      </div>
+
+      <!-- MCQ OPTIONS -->
+      <div class="options-grid" id="options-grid"></div>
+
+      <!-- REORDER (TILE-CLICK) SECTION -->
+      <div class="reorder-section hidden" id="reorder-section">
+        <div class="reorder-answer-zone" id="reorder-answer-zone">
+          <span class="reorder-placeholder" id="reorder-placeholder">點擊下方詞語，依序排列成句子 ↓</span>
+        </div>
+        <div class="reorder-bank" id="reorder-bank"></div>
+        <div class="reorder-actions">
+          <button class="submit-reorder-btn" id="submit-reorder-btn" onclick="submitReorder()">✓ 提交答案</button>
+          <button class="clear-reorder-btn" id="clear-reorder-btn" onclick="clearReorder()">↺ 重置</button>
+        </div>
+      </div>
+
+      <!-- CHAR TILE SECTION (詞語填充 / 配字完句) -->
+      <div class="char-section hidden" id="char-section">
+        <div class="char-answer-zone" id="char-answer-zone"></div>
+        <div class="char-bank" id="char-bank"></div>
+        <div class="char-actions">
+          <button class="submit-char-btn" id="submit-char-btn" onclick="submitCharTile()">✓ 提交答案</button>
+          <button class="clear-char-btn" id="clear-char-btn" onclick="clearCharTile()">↺ 重置</button>
+        </div>
+      </div>
+
+      <!-- RESULT BANNER -->
+      <div class="result-banner hidden" id="result-banner">
+        <div class="result-icon" id="result-icon">✅</div>
+        <div class="result-msg" id="result-msg">答對了！</div>
+        <div class="result-earn" id="result-earn">+10 XP  +5 🪙</div>
+      </div>
+
+      <!-- AI TEACHER -->
+      <div class="teacher-panel hidden" id="teacher-panel">
+        <div class="teacher-top">
+          <span class="teacher-robot">🤖</span>
+          <span class="teacher-label">小老師講解</span>
+          <button class="speak-btn-sm" onclick="speakText('explanation')">🔊</button>
+        </div>
+        <div class="teacher-body" id="teacher-body"></div>
+        <div class="wrong-why" id="wrong-why"></div>
+        <button class="next-q-btn" id="next-q-btn" onclick="advanceQ()">下一題 →</button>
+      </div>
+
+    </div><!-- end quiz-questions-area -->
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     WRONG QUESTIONS LIST
+══════════════════════════════════════════════ -->
+<div id="screen-wrong" class="screen">
+  <div class="screen-hd">
+    <button class="back-btn" onclick="showScreen('screen-dashboard')">← 返回</button>
+    <h2>🏆 錯題重溫中心</h2>
+    <div></div>
+  </div>
+  <div class="wrong-body" id="wrong-body"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     REPORT
+══════════════════════════════════════════════ -->
+<div id="screen-report" class="screen">
+  <div class="screen-hd">
+    <button class="back-btn" onclick="showScreen('screen-dashboard')">← 返回</button>
+    <h2>📈 學習報告中心</h2>
+    <div></div>
+  </div>
+  <div class="report-body" id="report-body"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PARENT MODE
+══════════════════════════════════════════════ -->
+<div id="screen-parent" class="screen">
+  <div class="screen-hd parent-hd">
+    <button class="back-btn" onclick="showScreen('screen-dashboard')">← 退出</button>
+    <h2>👨‍👩‍👧 家長專區</h2>
+    <div></div>
+  </div>
+  <!-- Parent Tabs -->
+  <div class="ptabs-bar">
+    <button class="ptab active" id="ptab-report-btn" onclick="switchPTab('report')">📊 學習報告</button>
+    <button class="ptab" id="ptab-qbank-btn" onclick="switchPTab('qbank')">📚 題目管理</button>
+  </div>
+  <!-- Report Tab -->
+  <div class="parent-body" id="parent-body"></div>
+  <!-- Question Bank Tab -->
+  <div class="parent-qb-body hidden" id="parent-qb-body">
+
+    <!-- ── Mode A: Single file upload (PDF / Word / Image OCR) ── -->
+    <div class="upload-section-label">📁 模式一：單一文件上載（PDF · Word · 圖片OCR）</div>
+    <div class="upload-zone" id="upload-zone"
+         onclick="document.getElementById('file-upload-input').click()">
+      <div class="uz-icon">📤</div>
+      <div class="uz-main">點擊或拖放文件至此</div>
+      <div class="uz-sub">支援：PDF · Word(.docx/.doc) · 圖片 JPG/PNG/GIF</div>
+    </div>
+    <input type="file" id="file-upload-input" class="hidden"
+           accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.gif,.bmp,.webp"
+           onchange="handleFileSelect(event)">
+
+    <!-- ── Progress bar (shared) ── -->
+    <div class="ocr-box hidden" id="ocr-box">
+      <div class="ocr-bar-track"><div class="ocr-bar-fill" id="ocr-bar-fill"></div></div>
+      <p class="ocr-status" id="ocr-status">正在處理...</p>
+    </div>
+
+    <!-- ── Extracted text + auto-detect ── -->
+    <div class="extracted-box hidden" id="extracted-box">
+      <div class="eb-header">
+        <span>📝 提取的文字</span>
+        <button class="eb-btn" onclick="runAutoDetect()">🔍 自動識別題目</button>
+      </div>
+      <textarea id="extracted-text" class="extracted-ta" rows="6"
+                placeholder="文字將顯示在這裏，你也可以直接貼上文字..."></textarea>
+    </div>
+
+    <!-- ── Auto-detected questions ── -->
+    <div class="detected-box hidden" id="detected-box">
+      <div class="db-header">
+        🔍 已識別 <b id="detected-count">0</b> 道題目
+        <button class="eb-btn" onclick="addAllDetected()">✅ 全部加入題庫</button>
+      </div>
+      <div id="detected-list"></div>
+    </div>
+
+    <!-- ── Mode B: Dual Q+A upload (question file + answer file) ── -->
+    <div class="upload-section-label" style="margin-top:16px">📋 模式二：題目文件（_s）＋答案文件（_t）自動配對</div>
+    <div class="dual-upload-row">
+      <div class="du-zone" id="du-zone-q" onclick="document.getElementById('du-input-q').click()">
+        <div class="du-zone-icon">📄</div>
+        <div class="du-zone-label">題目文件（_s）</div>
+        <div class="du-zone-hint">點擊或拖放</div>
+        <div class="du-zone-name hidden" id="du-name-q"></div>
+      </div>
+      <div class="du-plus">＋</div>
+      <div class="du-zone" id="du-zone-a" onclick="document.getElementById('du-input-a').click()">
+        <div class="du-zone-icon">✅</div>
+        <div class="du-zone-label">答案文件（_t）</div>
+        <div class="du-zone-hint">點擊或拖放</div>
+        <div class="du-zone-name hidden" id="du-name-a"></div>
+      </div>
+    </div>
+    <input type="file" id="du-input-q" class="hidden" accept=".docx,.doc,.pdf"
+           onchange="handleDualSelect('q',event)">
+    <input type="file" id="du-input-a" class="hidden" accept=".docx,.doc,.pdf"
+           onchange="handleDualSelect('a',event)">
+    <button class="match-pair-btn" id="match-pair-btn" disabled onclick="runMatchPair()">
+      🔗 配對答案，生成題庫格式
+    </button>
+
+    <!-- ── Match Result ── -->
+    <div class="match-result hidden" id="match-result">
+      <div class="mr-header">
+        <span>📋 配對結果</span>
+        <button class="eb-btn green-eb" onclick="addAllMatched()">✅ 全部加入題庫</button>
+      </div>
+      <div id="match-result-body"></div>
+    </div>
+
+    <!-- ── Custom Question Bank ── -->
+    <div class="cqb-section">
+      <div class="cqb-header">
+        <span>📚 自訂題目庫 <b id="cqb-count">0</b> 題</span>
+        <button class="eb-btn green-eb" onclick="openQEditor()">➕ 手動新增</button>
+      </div>
+      <div id="cqb-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════════ -->
+
+<!-- Daily Reward -->
+<div class="overlay hidden" id="modal-daily">
+  <div class="modal-box">
+    <h2 class="modal-title">🎁 每日登入獎勵</h2>
+    <p class="modal-sub">🔥 連續登入 <b id="daily-streak-num">1</b> 天</p>
+    <div class="reward-cards" id="reward-cards"></div>
+    <button class="big-btn green-btn" onclick="claimDaily()">🎉 領取獎勵！</button>
+  </div>
+</div>
+
+
+<!-- Level Up -->
+<div class="overlay hidden" id="modal-levelup">
+  <div class="modal-box glow-box">
+    <div class="lv-arrows">⬆️⬆️⬆️</div>
+    <h2 class="modal-title">🎊 升級了！</h2>
+    <div class="lv-big">Level <span id="new-lv">2</span></div>
+    <p class="lv-flavor">中文冒險等級提升！繼續加油！</p>
+    <button class="big-btn green-btn" onclick="closeModal('modal-levelup')">繼續冒險！⚔️</button>
+  </div>
+</div>
+
+<!-- TSA Category Picker -->
+<div class="overlay hidden" id="modal-tsa-cat">
+  <div class="modal-box tsa-cat-box">
+    <h2 class="modal-title">🎯 呈分試挑戰模式</h2>
+    <p class="tsa-cat-desc">選擇訓練分類（每次5題，計時30秒）：</p>
+    <div class="tsa-cat-grid">
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('形近字和同音字')"><span class="tsa-cat-no">1</span>形近字和同音字</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('形容詞和擬聲詞')"><span class="tsa-cat-no">2</span>形容詞和擬聲詞</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('直述句和轉述句')"><span class="tsa-cat-no">3</span>直述句和轉述句</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('關聯詞（一）')"><span class="tsa-cat-no">4</span>關聯詞（一）並列/承接/遞進</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('標點符號')"><span class="tsa-cat-no">5</span>標點符號</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('比喻和擬人')"><span class="tsa-cat-no">6</span>比喻和擬人</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('名詞和代詞')"><span class="tsa-cat-no">7</span>名詞和代詞</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('數量詞')"><span class="tsa-cat-no">8</span>數量詞</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('褒義詞和貶義詞')"><span class="tsa-cat-no">9</span>褒義詞和貶義詞</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('擴寫和縮寫句子')"><span class="tsa-cat-no">10</span>擴寫和縮寫句子</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('關聯詞（二）')"><span class="tsa-cat-no">11</span>關聯詞（二）因果/轉折/假設</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('排比、反復和對比')"><span class="tsa-cat-no">12</span>排比、反復和對比</button>
+      <button class="tsa-cat-btn" onclick="launchTsaCategory('段意理解')"><span class="tsa-cat-no">13</span>段意理解</button>
+      <button class="tsa-cat-btn tsa-cat-all" onclick="launchTsaCategory('all')"><span class="tsa-cat-no">🎲</span>隨機混合（全部分類）</button>
+    </div>
+
+    <div class="tsa-section-label">🔊 擬聲詞專項練習</div>
+    <div class="tsa-cat-grid">
+      <button class="tsa-cat-btn tsa-cat-onomat" onclick="launchOnomat()" style="grid-column:1/-1;justify-content:center;font-weight:700"><span class="tsa-cat-no" style="background:rgba(255,180,50,0.25);color:#ffb432">🔊</span>擬聲詞專項練習（動物聲・自然聲・的地辨析）</button>
+    </div>
+
+    <div class="tsa-section-label">📝 模擬練習（依課本順序）</div>
+    <div class="tsa-cat-grid">
+      <button class="tsa-cat-btn tsa-cat-practice" onclick="launchPractice(1)" style="grid-column:1/-1;justify-content:center;font-weight:700"><span class="tsa-cat-no" style="background:rgba(180,120,255,0.25);color:#c87fff">1</span>Unit 1 形近字和同音字（題1–7，依次練習）</button>
+    </div>
+
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-tsa-cat')">取消</button>
+  </div>
+</div>
+
+<!-- Fillin Mode Picker -->
+<div class="overlay hidden" id="modal-fillin-mode">
+  <div class="modal-box fillin-mode-box">
+    <h2 class="modal-title">✍️ 詞語填充訓練</h2>
+    <p class="fillin-mode-desc">請選擇練習模式：</p>
+    <button class="fillin-mode-btn" onclick="launchFillinQuiz('free')">
+      <div class="fillin-mode-icon">📝</div>
+      <div class="fillin-mode-name">不供詞填充</div>
+      <div class="fillin-mode-sub">自行寫出正確詞語</div>
+    </button>
+    <button class="fillin-mode-btn" onclick="launchFillinQuiz('bank')">
+      <div class="fillin-mode-icon">🔤</div>
+      <div class="fillin-mode-name">供詞填充</div>
+      <div class="fillin-mode-sub">從四個選項中選出正確詞語</div>
+    </button>
+    <button class="fillin-mode-btn" onclick="launchFillinQuiz('char')">
+      <div class="fillin-mode-icon">🔡</div>
+      <div class="fillin-mode-name">配字完句</div>
+      <div class="fillin-mode-sub">點擊字卡，依序組成詞語</div>
+    </button>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-fillin-mode')">取消</button>
+  </div>
+</div>
+
+<!-- Quiz Complete -->
+<div class="overlay hidden" id="modal-done">
+  <div class="modal-box">
+    <h2 class="modal-title">🎉 挑戰完成！</h2>
+    <div class="done-stats" id="done-stats"></div>
+    <button class="big-btn green-btn" onclick="closeModal('modal-done');showScreen('screen-dashboard')">返回主頁 🏠</button>
+    <button class="big-btn grey-btn mt8" onclick="retryModule()">🔄 重新挑戰</button>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="overlay hidden" id="modal-settings">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal('modal-settings')">✕</button>
+    <h2 class="modal-title">⚙️ 設定</h2>
+    <div class="setting-row">
+      <label class="set-label">👤 玩家名稱</label>
+      <input type="text" id="name-input" class="set-input" placeholder="輸入名稱...">
+    </div>
+    <div class="setting-row">
+      <label class="set-label">🎵 音樂音量</label>
+      <div class="vol-row">
+        <span>🔇</span>
+        <input type="range" id="vol-input" min="0" max="1" step="0.05" value="0.3" class="vol-range">
+        <span>🔊</span>
+      </div>
+    </div>
+    <div class="setting-row">
+      <label class="set-label">🔊 音效</label>
+      <label class="toggle">
+        <input type="checkbox" id="sfx-check" checked>
+        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+      </label>
+    </div>
+    <button class="big-btn green-btn" onclick="applySettings()">✓ 儲存設定</button>
+    <button class="big-btn red-btn mt8" onclick="openModal('modal-confirm-clear')">🗑️ 清除資料</button>
+  </div>
+</div>
+
+<!-- Parent PIN -->
+<div class="overlay hidden" id="modal-parent-pin">
+  <div class="modal-box">
+    <button class="modal-x" onclick="closeModal('modal-parent-pin')">✕</button>
+    <h2 class="modal-title">🔐 家長模式</h2>
+    <p class="modal-hint">請輸入4位數字密碼</p>
+    <p class="modal-hint-sm">（預設密碼：1234）</p>
+    <input type="password" id="pin-input" class="pin-box" maxlength="4" placeholder="● ● ● ●"
+           onkeydown="if(event.key==='Enter')verifyPin()">
+    <button class="big-btn green-btn" onclick="verifyPin()">確認 →</button>
+  </div>
+</div>
+
+<!-- Confirm Clear -->
+<div class="overlay hidden" id="modal-confirm-clear">
+  <div class="modal-box">
+    <h2 class="modal-title">⚠️ 警告</h2>
+    <p class="confirm-txt">確定要清除所有學習記錄嗎？<br>此操作無法撤銷！</p>
+    <button class="big-btn red-btn" onclick="doResetData()">確認清除</button>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-confirm-clear')">取消</button>
+  </div>
+</div>
+
+<!-- Confirm Exit Quiz -->
+<div class="overlay hidden" id="modal-confirm-exit">
+  <div class="modal-box">
+    <h2 class="modal-title">⚠️ 退出練習</h2>
+    <p class="confirm-txt">確定退出？當前進度不會儲存。</p>
+    <button class="big-btn red-btn" onclick="doExitQuiz()">確認退出</button>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-confirm-exit')">繼續練習</button>
+  </div>
+</div>
+
+<!-- Question Editor Modal -->
+<div class="overlay hidden" id="modal-q-editor">
+  <div class="modal-box q-editor-box">
+    <button class="modal-x" onclick="closeModal('modal-q-editor')">✕</button>
+    <h2 class="modal-title">✏️ 編輯題目</h2>
+
+    <div class="setting-row">
+      <label class="set-label">題目類別</label>
+      <select id="qe-type" class="set-input">
+        <option value="reading">📖 閱讀理解</option>
+        <option value="rhetoric">✍️ 修辭手法</option>
+        <option value="idiom">🏮 成語</option>
+        <option value="vocab">📚 詞語運用</option>
+        <option value="punctuation">✏️ 標點符號</option>
+        <option value="tsa">🎯 呈分試</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <label class="set-label">題目文字</label>
+      <textarea id="qe-text" class="set-input qe-ta" rows="3" placeholder="輸入題目..."></textarea>
+    </div>
+
+    <div class="qe-opts">
+      <div class="qe-opt-row">
+        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="0"> 正確</label>
+        <span class="qe-opt-lbl">A</span>
+        <input type="text" id="qe-opt0" class="set-input" placeholder="選項 A">
+      </div>
+      <div class="qe-opt-row">
+        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="1"> 正確</label>
+        <span class="qe-opt-lbl">B</span>
+        <input type="text" id="qe-opt1" class="set-input" placeholder="選項 B">
+      </div>
+      <div class="qe-opt-row">
+        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="2"> 正確</label>
+        <span class="qe-opt-lbl">C</span>
+        <input type="text" id="qe-opt2" class="set-input" placeholder="選項 C">
+      </div>
+      <div class="qe-opt-row">
+        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="3"> 正確</label>
+        <span class="qe-opt-lbl">D</span>
+        <input type="text" id="qe-opt3" class="set-input" placeholder="選項 D">
+      </div>
+    </div>
+
+    <div class="setting-row">
+      <label class="set-label">🤖 小老師解釋（選填）</label>
+      <textarea id="qe-expl" class="set-input qe-ta" rows="2" placeholder="輸入答案解釋..."></textarea>
+    </div>
+
+    <input type="hidden" id="qe-edit-id" value="">
+    <button class="big-btn green-btn" onclick="saveCustomQ()">✓ 儲存題目</button>
+  </div>
+</div>
+
+<!-- Particle Host -->
+<div id="particles" aria-hidden="true"></div>
+
+<script>
+// Step 1: catch any script error (syntax error in app.js)
+window.addEventListener('error', function(e){
+  var el=document.getElementById('load-msg');
+  if(el){
+    el.style.color='red';
+    el.style.fontSize='0.8rem';
+    el.textContent='錯誤 行'+e.lineno+'：'+e.message+' ['+( e.filename||'').split('/').pop()+']';
+  }
+}, true);
+</script>
+<script src="app.js?v=19"></script>
+<script>
+// Step 2: after app.js loads, check if it parsed correctly
+(function(){
+  var el=document.getElementById('load-msg');
+  if(typeof init==='undefined'){
+    // Only overwrite if Step 1 error handler hasn't already shown a specific error
+    if(el && el.style.color!=='red'){ el.style.color='orange'; el.textContent='app.js 載入失敗（init未定義）'; }
+  } else {
+    // JS is fine — force call init immediately
+    if(el && el.style.color!=='red') el.style.color='#90D640';
+    init();
+  }
+})();
+</script>
+</body>
+</html>
