@@ -662,6 +662,24 @@ input  { font-family: inherit; }
 }
 .opt-btn.wrong .opt-label { background: #B71C1C; color: #fff; }
 .opt-btn:disabled { cursor: default; }
+.opt-btn .opt-text { flex: 1; }
+.opt-speak-btn {
+  flex-shrink: 0;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border-radius: 5px;
+  font-size: 0.82rem;
+  background: rgba(255,255,255,0.07);
+  opacity: 0.55;
+  transition: background 0.15s, opacity 0.15s;
+  cursor: pointer;
+  user-select: none;
+}
+.opt-speak-btn:hover { background: rgba(100,200,80,0.25); opacity: 1; }
+.opt-btn:disabled .opt-speak-btn { pointer-events: none; }
 
 /* --- Fill In --- */
 .fill-section {

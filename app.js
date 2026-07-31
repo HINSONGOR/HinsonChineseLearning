@@ -3856,8 +3856,8 @@ function loadQuestion(i){
       (q.opts||[]).forEach((opt,idx)=>{
         const btn=document.createElement('button');
         btn.className='opt-btn';
-        btn.innerHTML=`<span class="opt-label">${'ABCD'[idx]}</span><span>${opt}</span>`;
-        btn.onclick=()=>checkAnswer(idx);
+        btn.innerHTML=`<span class="opt-label">${'ABCD'[idx]}</span><span class="opt-text">${opt}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
+        btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt); return; } checkAnswer(idx); };
         og.appendChild(btn);
       });
     } else if(mode==='char'){
@@ -3886,8 +3886,8 @@ function loadQuestion(i){
     (q.opts||[]).forEach((opt,idx)=>{
       const btn=document.createElement('button');
       btn.className='opt-btn';
-      btn.innerHTML=`<span class="opt-label">${'ABCD'[idx]}</span><span>${opt}</span>`;
-      btn.onclick=()=>checkAnswer(idx);
+      btn.innerHTML=`<span class="opt-label">${'ABCD'[idx]}</span><span class="opt-text">${opt}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
+      btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt); return; } checkAnswer(idx); };
       og.appendChild(btn);
     });
   }
