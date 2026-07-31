@@ -949,8 +949,9 @@ input  { font-family: inherit; }
 }
 .wrong-item:hover { border-color: #E57373; background: rgba(239,83,80,0.1); }
 .wrong-item-q { font-size: 0.92rem; color: var(--text-main); line-height: 1.6; margin-bottom: 4px; }
-.wrong-item-meta { font-size: 0.76rem; color: var(--text-dim); display: flex; gap: 10px; flex-wrap: wrap; }
+.wrong-item-meta { font-size: 0.76rem; color: var(--text-dim); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .wrong-item-meta span { display: flex; align-items: center; gap: 3px; }
+.wrong-item-date { margin-left: auto; font-size: 0.72rem; color: #888; background: rgba(255,255,255,0.06); border-radius: 6px; padding: 1px 7px; white-space: nowrap; }
 .wrong-retry-btn {
   margin-top: 6px;
   padding: 5px 12px;

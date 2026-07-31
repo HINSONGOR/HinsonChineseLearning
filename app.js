@@ -4048,6 +4048,7 @@ function showWrongList(){
           <div class="wrong-item-q">${q.text?.substring(0,80)}${q.text?.length>80?'…':''}</div>
           <div class="wrong-item-meta">
             <span>${q.type==='fill'?'正確答案：「'+q.ans+'」':'✗ 正確答案：'+('ABCD'[q.ans])+'. '+(q.opts?.[q.ans]||'')}</span>
+            ${q.wrongAt?`<span class="wrong-item-date">📅 ${(()=>{const d=new Date(q.wrongAt);return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';})()}</span>`:''}
           </div>
           <button class="wrong-retry-btn" onclick="retryWrong(${JSON.stringify(i)}, '${mod}')">🔄 重新練習</button>
         </div>
