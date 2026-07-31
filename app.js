@@ -3483,6 +3483,7 @@ let G = {
           fillin:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
   customQuestions:[],
+  dailyLog:[],
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
 };
 
@@ -3991,7 +3992,13 @@ function endQuiz(){
   const mod=Q.module;
   if(G.stats[mod]) G.stats[mod].sessions=(G.stats[mod].sessions||0)+1;
   if(Q.correct===Q.questions.length) G.perfectRuns=(G.perfectRuns||0)+1;
-  if(Q.startTime){ G.totalStudyTime=(G.totalStudyTime||0)+Math.round((Date.now()-Q.startTime)/1000); }
+  const sessionSec = Q.startTime ? Math.round((Date.now()-Q.startTime)/1000) : 0;
+  if(sessionSec){ G.totalStudyTime=(G.totalStudyTime||0)+sessionSec; }
+  G.dailyLog = G.dailyLog||[];
+  G.dailyLog.push({ date: new Date().toISOString().slice(0,10), module: mod, questions: Q.questions.length, correct: Q.correct, timeSec: sessionSec });
+  const cutoff = new Date(); cutoff.setDate(cutoff.getDate()-90);
+  const cutStr = cutoff.toISOString().slice(0,10);
+  G.dailyLog = G.dailyLog.filter(r=>r.date>=cutStr);
   Store.save();
 
   const acc=Math.round((Q.correct/Q.questions.length)*100);
@@ -4075,6 +4082,46 @@ function retryWrong(idx, mod){
 /* ============================================================
    REPORT
    ============================================================ */
+function fmtDate(dateStr){
+  const d=new Date(dateStr+'T00:00:00');
+  const days=['日','一','二','三','四','五','六'];
+  const today=new Date().toISOString().slice(0,10);
+  const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const label=dateStr===today?'今日':dateStr===yesterday?'昨日':`${d.getMonth()+1}月${d.getDate()}日`;
+  return `${label}（星期${days[d.getDay()]}）`;
+}
+
+function buildDailyLog(){
+  const log=(G.dailyLog||[]);
+  if(!log.length) return '<div style="text-align:center;color:var(--text-dim);font-size:0.82rem;padding:10px 0">完成練習後會自動記錄每日活動 📋</div>';
+  const MOD_NAMES={
+    reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', vocab:'詞語運用',
+    punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', synword:'以詞代意', wrong:'錯題重溫'
+  };
+  // group by date, most recent first
+  const byDate={};
+  log.forEach(r=>{ if(!byDate[r.date]) byDate[r.date]=[]; byDate[r.date].push(r); });
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).slice(0,14);
+  return `<div><div class="report-section-title">📅 每日學習紀錄</div>
+  ${dates.map(date=>{
+    const sessions=byDate[date];
+    const totalSec=sessions.reduce((s,r)=>s+r.timeSec,0);
+    const tags=sessions.map(r=>{
+      const name=MOD_NAMES[r.module]||r.module;
+      const pct=r.questions>0?Math.round(r.correct/r.questions*100):0;
+      const t=fmtTime(r.timeSec);
+      return `<span class="daily-tag">${name} ${r.correct}/${r.questions}（${pct}%）· ${t}</span>`;
+    }).join('');
+    return `<div class="daily-log-row">
+      <div class="daily-log-date">${fmtDate(date)}</div>
+      <div class="daily-log-tags">${tags}</div>
+      <div class="daily-log-total">共用 ${fmtTime(totalSec)}</div>
+    </div>`;
+  }).join('')}
+  </div>`;
+}
+
 function fmtTime(sec){
   if(!sec||sec<60) return (sec||0)+'秒';
   const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
@@ -4142,6 +4189,7 @@ function showReport(){
       <div class="module-report-row"><div class="mod-report-name">正確題數</div><div class="mod-report-bar-wrap"><div class="mod-report-bar" style="width:${totalAcc}%;background:#2196F3"></div></div><div class="mod-report-pct">${G.totalCorrect}</div></div>
       <div class="module-report-row"><div class="mod-report-name">錯題數量</div><div class="mod-report-bar-wrap"><div class="mod-report-bar" style="width:${G.wrongQuestions.length>0?Math.min(100,G.wrongQuestions.length*5):0}%;background:#F44336"></div></div><div class="mod-report-pct">${G.wrongQuestions.length}</div></div>
     </div>
+    ${buildDailyLog()}
   `;
 }
 

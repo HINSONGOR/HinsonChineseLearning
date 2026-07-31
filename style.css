@@ -1038,6 +1038,25 @@ input  { font-family: inherit; }
 .rexcard-icon { font-size: 1.4rem; margin-bottom: 4px; }
 .rexcard-val { font-size: 1.15rem; font-weight: 900; color: var(--text-main); }
 .rexcard-lbl { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; }
+.daily-log-row {
+  background: var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.daily-log-date { font-size: 0.82rem; font-weight: 700; color: var(--text-gold); margin-bottom: 6px; }
+.daily-log-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 5px; }
+.daily-tag {
+  font-size: 0.75rem;
+  background: rgba(93,156,40,0.18);
+  border: 1px solid rgba(93,156,40,0.35);
+  border-radius: 20px;
+  padding: 3px 10px;
+  color: #b8e57a;
+  white-space: nowrap;
+}
+.daily-log-total { font-size: 0.75rem; color: var(--text-dim); text-align: right; }
 .report-section-title {
   font-size: 0.95rem;
   font-weight: 700;
