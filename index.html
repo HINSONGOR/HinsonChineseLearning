@@ -315,6 +315,9 @@
     <div></div>
   </div>
   <div class="report-body" id="report-body"></div>
+  <div style="text-align:center;padding:18px 0 8px">
+    <button onclick="resetAllData()" style="background:none;border:1px solid rgba(239,83,80,0.4);color:#EF5350;border-radius:8px;padding:7px 18px;font-size:0.78rem;cursor:pointer;font-family:inherit">🗑️ 清除全部學習數據（重新開始）</button>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -647,7 +650,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=23"></script>
+<script src="app.js?v=24"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

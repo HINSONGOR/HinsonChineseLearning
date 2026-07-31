@@ -4015,6 +4015,12 @@ function endQuiz(){
 
 function retryModule(){ closeModal('modal-done'); launchModule(Q.module); }
 
+function resetAllData(){
+  if(!confirm('確定清除所有學習數據？\n（XP、金幣、統計、每日紀錄全部歸零）\n此操作不可撤銷！')) return;
+  localStorage.removeItem('hinson_v1');
+  location.reload();
+}
+
 function confirmExitQuiz(){ openModal('modal-confirm-exit'); }
 function doExitQuiz(){ Timer.stop(); closeModal('modal-confirm-exit'); showScreen('screen-dashboard'); updateDashboard(); }
 
