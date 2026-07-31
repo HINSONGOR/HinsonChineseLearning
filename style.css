@@ -1020,6 +1020,24 @@ input  { font-family: inherit; }
   text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
 }
 .report-stat-lbl { font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+.report-extra-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.report-extra-card {
+  flex: 1;
+  min-width: 100px;
+  background: var(--card-bg);
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 12px 10px;
+  text-align: center;
+}
+.rexcard-icon { font-size: 1.4rem; margin-bottom: 4px; }
+.rexcard-val { font-size: 1.15rem; font-weight: 900; color: var(--text-main); }
+.rexcard-lbl { font-size: 0.72rem; color: var(--text-dim); margin-top: 3px; }
 .report-section-title {
   font-size: 0.95rem;
   font-weight: 700;

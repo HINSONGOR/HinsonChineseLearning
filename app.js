@@ -3475,7 +3475,7 @@ const LEVEL_NAMES = ['','中文新兵','文字學徒','語言少俠','知識達�
 let G = {
   name:'冒險者', xp:0, coins:0, level:1, streak:0, lastLogin:'',
   maxStreak:0, perfectRuns:0, wrongRetryCorrect:0,
-  totalAnswered:0, totalCorrect:0,
+  totalAnswered:0, totalCorrect:0, totalStudyTime:0,
   badges:[],
   stats:{ reading:{answered:0,correct:0,sessions:0}, rhetoric:{answered:0,correct:0,sessions:0},
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
@@ -3775,7 +3775,7 @@ function buildQuestions(type){
 }
 
 function startQuiz(type, questions, reviewing){
-  Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0 };
+  Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
                 wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', synword:'🔄 以詞代意訓練' };
@@ -3991,6 +3991,7 @@ function endQuiz(){
   const mod=Q.module;
   if(G.stats[mod]) G.stats[mod].sessions=(G.stats[mod].sessions||0)+1;
   if(Q.correct===Q.questions.length) G.perfectRuns=(G.perfectRuns||0)+1;
+  if(Q.startTime){ G.totalStudyTime=(G.totalStudyTime||0)+Math.round((Date.now()-Q.startTime)/1000); }
   Store.save();
 
   const acc=Math.round((Q.correct/Q.questions.length)*100);
@@ -4038,7 +4039,7 @@ function showWrongList(){
 
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試' };
+  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', synword:'🔁 以詞代意' };
 
   body.innerHTML=`<div style="text-align:right;margin-bottom:10px"><button class="wrong-retry-btn" style="background:#c0392b" onclick="clearAllWrong()">🗑️ 清除全部錯題</button></div>`+Object.entries(byMod).map(([mod,qs])=>`
     <div class="wrong-module-group">
@@ -4074,12 +4075,32 @@ function retryWrong(idx, mod){
 /* ============================================================
    REPORT
    ============================================================ */
+function fmtTime(sec){
+  if(!sec||sec<60) return (sec||0)+'秒';
+  const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
+  return h>0?`${h}小時${m}分鐘`:`${m}分鐘`;
+}
+function getRank(acc){
+  if(acc>=95) return {label:'👑 冠軍學者', color:'#FFD700'};
+  if(acc>=85) return {label:'🌟 精英學生', color:'#FF9800'};
+  if(acc>=75) return {label:'⭐ 優秀學生', color:'#4CAF50'};
+  if(acc>=65) return {label:'📗 進階者',   color:'#2196F3'};
+  if(acc>=50) return {label:'📘 學習者',   color:'#9C27B0'};
+  return             {label:'📙 初學者',   color:'#78909C'};
+}
+
 function showReport(){
   showScreen('screen-report');
   const body=document.getElementById('report-body');
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭訓練', idiom:'🏮 成語', vocab:'📚 詞語', punctuation:'✏️ 標點', tsa:'🎯 呈分試' };
+  const NAMES={
+    reading:'📖 閱讀理解', rhetoric:'✍️ 修辭訓練', idiom:'🏮 成語',
+    vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試',
+    order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解',
+    wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', synword:'🔁 以詞代意'
+  };
   const mods=Object.entries(G.stats);
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;
+  const rank=getRank(totalAcc);
   const colors=['#4CAF50','#2196F3','#F44336','#9C27B0','#FF9800','#00BCD4'];
 
   body.innerHTML=`
@@ -4088,6 +4109,23 @@ function showReport(){
       <div class="report-stat-card"><div class="report-stat-num">${G.xp}</div><div class="report-stat-lbl">累積XP</div></div>
       <div class="report-stat-card"><div class="report-stat-num">${G.coins}</div><div class="report-stat-lbl">🪙金幣</div></div>
       <div class="report-stat-card"><div class="report-stat-num">${totalAcc}%</div><div class="report-stat-lbl">總正確率</div></div>
+    </div>
+    <div class="report-extra-row">
+      <div class="report-extra-card">
+        <div class="rexcard-icon">⏱</div>
+        <div class="rexcard-val">${fmtTime(G.totalStudyTime||0)}</div>
+        <div class="rexcard-lbl">累計學習時間</div>
+      </div>
+      <div class="report-extra-card">
+        <div class="rexcard-icon">🎯</div>
+        <div class="rexcard-val">${totalAcc}%</div>
+        <div class="rexcard-lbl">綜合得分</div>
+      </div>
+      <div class="report-extra-card" style="border-color:${rank.color}40">
+        <div class="rexcard-icon" style="color:${rank.color}">${rank.label.split(' ')[0]}</div>
+        <div class="rexcard-val" style="color:${rank.color};font-size:0.95rem">${rank.label.split(' ').slice(1).join(' ')}</div>
+        <div class="rexcard-lbl">學習排名</div>
+      </div>
     </div>
     <div><div class="report-section-title">各模組表現</div>
     ${mods.map(([m,st],i)=>{
