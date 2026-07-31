@@ -3497,6 +3497,12 @@ const Store = {
   save(){ try{ localStorage.setItem('hinson_v1', JSON.stringify(G)); }catch(e){} },
   load(){
     try{
+      // One-time data wipe requested 2026-07-31
+      if(!localStorage.getItem('hinson_wiped_20260731')){
+        localStorage.removeItem('hinson_v1');
+        localStorage.setItem('hinson_wiped_20260731','1');
+        return;
+      }
       const d = JSON.parse(localStorage.getItem('hinson_v1')||'null');
       if(d){ G = Object.assign(G, d); G.stats = Object.assign({reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0}}, d.stats||{}); G.settings = Object.assign({music:false,volume:0.3,sfx:true}, d.settings||{}); }
     }catch(e){}
