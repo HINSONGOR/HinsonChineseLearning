@@ -326,97 +326,8 @@
     <h2>👨‍👩‍👧 家長專區</h2>
     <div></div>
   </div>
-  <!-- Parent Tabs -->
-  <div class="ptabs-bar">
-    <button class="ptab active" id="ptab-report-btn" onclick="switchPTab('report')">📊 學習報告</button>
-    <button class="ptab" id="ptab-qbank-btn" onclick="switchPTab('qbank')">📚 題目管理</button>
-  </div>
-  <!-- Report Tab -->
+  <!-- Report -->
   <div class="parent-body" id="parent-body"></div>
-  <!-- Question Bank Tab -->
-  <div class="parent-qb-body hidden" id="parent-qb-body">
-
-    <!-- ── Mode A: Single file upload (PDF / Word / Image OCR) ── -->
-    <div class="upload-section-label">📁 模式一：單一文件上載（PDF · Word · 圖片OCR）</div>
-    <div class="upload-zone" id="upload-zone"
-         onclick="document.getElementById('file-upload-input').click()">
-      <div class="uz-icon">📤</div>
-      <div class="uz-main">點擊或拖放文件至此</div>
-      <div class="uz-sub">支援：PDF · Word(.docx/.doc) · 圖片 JPG/PNG/GIF</div>
-    </div>
-    <input type="file" id="file-upload-input" class="hidden"
-           accept=".pdf,.docx,.doc,.jpg,.jpeg,.png,.gif,.bmp,.webp"
-           onchange="handleFileSelect(event)">
-
-    <!-- ── Progress bar (shared) ── -->
-    <div class="ocr-box hidden" id="ocr-box">
-      <div class="ocr-bar-track"><div class="ocr-bar-fill" id="ocr-bar-fill"></div></div>
-      <p class="ocr-status" id="ocr-status">正在處理...</p>
-    </div>
-
-    <!-- ── Extracted text + auto-detect ── -->
-    <div class="extracted-box hidden" id="extracted-box">
-      <div class="eb-header">
-        <span>📝 提取的文字</span>
-        <button class="eb-btn" onclick="runAutoDetect()">🔍 自動識別題目</button>
-      </div>
-      <textarea id="extracted-text" class="extracted-ta" rows="6"
-                placeholder="文字將顯示在這裏，你也可以直接貼上文字..."></textarea>
-    </div>
-
-    <!-- ── Auto-detected questions ── -->
-    <div class="detected-box hidden" id="detected-box">
-      <div class="db-header">
-        🔍 已識別 <b id="detected-count">0</b> 道題目
-        <button class="eb-btn" onclick="addAllDetected()">✅ 全部加入題庫</button>
-      </div>
-      <div id="detected-list"></div>
-    </div>
-
-    <!-- ── Mode B: Dual Q+A upload (question file + answer file) ── -->
-    <div class="upload-section-label" style="margin-top:16px">📋 模式二：題目文件（_s）＋答案文件（_t）自動配對</div>
-    <div class="dual-upload-row">
-      <div class="du-zone" id="du-zone-q" onclick="document.getElementById('du-input-q').click()">
-        <div class="du-zone-icon">📄</div>
-        <div class="du-zone-label">題目文件（_s）</div>
-        <div class="du-zone-hint">點擊或拖放</div>
-        <div class="du-zone-name hidden" id="du-name-q"></div>
-      </div>
-      <div class="du-plus">＋</div>
-      <div class="du-zone" id="du-zone-a" onclick="document.getElementById('du-input-a').click()">
-        <div class="du-zone-icon">✅</div>
-        <div class="du-zone-label">答案文件（_t）</div>
-        <div class="du-zone-hint">點擊或拖放</div>
-        <div class="du-zone-name hidden" id="du-name-a"></div>
-      </div>
-    </div>
-    <input type="file" id="du-input-q" class="hidden" accept=".docx,.doc,.pdf"
-           onchange="handleDualSelect('q',event)">
-    <input type="file" id="du-input-a" class="hidden" accept=".docx,.doc,.pdf"
-           onchange="handleDualSelect('a',event)">
-    <button class="match-pair-btn" id="match-pair-btn" disabled onclick="runMatchPair()">
-      🔗 配對答案，生成題庫格式
-    </button>
-
-    <!-- ── Match Result ── -->
-    <div class="match-result hidden" id="match-result">
-      <div class="mr-header">
-        <span>📋 配對結果</span>
-        <button class="eb-btn green-eb" onclick="addAllMatched()">✅ 全部加入題庫</button>
-      </div>
-      <div id="match-result-body"></div>
-    </div>
-
-    <!-- ── Custom Question Bank ── -->
-    <div class="cqb-section">
-      <div class="cqb-header">
-        <span>📚 自訂題目庫 <b id="cqb-count">0</b> 題</span>
-        <button class="eb-btn green-eb" onclick="openQEditor()">➕ 手動新增</button>
-      </div>
-      <div id="cqb-list"></div>
-    </div>
-
-  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -577,61 +488,6 @@
   </div>
 </div>
 
-<!-- Question Editor Modal -->
-<div class="overlay hidden" id="modal-q-editor">
-  <div class="modal-box q-editor-box">
-    <button class="modal-x" onclick="closeModal('modal-q-editor')">✕</button>
-    <h2 class="modal-title">✏️ 編輯題目</h2>
-
-    <div class="setting-row">
-      <label class="set-label">題目類別</label>
-      <select id="qe-type" class="set-input">
-        <option value="reading">📖 閱讀理解</option>
-        <option value="rhetoric">✍️ 修辭手法</option>
-        <option value="idiom">🏮 成語</option>
-        <option value="vocab">📚 詞語運用</option>
-        <option value="punctuation">✏️ 標點符號</option>
-        <option value="tsa">🎯 呈分試</option>
-      </select>
-    </div>
-
-    <div class="setting-row">
-      <label class="set-label">題目文字</label>
-      <textarea id="qe-text" class="set-input qe-ta" rows="3" placeholder="輸入題目..."></textarea>
-    </div>
-
-    <div class="qe-opts">
-      <div class="qe-opt-row">
-        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="0"> 正確</label>
-        <span class="qe-opt-lbl">A</span>
-        <input type="text" id="qe-opt0" class="set-input" placeholder="選項 A">
-      </div>
-      <div class="qe-opt-row">
-        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="1"> 正確</label>
-        <span class="qe-opt-lbl">B</span>
-        <input type="text" id="qe-opt1" class="set-input" placeholder="選項 B">
-      </div>
-      <div class="qe-opt-row">
-        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="2"> 正確</label>
-        <span class="qe-opt-lbl">C</span>
-        <input type="text" id="qe-opt2" class="set-input" placeholder="選項 C">
-      </div>
-      <div class="qe-opt-row">
-        <label class="qe-ans-radio"><input type="radio" name="qe-ans" value="3"> 正確</label>
-        <span class="qe-opt-lbl">D</span>
-        <input type="text" id="qe-opt3" class="set-input" placeholder="選項 D">
-      </div>
-    </div>
-
-    <div class="setting-row">
-      <label class="set-label">🤖 小老師解釋（選填）</label>
-      <textarea id="qe-expl" class="set-input qe-ta" rows="2" placeholder="輸入答案解釋..."></textarea>
-    </div>
-
-    <input type="hidden" id="qe-edit-id" value="">
-    <button class="big-btn green-btn" onclick="saveCustomQ()">✓ 儲存題目</button>
-  </div>
-</div>
 
 <!-- Particle Host -->
 <div id="particles" aria-hidden="true"></div>
@@ -647,7 +503,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=25"></script>
+<script src="app.js?v=26"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
