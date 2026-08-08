@@ -3222,6 +3222,178 @@ fillin:[
  expl:'「<strong class="correct-hl">服侍</strong>」指照顧侍奉他人，「服侍周到」即照料得十分細心。「服役」是當兵，「服從」是聽從命令，均不符。　<strong>造句：</strong>「護士們細心地服侍病人，讓他們感到溫暖和安心。」'},
 ],
 
+fillin2:[
+{id:'fi2_01',word:'汗流浹背',
+ def:'形容出汗極多，汗水濕透了後背，比喻天氣極熱或非常辛苦。',
+ text:'天文台發出酷熱警告，我在街上走了幾分鐘，已熱得（　　　　）。',
+ opts:['汗流浹背','氣喘吁吁','筋疲力盡','滿頭大汗'],ans:0,
+ chars:['汗','流','浹','背'],distractors:['淋','頭','暈','熱'],
+ expl:'「<strong class="correct-hl">汗流浹背</strong>」形容出汗極多，形容天氣極熱或做事非常辛苦。'},
+{id:'fi2_02',word:'錯過',
+ def:'失去（機會）；沒有趕上（時間）。',
+ text:'因為堵車，我（　　）了演奏會的開頭部分。',
+ opts:['錯過','錯失','遺漏','忽略'],ans:0,
+ chars:['錯','過'],distractors:['失','略','漏','誤'],
+ expl:'「<strong class="correct-hl">錯過</strong>」指沒有趕上或未能把握。「錯失」多指失去重要機會，「遺漏」指忘記包含，「忽略」指不重視。'},
+{id:'fi2_03',word:'踴躍',
+ def:'形容情緒高漲，爭先恐後地參與。',
+ text:'大家都（　　）報名，積極參加賑災義演的籌備工作。',
+ opts:['踴躍','積極','爭先','熱烈'],ans:0,
+ chars:['踴','躍'],distractors:['積','熱','跳','奮'],
+ expl:'「<strong class="correct-hl">踴躍</strong>」形容爭先恐後、熱情地參與，與「報名」搭配恰當。'},
+{id:'fi2_04',word:'恍然大悟',
+ def:'形容突然完全明白了事理。',
+ text:'經過老師的引導，我（　　　　），原來這道題目的解答方式如此簡單啊！',
+ opts:['恍然大悟','茅塞頓開','若有所悟','豁然開朗'],ans:0,
+ chars:['恍','然','大','悟'],distractors:['茅','豁','明','醒'],
+ expl:'「<strong class="correct-hl">恍然大悟</strong>」指突然完全明白了道理。「茅塞頓開」指思路突然開通，「豁然開朗」多指困境中突見光明，「若有所悟」表示似乎有所理解，程度較輕。'},
+{id:'fi2_05',word:'威脅',
+ def:'用某種力量令人感到害怕或對事物造成危險。',
+ text:'工廠從煙囪裏排放出來的有毒廢氣，（　　）着市民的健康。',
+ opts:['威脅','危害','損害','影響'],ans:0,
+ chars:['威','脅'],distractors:['危','害','迫','壓'],
+ expl:'「<strong class="correct-hl">威脅</strong>」指構成危險或壓力，與「着」連用表示持續影響。「危害」、「損害」已造成傷害，而此句強調持續的威脅狀態。'},
+{id:'fi2_06',word:'義務',
+ def:'應盡的責任；也指不收報酬、自願去做的事。',
+ text:'哥哥利用課餘時間，為社區中心做了許多（　　）工作。',
+ opts:['義務','志願','義工','慈善'],ans:0,
+ chars:['義','務'],distractors:['志','工','善','免'],
+ expl:'「<strong class="correct-hl">義務</strong>」工作指不收報酬的工作。「義工」是名詞（指人），「志願」多指有特定目標，「慈善」指有關幫助弱勢的事業。'},
+{id:'fi2_07',word:'分佈',
+ def:'分散分配在一個範圍之內。',
+ text:'這個蛋糕真漂亮，上面平均地（　　）着一顆又一顆鮮紅色的草莓。',
+ opts:['分佈','散佈','分散','佈滿'],ans:0,
+ chars:['分','佈'],distractors:['散','滿','排','列'],
+ expl:'「<strong class="correct-hl">分佈</strong>」指分散地分配在某範圍內，配合「平均地」強調均勻排列。「佈滿」表示鋪滿整個，程度更強，與「平均地」搭配欠佳。'},
+{id:'fi2_08',word:'尊嚴',
+ def:'人格上應受到尊重的體面與地位。',
+ text:'即使失去自理能力的長者要人照顧，我們也要顧及他們的（　　），不能呼喝他們。',
+ opts:['尊嚴','自尊','尊重','體面'],ans:0,
+ chars:['尊','嚴'],distractors:['重','面','自','格'],
+ expl:'「<strong class="correct-hl">尊嚴</strong>」指人格上應受尊重的地位，是名詞，可作賓語。「自尊」是自我尊重，「尊重」是動詞，「體面」偏向外在形象。'},
+{id:'fi2_09',word:'屈服',
+ def:'因壓力或困難而放棄抵抗，讓步妥協。',
+ text:'我們不能向困難（　　），要勇敢地克服它，戰勝它。',
+ opts:['屈服','退讓','讓步','妥協'],ans:0,
+ chars:['屈','服'],distractors:['讓','妥','降','退'],
+ expl:'「<strong class="correct-hl">屈服</strong>」指向壓力或困難低頭，常與「向……屈服」搭配。「退讓」、「讓步」、「妥協」也有讓步之意，但「屈服」語氣最強，強調完全放棄抵抗。'},
+{id:'fi2_10',word:'窘態',
+ def:'困窘尷尬的神態或狀況。',
+ text:'我一不小心，在大街上摔了一跤，衣服沾了塵土，露出一臉的（　　）。',
+ opts:['窘態','狼狽','尷尬','難堪'],ans:0,
+ chars:['窘','態'],distractors:['狼','尷','堪','丑'],
+ expl:'「<strong class="correct-hl">窘態</strong>」是名詞，指困窘的神態，可接在「一臉的」之後。「狼狽」、「尷尬」、「難堪」為形容詞，不宜直接接在「一臉的」後。'},
+{id:'fi2_11',word:'井然',
+ def:'形容整齊有序的樣子，常與「有序」搭配使用。',
+ text:'哥哥做事有條理，連書桌上瑣碎的東西都擺得（　　）有序。',
+ opts:['井然','整齊','有條不紊','整潔'],ans:0,
+ chars:['井','然'],distractors:['整','齊','潔','序'],
+ expl:'「<strong class="correct-hl">井然</strong>有序」是固定搭配，形容非常整齊有條理。「整齊」、「整潔」後不接「有序」，「有條不紊」本身已含「有序」之意，不能再接「有序」。'},
+{id:'fi2_12',word:'退縮',
+ def:'因畏懼或缺乏信心而不敢向前，退後迴避。',
+ text:'如果我們遇到困難就（　　），那麼我們做甚麼事都不會成功。',
+ opts:['退縮','退卻','畏縮','逃避'],ans:0,
+ chars:['退','縮'],distractors:['卻','畏','逃','讓'],
+ expl:'「<strong class="correct-hl">退縮</strong>」指遇到困難時畏怯後退。「退卻」多用於軍事，「畏縮」強調因恐懼而縮手縮腳，「逃避」指逃開，語義有別。'},
+{id:'fi2_13',word:'留神',
+ def:'小心注意，警惕。',
+ text:'一次意外便足以致命，所以我們橫過馬路時必須加倍（　　）。',
+ opts:['留神','留意','小心','謹慎'],ans:0,
+ chars:['留','神'],distractors:['意','心','慎','注'],
+ expl:'「<strong class="correct-hl">留神</strong>」指集中注意力、小心警惕，可接在「加倍」之後。四個選項語義相近，但「留神」與「加倍」搭配最為自然。'},
+{id:'fi2_14',word:'醉心',
+ def:'深深地愛好、沉浸於某事物之中。',
+ text:'祖父（　　）於中國古典文學，他常常閲讀《西遊記》、《三國演義》等名著。',
+ opts:['醉心','沉迷','熱衷','專注'],ans:0,
+ chars:['醉','心'],distractors:['沉','熱','迷','痴'],
+ expl:'「<strong class="correct-hl">醉心</strong>」指深深愛好、沉浸其中，含褒義，與「於」搭配。「沉迷」含貶義，「熱衷」指積極追求，「專注」指集中注意力，語義有別。'},
+{id:'fi2_15',word:'狼狽',
+ def:'形容困窘、慌亂、十分難看的樣子。',
+ text:'我站在街上賣旗，不料突然下起大雨來，結果全身都濕了，（　　）得很。',
+ opts:['狼狽','窘迫','尷尬','難堪'],ans:0,
+ chars:['狼','狽'],distractors:['窘','尷','堪','迫'],
+ expl:'「<strong class="correct-hl">狼狽</strong>」形容因遭遇意外而顯得慌亂難看，可接「得很」。「窘迫」指處境困難，「尷尬」指處境難為情，「難堪」指難以忍受，語義有別。'},
+{id:'fi2_16',word:'救濟',
+ def:'以金錢、物資或服務幫助生活困難或遭遇災難的人。',
+ text:'社會福利署會為受天災影響的市民提供緊急（　　）服務。',
+ opts:['救濟','援助','資助','救援'],ans:0,
+ chars:['救','濟'],distractors:['援','助','資','扶'],
+ expl:'「<strong class="correct-hl">救濟</strong>」指為受災或困難人士提供物質幫助，與「緊急……服務」搭配最恰當。「援助」偏向整體支援，「資助」是財政資助，「救援」指搶救脫險。'},
+{id:'fi2_17',word:'沉甸甸',
+ def:'形容物體沉重的樣子。',
+ text:'這個箱子（　　　）的，裏面裝的是石頭嗎？',
+ opts:['沉甸甸','沉重','重甸甸','笨重'],ans:0,
+ chars:['沉','甸','甸'],distractors:['重','笨','硬','實'],
+ expl:'「<strong class="correct-hl">沉甸甸</strong>」是疊音詞，形容物體分量很重，後接「的」更為生動自然。「沉重」、「笨重」是一般形容詞，「重甸甸」並非標準詞語。'},
+{id:'fi2_18',word:'規矩',
+ def:'一定的標準、習慣或行為準則（名詞）。',
+ text:'吃飯時不能看電視，這個（　　）是爺爺定下的，爸爸也得遵守。',
+ opts:['規矩','規則','規定','規例'],ans:0,
+ chars:['規','矩'],distractors:['則','定','例','律'],
+ expl:'「<strong class="correct-hl">規矩</strong>」指家庭或社會中約定俗成的行為準則，口語色彩較強，多用於家規習俗。「規則」、「規定」、「規例」較為正式。'},
+{id:'fi2_19',word:'研製',
+ def:'研究並製造（新產品或新設備）。',
+ text:'「嫦娥一號」是我國科學家（　　）出來的衞星，能用作探測月球。',
+ opts:['研製','研發','製造','發明'],ans:0,
+ chars:['研','製'],distractors:['發','造','明','創'],
+ expl:'「<strong class="correct-hl">研製</strong>」指研究並製造，強調製造過程，與「出來」搭配自然。「研發」側重開發研究，「製造」不含研究成分，「發明」指創造出前所未有的東西。'},
+{id:'fi2_20',word:'震盪',
+ def:'（受到衝擊而）劇烈震動、搖盪。',
+ text:'地震發生時，整個大地都在（　　）着，連穩固的大樓也搖搖欲墜。',
+ opts:['震盪','震動','搖晃','顫動'],ans:0,
+ chars:['震','盪'],distractors:['動','晃','顫','搖'],
+ expl:'「<strong class="correct-hl">震盪</strong>」形容地震帶來的劇烈搖動，程度強烈，能引致大樓搖搖欲墜。「震動」程度較輕，「搖晃」偏向一般搖擺，「顫動」指細微抖動。'},
+{id:'fi2_21',word:'盲目',
+ def:'形容缺乏理性思考，不加辨別地（行動）。',
+ text:'社會上有各種各樣的慈善募款活動，但我們不應（　　）捐獻，應該先瞭解活動是否合法和善款用途，否則容易被騙。',
+ opts:['盲目','隨意','胡亂','輕率'],ans:0,
+ chars:['盲','目'],distractors:['隨','胡','率','亂'],
+ expl:'「<strong class="correct-hl">盲目</strong>」指缺乏判斷依據、不加思索地行動，強調欠缺理性，符合「否則容易被騙」的語境。「隨意」偏向隨便，「胡亂」指沒有規律，「輕率」指不夠慎重。'},
+{id:'fi2_22',word:'眾目睽睽',
+ def:'形容在眾人的注視之下（通常指大家都看得清楚）。',
+ text:'那個小偷竟敢在（　　　　）之下，明目張膽偷東西，實在太可惡了。',
+ opts:['眾目睽睽','光天化日','明目張膽','大庭廣眾'],ans:0,
+ chars:['眾','目','睽','睽'],distractors:['光','廣','庭','日'],
+ expl:'「<strong class="correct-hl">眾目睽睽</strong>」指在眾人目光注視下，與「之下」搭配。「光天化日」指白天公開，「大庭廣眾」指公開場合，「明目張膽」已在句中出現，不能重複。'},
+{id:'fi2_23',word:'解脫',
+ def:'從束縛、壓力或困境中得到釋放和自由。',
+ text:'考試終於完結了，我身心的壓力也得到（　　），是時候好好睡一覺。',
+ opts:['解脫','解放','解除','釋放'],ans:0,
+ chars:['解','脫'],distractors:['放','除','釋','免'],
+ expl:'「<strong class="correct-hl">解脫</strong>」指從壓力或束縛中獲得自由，含感情色彩，與「身心的壓力得到……」搭配最自然。「解除」多接具體事物（解除合約），「解放」、「釋放」語義範圍有別。'},
+{id:'fi2_24',word:'慕名',
+ def:'因仰慕（某人或某事物的）名聲而（前來）。',
+ text:'這家舞蹈學校的學生經常在比賽中勝出，因此吸引了許多家長（　　）前來給子女報名。',
+ opts:['慕名','聞名','知名','著名'],ans:0,
+ chars:['慕','名'],distractors:['聞','知','著','鳴'],
+ expl:'「<strong class="correct-hl">慕名</strong>」指因仰慕名聲而前來，動詞，與「前來」搭配。「聞名」、「知名」、「著名」均為形容詞，指有名氣，不能與「前來」搭配修飾動作。'},
+{id:'fi2_25',word:'宛如',
+ def:'好像；恰似（多用於書面語，語氣較強）。',
+ text:'雨後天邊的彩虹（　　）一條彩帶，美麗極了！',
+ opts:['宛如','猶如','彷彿','好像'],ans:0,
+ chars:['宛','如'],distractors:['猶','彷','似','像'],
+ expl:'四個選項均表示「好像」，但「<strong class="correct-hl">宛如</strong>」語氣最肯定，視覺形象最鮮明，最適合描寫彩虹宛若彩帶的優美景象。'},
+{id:'fi2_26',word:'百折不撓',
+ def:'形容意志堅強，無論遇到多少挫折都不退縮。',
+ text:'啟仁無論遇到甚麼困難也不放棄，他那種（　　　　）的精神值得我們學習。',
+ opts:['百折不撓','堅持不懈','鍥而不捨','持之以恆'],ans:0,
+ chars:['百','折','不','撓'],distractors:['鍥','持','恆','懈'],
+ expl:'「<strong class="correct-hl">百折不撓</strong>」強調面對重重挫折仍不屈服，最符合「無論……也不放棄」的語境。「堅持不懈」、「鍥而不捨」、「持之以恆」偏向持續努力，未必強調挫折。'},
+{id:'fi2_27',word:'扭曲',
+ def:'使（事實、真相等）變形、失真；歪曲。',
+ text:'警方經過深入調查後，才發現疑犯一直在説謊，意圖（　　）事情的真相。',
+ opts:['扭曲','歪曲','曲解','誤解'],ans:0,
+ chars:['扭','曲'],distractors:['歪','解','誤','偽'],
+ expl:'「<strong class="correct-hl">扭曲</strong>」指故意使真相變形失真，與「意圖」（蓄意）搭配，強調主觀惡意。「歪曲」語義相近，「曲解」指錯誤地理解，「誤解」偏向無意中理解錯誤。'},
+{id:'fi2_28',word:'犧牲',
+ def:'為了某種目的而放棄或損失（自身的利益）。',
+ text:'爸爸寧願（　　）寶貴的休息時間，也要多做一份兼職賺錢，只為了給家人安穩的生活。',
+ opts:['犧牲','放棄','捨棄','浪費'],ans:0,
+ chars:['犧','牲'],distractors:['放','棄','浪','廢'],
+ expl:'「<strong class="correct-hl">犧牲</strong>」指為了更高目標而主動放棄自身利益，含有無私、高尚的含義，與「寧願……也要……給家人安穩生活」的語境最吻合。'},
+],
+
+
 synword:[
 // ── 淺 (Level 1) ──────────────────────────────────────────────
 {id:'sw1',level:1,sub:'以詞代意',
@@ -3367,7 +3539,7 @@ let G = {
   stats:{ reading:{answered:0,correct:0,sessions:0}, rhetoric:{answered:0,correct:0,sessions:0},
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
           punctuation:{answered:0,correct:0,sessions:0}, tsa:{answered:0,correct:0,sessions:0},
-          fillin:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0} },
+          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
   customQuestions:[],
   dailyLog:[],
@@ -3488,7 +3660,7 @@ function updateDashboard(){
   document.getElementById('xp-fill').style.width=pct+'%';
   document.getElementById('xp-label').textContent=`${G.xp} / ${nextXP} XP → Lv.${G.level+1}`;
 
-  ['reading','rhetoric','idiom','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','synword','wrong'].forEach(m=>{
+  ['reading','rhetoric','idiom','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','synword','wrong'].forEach(m=>{
     const el=document.getElementById('pb-'+m);
     if(!el) return;
     const st=G.stats[m]||{answered:0,correct:0};
@@ -3602,7 +3774,7 @@ function claimDaily(){
 function launchModule(type){
   if(type==='report'){ showReport(); return; }
   if(type==='wrong'){ showWrongList(); return; }
-  if(type==='fillin'){ openModal('modal-fillin-mode'); return; }
+  if(type==='fillin'||type==='fillin2'){ openModal('modal-fillin-mode'); return; }
   if(type==='tsa'){ openModal('modal-tsa-cat'); return; }
   const qs = buildQuestions(type);
   if(!qs.length){ alert('暫時沒有題目，請稍後再試！'); return; }
@@ -3636,12 +3808,14 @@ function launchPractice(unit){
   startQuiz('tsa', qs, false);
 }
 
-function launchFillinQuiz(mode){
+function launchFillinQuiz(mode){ launchFillinQuizPool('fillin', mode); }
+function launchFillinQuizPool(poolName, mode){
   closeModal('modal-fillin-mode');
-  const pool=shuffle([...(QB.fillin||[])]).slice(0,10);
+  const src = poolName==='fillin2' ? QB.fillin2 : QB.fillin;
+  const pool=shuffle([...(src||[])]).slice(0,10);
   if(!pool.length){ alert('暫時沒有題目！'); return; }
-  const qs=pool.map(q=>({...shuffleOpts({...q}), fillinMode:mode, type:'fillin'}));
-  startQuiz('fillin', qs, false);
+  const qs=pool.map(q=>({...shuffleOpts({...q}), fillinMode:mode, type:poolName}));
+  startQuiz(poolName, qs, false);
 }
 
 function shuffleOpts(q){
@@ -3672,7 +3846,7 @@ function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
-                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', synword:'🔄 以詞代意訓練' };
+                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', synword:'🔄 以詞代意訓練' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;
   const tBtn=document.getElementById('timer-toggle-btn');
   if(tBtn) tBtn.textContent=Q.timerDuration>0?`⏱ ${Q.timerDuration}s`:'⏱ 關';
@@ -3685,8 +3859,8 @@ function startQuiz(type, questions, reviewing){
 /* ============================================================
    QUIZ ENGINE
    ============================================================ */
-const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, synword:7 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:4, vocab:3, punctuation:3, tsa:8, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, synword:4 };
+const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, synword:7 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:4, vocab:3, punctuation:3, tsa:8, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, synword:4 };
 
 function loadQuestion(i){
   const q=Q.questions[i];
@@ -3730,7 +3904,7 @@ function loadQuestion(i){
   // Options vs Fill-in vs Reorder vs FillinModule
   const og=document.getElementById('options-grid');
   const fs=document.getElementById('fill-section');
-  if(q.type==='fillin'){
+  if(q.type==='fillin'||q.type==='fillin2'){
     const mode=q.fillinMode;
     if(mode==='free'){
       og.innerHTML=''; og.style.display='none';
@@ -3799,7 +3973,7 @@ function checkAnswer(chosen){
 
   const isFill=(q.type==='fill');
   const isReorder=(q.type==='reorder');
-  const isFillin=(q.type==='fillin');
+  const isFillin=(q.type==='fillin'||q.type==='fillin2');
   const isCorrect=isFill?(chosen==='fill-ok'):isReorder?(chosen==='reorder-ok'):isFillin&&q.fillinMode==='bank'?(chosen===q.ans):isFillin?(chosen==='fillin-ok'):(chosen===q.ans);
   const timedOut=(chosen===-1);
 
@@ -3945,7 +4119,7 @@ function showWrongList(){
 
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', synword:'🔁 以詞代意' };
+  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意' };
 
   body.innerHTML=`<div style="text-align:right;margin-bottom:10px"><button class="wrong-retry-btn" style="background:#c0392b" onclick="clearAllWrong()">🗑️ 清除全部錯題</button></div>`+Object.entries(byMod).map(([mod,qs])=>`
     <div class="wrong-module-group">
@@ -3996,7 +4170,7 @@ function buildDailyLog(){
   const MOD_NAMES={
     reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
-    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', synword:'以詞代意', wrong:'錯題重溫'
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', synword:'以詞代意', wrong:'錯題重溫'
   };
   // group by date, most recent first
   const byDate={};
@@ -4042,7 +4216,7 @@ function showReport(){
     reading:'📖 閱讀理解', rhetoric:'✍️ 修辭訓練', idiom:'🏮 成語',
     vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試',
     order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解',
-    wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', synword:'🔁 以詞代意'
+    wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意'
   };
   const mods=Object.entries(G.stats);
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;
@@ -4249,7 +4423,7 @@ function clearReorder(){
    ============================================================ */
 function submitFillin(){
   const q=Q.questions[Q.index];
-  if(!q||q.type!=='fillin') return;
+  if(!q||q.type!=='fillin'&&q.type!=='fillin2') return;
   const fi=document.getElementById('fill-input');
   const typed=(fi.value||'').trim();
   if(!typed) return;
@@ -4264,7 +4438,7 @@ function submitFillin(){
 
 function skipFillin(){
   const q=Q.questions[Q.index];
-  if(!q||q.type!=='fillin') return;
+  if(!q||q.type!=='fillin'&&q.type!=='fillin2') return;
   document.getElementById('fill-input').disabled=true;
   const sb=document.querySelector('.submit-fill-btn'); if(sb) sb.disabled=true;
   const sk=document.querySelector('.skip-fill-btn'); if(sk) sk.disabled=true;
@@ -4322,7 +4496,7 @@ function returnCharTile(box, tile, ch){
 
 function submitCharTile(){
   const q=Q.questions[Q.index];
-  if(!q||q.type!=='fillin') return;
+  if(!q||q.type!=='fillin'&&q.type!=='fillin2') return;
   const boxes=[...document.querySelectorAll('#char-answer-zone .char-blank-box')];
   if(boxes.some(b=>!b.classList.contains('filled'))) return;
   const assembled=boxes.map(b=>b.textContent).join('');
@@ -4336,7 +4510,7 @@ function submitCharTile(){
 
 function clearCharTile(){
   const q=Q.questions[Q.index];
-  if(q&&q.type==='fillin') initCharTile(q);
+  if(q&&(q.type==='fillin'||q.type==='fillin2')) initCharTile(q);
 }
 
 /* ============================================================
