@@ -397,17 +397,17 @@
   <div class="modal-box fillin-mode-box">
     <h2 class="modal-title">✍️ 詞語填充訓練</h2>
     <p class="fillin-mode-desc">請選擇練習模式：</p>
-    <button class="fillin-mode-btn" onclick="launchFillinQuiz('free')">
-      <div class="fillin-mode-icon">📝</div>
-      <div class="fillin-mode-name">不供詞填充</div>
-      <div class="fillin-mode-sub">自行寫出正確詞語</div>
-    </button>
-    <button class="fillin-mode-btn" onclick="launchFillinQuiz('bank')">
+    <button class="fillin-mode-btn" onclick="launchFillinQuizPool('fillin','bank')">
       <div class="fillin-mode-icon">🔤</div>
       <div class="fillin-mode-name">供詞填充</div>
       <div class="fillin-mode-sub">從四個選項中選出正確詞語</div>
     </button>
-    <button class="fillin-mode-btn" onclick="launchFillinQuiz('char')">
+    <button class="fillin-mode-btn" onclick="launchFillinQuizPool('fillin2','bank')">
+      <div class="fillin-mode-icon">🔤</div>
+      <div class="fillin-mode-name">供詞填充2</div>
+      <div class="fillin-mode-sub">從四個選項中選出正確詞語</div>
+    </button>
+    <button class="fillin-mode-btn" onclick="launchFillinQuizPool('fillin','char')">
       <div class="fillin-mode-icon">🔡</div>
       <div class="fillin-mode-name">配字完句</div>
       <div class="fillin-mode-sub">點擊字卡，依序組成詞語</div>
@@ -503,7 +503,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=29"></script>
+<script src="app.js?v=30"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
