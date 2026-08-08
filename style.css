@@ -662,8 +662,8 @@ input  { font-family: inherit; }
 }
 .opt-btn.wrong .opt-label { background: #B71C1C; color: #fff; }
 .opt-btn:disabled { cursor: default; }
-.opt-btn .opt-text { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-.opt-eng { font-size: 0.72em; color: rgba(255,255,255,0.88); line-height: 1.3; margin-top: 5px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.18); font-family: sans-serif; letter-spacing: 0.01em; }
+.opt-btn .opt-text { flex: 1; }
+.opt-eng { font-size: 0.85em; color: rgba(255,255,255,0.9); font-family: sans-serif; margin-left: 2em; }
 .opt-speak-btn {
   flex-shrink: 0;
   align-self: center;
