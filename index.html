@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>HINSON 中文冒險王國</title>
-<link rel="stylesheet" href="style.css?v=15">
+<link rel="stylesheet" href="style.css?v=16">
 <script>
   if(location.hostname==='localhost'){
     let _lrh=null;
@@ -169,6 +169,12 @@
       <div class="mc-xp">+7 XP / 題</div>
       <div class="mc-bar"><div class="mc-bar-fill" id="pb-synword"></div></div>
     </button>
+    <button class="mod-card mc-pink" onclick="launchModule('dictation')">
+      <div class="mc-icon">🖊️</div>
+      <div class="mc-name">默書園地</div>
+      <div class="mc-xp">+5 XP / 項</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-dictation"></div></div>
+    </button>
     <button class="mod-card mc-dark" onclick="launchModule('wrong')">
       <div class="mc-icon">🏆</div>
       <div class="mc-name">錯題重溫中心</div>
@@ -290,6 +296,53 @@
 
     </div><!-- end quiz-questions-area -->
 
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DICTATION SCREEN (默書園地) — 睇螢幕聽讀、紙筆書寫
+══════════════════════════════════════════════ -->
+<div id="screen-dictation" class="screen">
+
+  <div class="quiz-bar">
+    <button class="back-btn" onclick="confirmExitQuiz()">← 返回</button>
+    <div class="quiz-mod-name" id="dict-mod-name">默書練習</div>
+    <div class="quiz-prog" id="dict-prog">1 / 10</div>
+  </div>
+
+  <div class="quiz-live-stats">
+    <span>⚡ <b id="dict-live-xp">0</b> XP</span>
+    <span>🪙 <b id="dict-live-coins">0</b></span>
+  </div>
+
+  <div class="quiz-body">
+    <div class="quiz-questions-area">
+
+      <div class="q-card dict-card">
+        <div class="dict-play-wrap">
+          <button class="dict-play-btn" id="dict-play-btn" onclick="playDictAudio()" title="點擊播放，可重複點擊">🔊</button>
+          <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。想再聽可以撳幾多次都得。</p>
+        </div>
+
+        <div class="dict-answer-panel hidden" id="dict-answer-panel">
+          <div class="dict-answer-label">📖 正確內容（同紙上核對）</div>
+          <div class="dict-answer-text" id="dict-answer-text"></div>
+        </div>
+
+        <button class="big-btn green-btn" id="dict-reveal-btn" onclick="revealDictAnswer()">✍️ 寫好了，顯示答案</button>
+
+        <div class="dict-selfcheck hidden" id="dict-selfcheck">
+          <p class="dict-selfcheck-q">同紙上核對，寫得啱唔啱？</p>
+          <div class="dict-selfcheck-btns">
+            <button class="big-btn green-btn" onclick="markDict(true)">✓ 啱哂</button>
+            <button class="big-btn red-btn" onclick="markDict(false)">✗ 有錯</button>
+          </div>
+        </div>
+
+        <button class="big-btn grey-btn hidden" id="dict-next-btn" onclick="advanceDict()">下一項 →</button>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -416,6 +469,16 @@
   </div>
 </div>
 
+<!-- Dictation Set Picker -->
+<div class="overlay hidden" id="modal-dictation">
+  <div class="modal-box tsa-cat-box">
+    <h2 class="modal-title">🖊️ 默書園地</h2>
+    <p class="tsa-cat-desc">揀返要默嘅一課，睇螢幕聽讀、喺紙上書寫，寫完自己核對：</p>
+    <div id="dictation-set-list"></div>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
+  </div>
+</div>
+
 <!-- Quiz Complete -->
 <div class="overlay hidden" id="modal-done">
   <div class="modal-box">
@@ -503,7 +566,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=35"></script>
+<script src="app.js?v=36"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

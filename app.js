@@ -3554,6 +3554,21 @@ synword:[
  text:'這事情需要大眾同心合作，若只靠你單獨一個人【不顧客觀規律或實際情況去硬幹】，看來難以把事情辦好。',
  opts:['無視','硬撐','蠻橫','蠻幹'],ans:3,
  expl:'「<strong class="correct-hl">蠻幹</strong>」指不顧客觀規律、不用頭腦、只憑蠻力去做事，最能取代「不顧客觀規律或實際情況去硬幹」。「無視」是忽視，「硬撐」是勉強撐持，「蠻橫」是粗暴無禮，均不符。　<strong>造句：</strong>「做事要講究策略，一味蠻幹只會事倍功半，甚至壞事。」'},
+],
+
+/* 默書園地：每個 set 係一次可獨立練習的默書項目（詞語表或按段落分組的句子）。
+   items 內每項會逐一由 TTS 讀出，學生對住紙筆默寫，然後自己核對。
+   要加新一課，跟住呢個格式加 set 就得，唔使改畫面/邏輯。 */
+dictation:[
+  {id:'dict_lt_vocab', lesson:'老藤椅', title:'重點詞語', items:['濃重','協調','擅自','清理','嘆息','精神煥發','安詳','自作主張']},
+  {id:'dict_lt_p1', lesson:'老藤椅', title:'第一段', items:['婷婷在幫媽媽清理雜物的時候，','扔掉了那把老藤椅。']},
+  {id:'dict_lt_p2', lesson:'老藤椅', title:'第二段', items:['它真的太老了。','那是外祖母用了很久很久的老家具。']},
+  {id:'dict_lt_p3', lesson:'老藤椅', title:'第三段', items:['婷婷在剛有記憶的時候，','就記住了家裏有這麼一把老藤椅。','婷婷還記得外祖母坐在椅子上，','自己坐在她的懷裏，','聽她用濃重的鄉音講故事、','唱歌謠。']},
+  {id:'dict_lt_p4', lesson:'老藤椅', title:'第四段', items:['外祖母去世後，','它成了媽媽的專座。']},
+  {id:'dict_lt_p5', lesson:'老藤椅', title:'第五段', items:['在以後的日子裏，','婷婷從小學升入中學，','老藤椅修了一次又一次。','媽媽修得很認真，','用布條兒纏，','用線繩兒綁。']},
+  {id:'dict_lt_p6', lesson:'老藤椅', title:'第六段', items:['前年夏天，','老籐椅老得發出了吱吱扭扭的歎息聲。','媽媽請來了一位老工匠，','他用了一整天的時間，','拆掉了那些布條兒、','線繩兒，','換上了新的藤條，','老藤椅精神煥發了。']},
+  {id:'dict_lt_p7', lesson:'老藤椅', title:'第七段', items:['真沒想到，','老工匠要的修理費幾乎可以再買一把新藤椅。','但是，','媽媽二話沒說就付了錢。']},
+  {id:'dict_lt_p8', lesson:'老藤椅', title:'第八段', items:['那一夜，','媽媽坐在老藤椅上，','安詳地讀書、','看電視。','爸爸說，','看媽媽那表情，','比買了新沙發還高興。']},
 ]
 };
 
@@ -3575,7 +3590,8 @@ let G = {
   stats:{ reading:{answered:0,correct:0,sessions:0}, rhetoric:{answered:0,correct:0,sessions:0},
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
           punctuation:{answered:0,correct:0,sessions:0}, tsa:{answered:0,correct:0,sessions:0},
-          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0} },
+          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
+          dictation:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
   customQuestions:[],
   dailyLog:[],
@@ -3584,6 +3600,9 @@ let G = {
 
 /* quiz session (not saved) */
 let Q = { module:'', questions:[], index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:false };
+
+/* dictation session (not saved) */
+let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionCoins:0, reviewing:false, startTime:0 };
 
 /* ============================================================
    STORAGE
@@ -3599,7 +3618,7 @@ const Store = {
         return;
       }
       const d = JSON.parse(localStorage.getItem('hinson_v1')||'null');
-      if(d){ G = Object.assign(G, d); G.stats = Object.assign({reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0}}, d.stats||{}); G.settings = Object.assign({music:false,volume:0.3,sfx:true}, d.settings||{}); }
+      if(d){ G = Object.assign(G, d); G.stats = Object.assign({reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}}, d.stats||{}); G.settings = Object.assign({music:false,volume:0.3,sfx:true}, d.settings||{}); }
     }catch(e){}
   }
 };
@@ -3696,7 +3715,7 @@ function updateDashboard(){
   document.getElementById('xp-fill').style.width=pct+'%';
   document.getElementById('xp-label').textContent=`${G.xp} / ${nextXP} XP → Lv.${G.level+1}`;
 
-  ['reading','rhetoric','idiom','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','synword','wrong'].forEach(m=>{
+  ['reading','rhetoric','idiom','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','synword','dictation','wrong'].forEach(m=>{
     const el=document.getElementById('pb-'+m);
     if(!el) return;
     const st=G.stats[m]||{answered:0,correct:0};
@@ -3812,9 +3831,125 @@ function launchModule(type){
   if(type==='wrong'){ showWrongList(); return; }
   if(type==='fillin'||type==='fillin2'){ openModal('modal-fillin-mode'); return; }
   if(type==='tsa'){ openModal('modal-tsa-cat'); return; }
+  if(type==='dictation'){ openDictationPicker(); return; }
   const qs = buildQuestions(type);
   if(!qs.length){ alert('暫時沒有題目，請稍後再試！'); return; }
   startQuiz(type, qs, false);
+}
+
+/* ============================================================
+   默書園地（DICTATION）— 睇螢幕聽讀、紙筆書寫，自己核對
+   ============================================================ */
+function openDictationPicker(){
+  const body=document.getElementById('dictation-set-list');
+  const byLesson={};
+  (QB.dictation||[]).forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
+  const lessons=Object.entries(byLesson);
+  body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
+    <div class="dict-lesson-title">📖 ${lesson}</div>
+    <div class="tsa-cat-grid">
+      ${sets.map(s=>`<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`).join('')}
+    </div>
+  `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容</p>';
+  openModal('modal-dictation');
+}
+
+function launchDictationSet(setId){
+  const set=(QB.dictation||[]).find(s=>s.id===setId);
+  if(!set) return;
+  closeModal('modal-dictation');
+  const items=set.items.map((text,i)=>({id:set.id+'_i'+i, text}));
+  startDictation((set.lesson?set.lesson+' · ':'')+set.title, items, false);
+}
+
+function startDictation(title, items, reviewing){
+  Q.module='dictation';
+  D = { title, items, index:0, correct:0, wrong:0, sessionXP:0, sessionCoins:0, reviewing:!!reviewing, startTime:Date.now() };
+  document.getElementById('dict-mod-name').textContent='🖊️ '+title;
+  document.getElementById('dict-live-xp').textContent=0;
+  document.getElementById('dict-live-coins').textContent=0;
+  showScreen('screen-dictation');
+  loadDictItem(0);
+}
+
+function loadDictItem(i){
+  const it=D.items[i];
+  if(!it) return;
+  document.getElementById('dict-prog').textContent=`${i+1} / ${D.items.length}`;
+  document.getElementById('dict-answer-text').textContent=it.text;
+  document.getElementById('dict-answer-panel').classList.add('hidden');
+  document.getElementById('dict-reveal-btn').classList.remove('hidden');
+  document.getElementById('dict-selfcheck').classList.add('hidden');
+  document.getElementById('dict-next-btn').classList.add('hidden');
+  document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。想再聽可以撳幾多次都得。';
+  playDictAudio();
+}
+
+function playDictAudio(){
+  const it=D.items[D.index];
+  if(it) Speech.speak(it.text);
+}
+
+function revealDictAnswer(){
+  document.getElementById('dict-answer-panel').classList.remove('hidden');
+  document.getElementById('dict-reveal-btn').classList.add('hidden');
+  document.getElementById('dict-selfcheck').classList.remove('hidden');
+}
+
+function markDict(isCorrect){
+  const it=D.items[D.index];
+  document.getElementById('dict-selfcheck').classList.add('hidden');
+  document.getElementById('dict-next-btn').classList.remove('hidden');
+
+  G.totalAnswered++;
+  const mst=G.stats.dictation; if(mst){ mst.answered++; if(isCorrect) mst.correct++; }
+
+  if(isCorrect){
+    D.correct++; G.totalCorrect++;
+    const xpEarn=XP_TABLE.dictation, coinEarn=COIN_TABLE.dictation;
+    addXP(xpEarn); addCoins(coinEarn);
+    D.sessionXP+=xpEarn; D.sessionCoins+=coinEarn;
+    document.getElementById('dict-live-xp').textContent=D.sessionXP;
+    document.getElementById('dict-live-coins').textContent=D.sessionCoins;
+    sfx('correct'); sfx('coin');
+    if(D.reviewing){ G.wrongRetryCorrect=(G.wrongRetryCorrect||0)+1; G.wrongQuestions=G.wrongQuestions.filter(w=>w.id!==it.id); }
+  } else {
+    D.wrong++;
+    sfx('wrong');
+    const exists=G.wrongQuestions.find(w=>w.id===it.id);
+    if(!exists) G.wrongQuestions.push({id:it.id, type:'dictation', text:it.text, setTitle:D.title, wrongAt:Date.now()});
+  }
+  Store.save();
+  updateDashboard();
+  checkBadges();
+}
+
+function advanceDict(){
+  if(D.index>=D.items.length-1) endDictation();
+  else { D.index++; loadDictItem(D.index); }
+}
+
+function endDictation(){
+  if(G.stats.dictation) G.stats.dictation.sessions=(G.stats.dictation.sessions||0)+1;
+  const sessionSec = D.startTime?Math.round((Date.now()-D.startTime)/1000):0;
+  if(sessionSec) G.totalStudyTime=(G.totalStudyTime||0)+sessionSec;
+  G.dailyLog=G.dailyLog||[];
+  G.dailyLog.push({date:new Date().toISOString().slice(0,10), module:'dictation', questions:D.items.length, correct:D.correct, timeSec:sessionSec});
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-90);
+  const cutStr=cutoff.toISOString().slice(0,10);
+  G.dailyLog=G.dailyLog.filter(r=>r.date>=cutStr);
+  Store.save();
+
+  const acc=D.items.length?Math.round((D.correct/D.items.length)*100):0;
+  document.getElementById('done-stats').innerHTML=`
+    <div class="done-stat"><div class="done-stat-num">${D.correct}/${D.items.length}</div><div class="done-stat-lbl">自評啱嘅數量</div></div>
+    <div class="done-stat"><div class="done-stat-num">${acc}%</div><div class="done-stat-lbl">正確率</div></div>
+    <div class="done-stat"><div class="done-stat-num">+${D.sessionXP}</div><div class="done-stat-lbl">XP獲得</div></div>
+    <div class="done-stat"><div class="done-stat-num">+${D.sessionCoins}</div><div class="done-stat-lbl">🪙獲得</div></div>
+  `;
+  openModal('modal-done');
+  updateDashboard();
+  checkBadges();
 }
 
 function launchTsaCategory(sub){
@@ -3895,8 +4030,8 @@ function startQuiz(type, questions, reviewing){
 /* ============================================================
    QUIZ ENGINE
    ============================================================ */
-const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, synword:7 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:4, vocab:3, punctuation:3, tsa:8, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, synword:4 };
+const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, synword:7, dictation:5 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:4, vocab:3, punctuation:3, tsa:8, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, synword:4, dictation:3 };
 
 const WORD_ENG={
   '汗流浹背':'dripping with sweat','大汗淋漓':'perspiring profusely','揮汗如雨':'sweating like rain','頭昏腦脹':'dizzy and groggy',
@@ -4210,7 +4345,11 @@ function endQuiz(){
   checkBadges();
 }
 
-function retryModule(){ closeModal('modal-done'); launchModule(Q.module); }
+function retryModule(){
+  closeModal('modal-done');
+  if(Q.module==='dictation'){ startDictation(D.title, D.items.map(it=>({...it})), D.reviewing); return; }
+  launchModule(Q.module);
+}
 
 function resetAllData(){
   if(!confirm('確定清除所有學習數據？\n（XP、金幣、統計、每日紀錄全部歸零）\n此操作不可撤銷！')) return;
@@ -4249,7 +4388,7 @@ function showWrongList(){
 
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意' };
+  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意', dictation:'🖊️ 默書練習' };
 
   body.innerHTML=`<div style="text-align:right;margin-bottom:10px"><button class="wrong-retry-btn" style="background:#c0392b" onclick="clearAllWrong()">🗑️ 清除全部錯題</button></div>`+Object.entries(byMod).map(([mod,qs])=>`
     <div class="wrong-module-group">
@@ -4258,7 +4397,7 @@ function showWrongList(){
         <div class="wrong-item">
           <div class="wrong-item-q">${q.text?.substring(0,80)}${q.text?.length>80?'…':''}</div>
           <div class="wrong-item-meta">
-            <span>${q.type==='fill'?'正確答案：「'+q.ans+'」':'✗ 正確答案：'+('ABCD'[q.ans])+'. '+(q.opts?.[q.ans]||'')}</span>
+            <span>${q.type==='dictation'?'🔊 重聽並重寫（見上）':q.type==='fill'?'正確答案：「'+q.ans+'」':'✗ 正確答案：'+('ABCD'[q.ans])+'. '+(q.opts?.[q.ans]||'')}</span>
             ${q.wrongAt?`<span class="wrong-item-date">📅 ${(()=>{const d=new Date(q.wrongAt);return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';})()}</span>`:''}
           </div>
           <button class="wrong-retry-btn" onclick="retryWrong(${JSON.stringify(i)}, '${mod}')">🔄 重新練習</button>
@@ -4279,7 +4418,9 @@ function retryWrong(idx, mod){
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
   const qs=byMod[mod]||[];
-  if(qs.length) startQuiz(mod, shuffle([...qs]).slice(0,Math.min(qs.length,5)), true);
+  if(!qs.length) return;
+  if(mod==='dictation'){ startDictation('錯題重溫', qs.map(q=>({id:q.id, text:q.text})), true); return; }
+  startQuiz(mod, shuffle([...qs]).slice(0,Math.min(qs.length,5)), true);
 }
 
 /* ============================================================
@@ -4300,7 +4441,8 @@ function buildDailyLog(){
   const MOD_NAMES={
     reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
-    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', synword:'以詞代意', wrong:'錯題重溫'
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', synword:'以詞代意', wrong:'錯題重溫',
+    dictation:'默書練習'
   };
   // group by date, most recent first
   const byDate={};
@@ -4346,7 +4488,8 @@ function showReport(){
     reading:'📖 閱讀理解', rhetoric:'✍️ 修辭訓練', idiom:'🏮 成語',
     vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試',
     order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解',
-    wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意'
+    wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意',
+    dictation:'🖊️ 默書練習'
   };
   const mods=Object.entries(G.stats);
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;

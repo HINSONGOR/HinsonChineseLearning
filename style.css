@@ -1977,3 +1977,82 @@ u.synword-ul {
   color: #5bc4f5;
   flex-shrink: 0;
 }
+
+/* ============================================================
+   默書園地 (DICTATION)
+   ============================================================ */
+.mc-pink { background: linear-gradient(145deg,#4A0D2E,#2D0819); border-color: #C2185B; }
+
+.dict-lesson-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-gold);
+  text-align: left;
+  margin: 14px 0 6px;
+}
+.dict-lesson-title:first-child { margin-top: 0; }
+
+.dict-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px 16px;
+}
+.dict-play-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.dict-play-btn {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  font-size: 3rem;
+  background: linear-gradient(135deg, var(--mc-grass) 0%, var(--mc-grass-dk) 100%);
+  border: 4px solid #90D640;
+  color: #fff;
+  box-shadow: var(--shadow-md, 0 6px 16px rgba(0,0,0,0.4));
+  transition: transform 0.12s, filter 0.15s;
+}
+.dict-play-btn:hover { filter: brightness(1.12); }
+.dict-play-btn:active { transform: scale(0.94); }
+.dict-play-hint {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.dict-answer-panel {
+  width: 100%;
+  background: rgba(255,248,220,0.08);
+  border: 2px solid rgba(255,248,220,0.25);
+  border-radius: 10px;
+  padding: 16px;
+}
+.dict-answer-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-gold);
+  margin-bottom: 8px;
+}
+.dict-answer-text {
+  font-size: clamp(1.3rem, 5vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.6;
+  color: #fff;
+  white-space: pre-wrap;
+}
+.dict-selfcheck { width: 100%; }
+.dict-selfcheck-q {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.dict-selfcheck-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
