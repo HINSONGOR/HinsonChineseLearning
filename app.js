@@ -4754,12 +4754,18 @@ function switchGachaTab(tab){
   } else {
     const hist=G.gachaHistory||[];
     if(!hist.length){ content.innerHTML='<div class="gacha-no-hist">尚未抽過獎品 🎰</div>'; return; }
-    content.innerHTML=hist.slice(0,20).map(h=>`<div class="gacha-hist-row">
+    content.innerHTML=`<button onclick="clearGachaHistory()" style="font-size:0.75rem;padding:4px 10px;margin-bottom:8px;background:rgba(255,80,80,0.18);border:1px solid rgba(255,80,80,0.4);color:#ff8080;border-radius:6px;cursor:pointer;">🗑️ 清除全部紀錄</button>`
+      +hist.slice(0,20).map(h=>`<div class="gacha-hist-row">
       <span class="ghr-emoji">${h.emoji}</span>
       <span class="ghr-name">${h.name}</span>
       <span class="ghr-date">${h.date}</span>
     </div>`).join('');
   }
+}
+function clearGachaHistory(){
+  G.gachaHistory=[];
+  Store.save();
+  switchGachaTab('hist');
 }
 
 function spinGacha(){
