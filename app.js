@@ -4721,8 +4721,10 @@ function openGacha(){
   switchGachaTab('pool');
   document.getElementById('gacha-result').classList.add('hidden');
   const cap=document.getElementById('gacha-capsule');
-  cap.className='gacha-egg'; cap.style.display='';
+  cap.className='gacha-egg'; cap.style.display='none';
   document.getElementById('gacha-prize-burst').className='gacha-prize-burst';
+  const mach=document.getElementById('gacha-machine-svg');
+  if(mach) mach.className='gacha-machine-svg';
   openModal('modal-gacha');
 }
 
@@ -4767,9 +4769,15 @@ function spinGacha(){
   document.getElementById('gacha-result').classList.add('hidden');
   const cap=document.getElementById('gacha-capsule');
   const burst=document.getElementById('gacha-prize-burst');
-  cap.style.display=''; burst.className='gacha-prize-burst';
-  cap.className='gacha-egg wobbling';
-  setTimeout(()=>{ cap.className='gacha-egg shaking'; },1000);
+  const mach=document.getElementById('gacha-machine-svg');
+  burst.className='gacha-prize-burst';
+  // Phase 1: machine shakes (0–600ms)
+  if(mach) mach.className='gacha-machine-svg shaking';
+  // Phase 2: egg rolls out + wobbles (600–1600ms)
+  setTimeout(()=>{ cap.style.display='block'; cap.className='gacha-egg wobbling'; },600);
+  // Phase 3: egg shakes with anticipation (1600–2400ms)
+  setTimeout(()=>{ cap.className='gacha-egg shaking'; },1600);
+  // Phase 4: pick prize + crack (2400ms)
   setTimeout(()=>{
     const prizes=getGachaPrizes();
     const total=prizes.reduce((s,p)=>s+p.weight,0);
@@ -4794,7 +4802,7 @@ function spinGacha(){
         spawnGachaConfetti();
       },500);
     },400);
-  },1800);
+  },2400);
 }
 
 function spawnGachaConfetti(){

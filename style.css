@@ -2064,9 +2064,13 @@ u.synword-ul {
 .gacha-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .gacha-modal-title{font-size:1.15rem;font-weight:800;color:#FFD54F;}
 .gacha-bal{background:rgba(255,214,0,0.1);border:1px solid rgba(255,214,0,0.3);border-radius:8px;padding:5px 12px;font-weight:700;color:#FFD54F;font-size:0.95rem;}
-.gacha-egg-stage{display:flex;align-items:center;justify-content:center;min-height:130px;position:relative;margin-bottom:8px;}
-.gacha-egg{width:88px;height:108px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 35% 28%,#fffde7 0%,#FFD54F 55%,#FF8F00 100%);box-shadow:inset -8px -12px 20px rgba(0,0,0,0.18),0 8px 24px rgba(0,0,0,0.3);transform-origin:center bottom;}
-.gacha-prize-burst{position:absolute;font-size:4.5rem;display:none;filter:drop-shadow(0 4px 16px rgba(255,213,0,0.6));}
+.gacha-machine-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.gacha-machine-svg{width:160px;height:auto;filter:drop-shadow(0 6px 18px rgba(0,0,0,0.55));display:block;transform-origin:center bottom;}
+.gacha-machine-svg.shaking{animation:machineShake 0.55s ease-in-out;}
+@keyframes machineShake{0%,100%{transform:rotate(0) translateX(0)}15%{transform:rotate(-6deg) translateX(-4px)}35%{transform:rotate(7deg) translateX(4px)}55%{transform:rotate(-5deg) translateX(-3px)}75%{transform:rotate(5deg) translateX(3px)}90%{transform:rotate(-2deg) translateX(-1px)}}
+.gacha-egg-pos,.gacha-prize-pos{position:absolute;bottom:7px;left:0;right:0;display:flex;justify-content:center;pointer-events:none;}
+.gacha-egg{width:70px;height:86px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 35% 28%,#fffde7 0%,#FFD54F 55%,#FF8F00 100%);box-shadow:inset -6px -10px 16px rgba(0,0,0,0.18),0 6px 20px rgba(0,0,0,0.38);transform-origin:center bottom;display:none;}
+.gacha-prize-burst{font-size:4.5rem;display:none;filter:drop-shadow(0 4px 16px rgba(255,213,0,0.6));}
 @keyframes eggWobble{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(12deg)}}
 @keyframes eggShake{0%,100%{transform:translateX(-10px) rotate(-8deg)}25%{transform:translateX(10px) rotate(8deg) scale(1.08)}50%{transform:translateX(-7px) rotate(-5deg) scale(1.1)}75%{transform:translateX(7px) rotate(5deg) scale(1.08)}}
 @keyframes eggCrack{0%{transform:scale(1);opacity:1;filter:brightness(1)}45%{transform:scale(1.4);filter:brightness(2.5);opacity:1}100%{transform:scale(0.2);opacity:0;filter:brightness(3)}}
