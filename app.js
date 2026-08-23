@@ -3595,6 +3595,7 @@ let G = {
   wrongQuestions:[],
   customQuestions:[],
   dailyLog:[],
+  studyCheckIn:{streak:0,maxStreak:0,history:[]},
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
 };
 
@@ -3939,6 +3940,7 @@ function endDictation(){
   const cutStr=cutoff.toISOString().slice(0,10);
   G.dailyLog=G.dailyLog.filter(r=>r.date>=cutStr);
   Store.save();
+  updateStudyCheckin();
 
   const acc=D.items.length?Math.round((D.correct/D.items.length)*100):0;
   document.getElementById('done-stats').innerHTML=`
@@ -4332,6 +4334,7 @@ function endQuiz(){
   const cutStr = cutoff.toISOString().slice(0,10);
   G.dailyLog = G.dailyLog.filter(r=>r.date>=cutStr);
   Store.save();
+  updateStudyCheckin();
 
   const acc=Math.round((Q.correct/Q.questions.length)*100);
   document.getElementById('done-stats').innerHTML=`
@@ -4472,6 +4475,72 @@ function fmtTime(sec){
   const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
   return h>0?`${h}小時${m}分鐘`:`${m}分鐘`;
 }
+
+function updateStudyCheckin(){
+  const log=G.dailyLog||[];
+  const byDate={};
+  log.forEach(r=>{byDate[r.date]=(byDate[r.date]||0)+r.timeSec;});
+  const qualDates=Object.keys(byDate).filter(d=>byDate[d]>=1200).sort();
+  const qualSet=new Set(qualDates);
+  function streakFrom(ds){
+    let n=0; let d=new Date(ds+'T00:00:00');
+    while(qualSet.has(d.toISOString().slice(0,10))){n++;d.setDate(d.getDate()-1);}
+    return n;
+  }
+  const today=new Date().toISOString().slice(0,10);
+  const yest=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const streak=qualSet.has(today)?streakFrom(today):streakFrom(yest);
+  const prev=G.studyCheckIn||{};
+  const prevStreak=prev.streak||0;
+  G.studyCheckIn={streak,maxStreak:Math.max(streak,prev.maxStreak||0),history:qualDates};
+  Store.save();
+  const MS=[7,14,30,60,100];
+  if(MS.includes(streak)&&streak>prevStreak) setTimeout(()=>showCheckInMilestone(streak),600);
+}
+
+function showCheckInMilestone(n){
+  const m={7:'🔥 連續打卡 7 天！學習進入正軌，太棒了！',14:'🌟 連續打卡 14 天！兩週堅持，你非常出色！',30:'🏆 連續打卡 30 天！一個月的堅持，了不起！',60:'🎖️ 連續打卡 60 天！你的毅力令人佩服！',100:'👑 連續打卡 100 天！百日成就，你是學習冠軍！'};
+  alert(m[n]||`🔥 連續打卡 ${n} 天！繼續加油！`);
+}
+
+function buildCheckInWidget(){
+  const ci=G.studyCheckIn||{streak:0,maxStreak:0,history:[]};
+  const qualSet=new Set(ci.history||[]);
+  const today=new Date().toISOString().slice(0,10);
+  const cells=[];
+  for(let i=34;i>=0;i--){
+    const d=new Date(Date.now()-i*86400000);
+    const ds=d.toISOString().slice(0,10);
+    const dayNum=d.getDate();
+    const isToday=ds===today;
+    let cls;
+    if(qualSet.has(ds)) cls='ci-cell ci-done'+(isToday?' ci-today':'');
+    else cls='ci-cell ci-miss'+(isToday?' ci-today':'');
+    cells.push(`<div class="${cls}" title="${ds}">${dayNum}</div>`);
+  }
+  const sc=ci.streak;
+  const streakColor=sc>=30?'#FFD700':sc>=14?'#FF9800':sc>=7?'#4CAF50':'#64B5F6';
+  const MS=[7,14,30,60,100]; const next=MS.find(m=>m>sc)||100; const left=next-sc;
+  const total=(ci.history||[]).length;
+  return `<div class="report-section-title">🔥 學習打卡記錄</div>
+  <div class="ci-widget">
+    <div class="ci-header">
+      <div class="ci-streak-box">
+        <div class="ci-streak-num" style="color:${streakColor}">${sc}</div>
+        <div class="ci-streak-lbl">🔥 連續打卡天數</div>
+        <div class="ci-streak-sub">最高紀錄 ${ci.maxStreak} 天 &nbsp;·&nbsp; 累計 ${total} 天</div>
+        ${sc<100?`<div class="ci-streak-sub">再 ${left} 天達 ${next} 天里程碑 🎯</div>`:'<div class="ci-streak-sub">🎊 已達百日里程碑！</div>'}
+      </div>
+      <div class="ci-req">每日完成<br><strong>20分鐘</strong>學習<br>即算打卡</div>
+    </div>
+    <div class="ci-calendar">${cells.join('')}</div>
+    <div class="ci-legend">
+      <span class="ci-leg-item"><span class="ci-leg-dot" style="background:#1B5E20"></span>打卡成功</span>
+      <span class="ci-leg-item"><span class="ci-leg-dot" style="background:rgba(255,255,255,0.1)"></span>未達標</span>
+      <span class="ci-leg-item"><span class="ci-leg-dot" style="outline:2px solid rgba(255,255,255,0.55);outline-offset:-2px"></span>今天</span>
+    </div>
+  </div>`;
+}
 function getRank(acc){
   if(acc>=95) return {label:'👑 冠軍學者', color:'#FFD700'};
   if(acc>=85) return {label:'🌟 精英學生', color:'#FF9800'};
@@ -4535,6 +4604,7 @@ function showReport(){
       <div class="module-report-row"><div class="mod-report-name">正確題數</div><div class="mod-report-bar-wrap"><div class="mod-report-bar" style="width:${totalAcc}%;background:#2196F3"></div></div><div class="mod-report-pct">${G.totalCorrect}</div></div>
       <div class="module-report-row"><div class="mod-report-name">錯題數量</div><div class="mod-report-bar-wrap"><div class="mod-report-bar" style="width:${G.wrongQuestions.length>0?Math.min(100,G.wrongQuestions.length*5):0}%;background:#F44336"></div></div><div class="mod-report-pct">${G.wrongQuestions.length}</div></div>
     </div>
+    ${buildCheckInWidget()}
     ${buildDailyLog()}
   `;
 }
