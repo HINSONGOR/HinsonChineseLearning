@@ -4729,7 +4729,7 @@ function openGacha(){
 function updateGachaBtn(){
   const btn=document.getElementById('gacha-spin-btn');
   if(!btn) return;
-  const cost=G.gachaCost||300;
+  const cost=G.gachaCost!=null?G.gachaCost:300;
   if(G.coins<cost){
     btn.disabled=true;
     btn.innerHTML=`<span class="gsb-icon">🪙</span><span class="gsb-text">金幣不足</span><span class="gsb-cost">需 ${cost} 🪙</span>`;
@@ -4761,7 +4761,7 @@ function switchGachaTab(tab){
 }
 
 function spinGacha(){
-  const cost=G.gachaCost||300;
+  const cost=G.gachaCost!=null?G.gachaCost:300;
   if(G.coins<cost) return;
   document.getElementById('gacha-spin-btn').disabled=true;
   document.getElementById('gacha-result').classList.add('hidden');
@@ -4812,12 +4812,12 @@ function spawnGachaConfetti(){
 function buildGachaParentConfig(){
   const prizes=getGachaPrizes();
   const total=prizes.reduce((s,p)=>s+p.weight,0);
-  const cost=G.gachaCost||300;
+  const cost=G.gachaCost!=null?G.gachaCost:300;
   return `<div class="parent-card">
     <div class="parent-card-title">🎰 扭蛋機設定</div>
     <div class="gacha-cfg-cost">
       每次扭蛋費用：
-      <input id="gacha-cost-input" type="number" min="50" max="2000" value="${cost}" class="gacha-input-sm">
+      <input id="gacha-cost-input" type="number" min="0" max="2000" value="${cost}" class="gacha-input-sm">
       金幣
       <button onclick="saveGachaCost()" class="gacha-save-btn">儲存</button>
     </div>
@@ -4859,8 +4859,8 @@ function deleteGachaPrize(id){
 }
 
 function saveGachaCost(){
-  const v=parseInt(document.getElementById('gacha-cost-input').value)||300;
-  G.gachaCost=Math.max(50,Math.min(2000,v));
+  const v=parseInt(document.getElementById('gacha-cost-input').value);
+  G.gachaCost=Math.max(0,Math.min(2000,isNaN(v)?300:v));
   Store.save(); alert(`已儲存：每次扭蛋 ${G.gachaCost} 金幣`);
 }
 
