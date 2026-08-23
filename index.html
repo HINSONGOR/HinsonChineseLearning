@@ -200,6 +200,12 @@
       <div class="mc-xp">查看進度</div>
       <div class="mc-bar"><div class="mc-bar-fill" style="width:100%"></div></div>
     </button>
+    <button class="mod-card mc-gacha" onclick="openGacha()">
+      <div class="mc-icon">🎰</div>
+      <div class="mc-name">獎品扭蛋機</div>
+      <div class="mc-xp">300 🪙 / 次</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:100%;background:#FFD54F"></div></div>
+    </button>
   </div>
 
 
@@ -410,6 +416,39 @@
   </div>
 </div>
 
+<!-- Gacha Machine -->
+<div class="overlay hidden" id="modal-gacha">
+  <div class="modal-box gacha-modal">
+    <div class="gacha-topbar">
+      <div class="gacha-modal-title">🎰 獎品扭蛋機</div>
+      <div class="gacha-bal">🪙 <span id="gacha-coin-bal">0</span></div>
+    </div>
+    <div class="gacha-machine-area">
+      <div class="gacha-machine-body">
+        <div class="gacha-window">
+          <div class="gacha-capsule" id="gacha-capsule"></div>
+        </div>
+      </div>
+      <button class="gacha-spin-btn" id="gacha-spin-btn" onclick="spinGacha()">
+        <span class="gsb-icon">🎰</span>
+        <span class="gsb-text">扭蛋！</span>
+        <span class="gsb-cost">-300 🪙</span>
+      </button>
+    </div>
+    <div class="gacha-result hidden" id="gacha-result">
+      <div class="gacha-res-emoji" id="gacha-res-emoji"></div>
+      <div class="gacha-res-name" id="gacha-res-name"></div>
+      <div class="gacha-res-congrats">🎉 恭喜獲得！</div>
+    </div>
+    <div class="gacha-tabs">
+      <button class="gacha-tab active" id="gtab-pool" onclick="switchGachaTab('pool')">獎品池</button>
+      <button class="gacha-tab" id="gtab-hist" onclick="switchGachaTab('hist')">抽獎記錄</button>
+    </div>
+    <div id="gacha-tab-content"></div>
+    <button class="big-btn" style="margin-top:12px" onclick="closeModal('modal-gacha')">關閉</button>
+  </div>
+</div>
+
 
 <!-- Level Up -->
 <div class="overlay hidden" id="modal-levelup">
@@ -579,7 +618,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=38"></script>
+<script src="app.js?v=39"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
