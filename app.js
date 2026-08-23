@@ -4743,16 +4743,10 @@ function switchGachaTab(tab){
   const content=document.getElementById('gacha-tab-content');
   if(tab==='pool'){
     const prizes=getGachaPrizes();
-    const total=prizes.reduce((s,p)=>s+p.weight,0);
-    content.innerHTML=prizes.map(p=>{
-      const pct=total>0?Math.round(p.weight/total*100):0;
-      return `<div class="gacha-pool-row">
+    content.innerHTML=prizes.map(p=>`<div class="gacha-pool-row">
         <span class="gpr-emoji">${p.emoji}</span>
         <span class="gpr-name">${p.name}</span>
-        <div class="gpr-bar-wrap"><div class="gpr-bar" style="width:${pct}%"></div></div>
-        <span class="gpr-pct">${pct}%</span>
-      </div>`;
-    }).join('');
+      </div>`).join('');
   } else {
     const hist=G.gachaHistory||[];
     if(!hist.length){ content.innerHTML='<div class="gacha-no-hist">尚未抽過獎品 🎰</div>'; return; }
