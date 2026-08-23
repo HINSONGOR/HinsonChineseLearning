@@ -7,18 +7,31 @@
 <title>HINSON 中文冒險王國</title>
 <link rel="stylesheet" href="style.css?v=16">
 <script>
-  if(location.hostname==='localhost'){
+  // Auto-update: poll the deployed page for changes and reload when a new
+  // version lands, so devices (esp. an iPad "Add to Home Screen" icon) never
+  // need a manual cache-clear. Fast poll for local dev; slower in production,
+  // and only reloads while sitting on the dashboard so it never interrupts a
+  // quiz/dictation session in progress.
+  (function(){
+    const isLocal = location.hostname==='localhost';
+    const pollMs = isLocal ? 4000 : 60000;
     let _lrh=null;
     setInterval(async()=>{
       try{
-        const r=await fetch('/index.html?_='+Date.now(),{cache:'no-store'});
+        const r=await fetch('index.html?_='+Date.now(),{cache:'no-store'});
         const t=await r.text();
         const h=t.length+'|'+t.slice(0,120);
-        if(_lrh!==null&&_lrh!==h)location.reload();
+        if(_lrh!==null&&_lrh!==h){
+          const safeToReload = isLocal || (
+            document.getElementById('screen-dashboard')?.classList.contains('active') &&
+            !document.querySelector('.overlay:not(.hidden)')
+          );
+          if(safeToReload){ location.reload(); return; }
+        }
         _lrh=h;
       }catch(e){}
-    },4000);
-  }
+    },pollMs);
+  })();
 </script>
 </head>
 <body>
