@@ -3595,7 +3595,7 @@ let G = {
   wrongQuestions:[],
   customQuestions:[],
   dailyLog:[],
-  studyCheckIn:{streak:0,maxStreak:0,history:[]},
+  studyCheckIn:{streak:0,maxStreak:0,history:[],lastAwardDate:''},
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
 };
 
@@ -3709,7 +3709,8 @@ function updateDashboard(){
   document.getElementById('s-coins').textContent=G.coins;
   document.getElementById('s-lv').textContent=G.level;
   document.getElementById('player-name-display').textContent=G.name;
-  document.getElementById('streak-count').textContent=G.streak;
+  document.getElementById('streak-count').textContent=(G.studyCheckIn||{}).streak||G.streak||0;
+  updateCheckinBtn();
 
   const lvXP=LEVELS[G.level]||0, nextXP=LEVELS[G.level+1]||LEVELS[G.level]+500;
   const pct=Math.min(100,Math.round(((G.xp-lvXP)/(nextXP-lvXP))*100));
@@ -4492,10 +4493,53 @@ function updateStudyCheckin(){
   const streak=qualSet.has(today)?streakFrom(today):streakFrom(yest);
   const prev=G.studyCheckIn||{};
   const prevStreak=prev.streak||0;
-  G.studyCheckIn={streak,maxStreak:Math.max(streak,prev.maxStreak||0),history:qualDates};
+  const prevAward=prev.lastAwardDate||'';
+  G.studyCheckIn={streak,maxStreak:Math.max(streak,prev.maxStreak||0),history:qualDates,lastAwardDate:prevAward};
+
+  // Auto-award coins when today first qualifies
+  if(qualSet.has(today) && prevAward!==today){
+    const coins=streak>=7?20:streak>=3?12:8;
+    const xp=streak>=7?50:streak>=3?30:20;
+    G.coins+=coins; G.xp+=xp;
+    G.studyCheckIn.lastAwardDate=today;
+    G.streak=streak;
+    G.lastLogin=new Date().toDateString();
+    setTimeout(()=>showCheckinAwardToast(coins,xp,streak),400);
+  }
+
   Store.save();
+  updateCheckinBtn();
   const MS=[7,14,30,60,100];
-  if(MS.includes(streak)&&streak>prevStreak) setTimeout(()=>showCheckInMilestone(streak),600);
+  if(MS.includes(streak)&&streak>prevStreak) setTimeout(()=>showCheckInMilestone(streak),1200);
+}
+
+function showCheckinAwardToast(coins,xp,streak){
+  const t=document.createElement('div');
+  t.className='checkin-toast';
+  t.innerHTML=`<div class="ct-title">🎉 打卡成功！今日已達 20 分鐘</div>
+    <div class="ct-rewards"><span>+${xp} XP</span><span>+${coins} 🪙</span>${streak>=3?`<span>🔥 ${streak}天連續</span>`:''}</div>`;
+  document.body.appendChild(t);
+  setTimeout(()=>t.classList.add('ct-show'),50);
+  setTimeout(()=>{t.classList.remove('ct-show');setTimeout(()=>t.remove(),400);},3500);
+  updateDashboard(); sfx('coin');
+}
+
+function updateCheckinBtn(){
+  const btn=document.getElementById('daily-btn');
+  if(!btn) return;
+  const ci=G.studyCheckIn||{};
+  const today=new Date().toISOString().slice(0,10);
+  if(ci.lastAwardDate===today){
+    btn.textContent=`✅ 今日已打卡 🔥${ci.streak}天`;
+    btn.classList.add('claimed');
+  } else {
+    // Show today's progress toward 20 min
+    const log=G.dailyLog||[];
+    const todaySec=log.filter(r=>r.date===today).reduce((s,r)=>s+r.timeSec,0);
+    const todayMin=Math.floor(todaySec/60);
+    btn.textContent=todayMin>0?`📚 今日 ${todayMin}/20 分鐘`:'📚 今日未打卡';
+    btn.classList.remove('claimed');
+  }
 }
 
 function showCheckInMilestone(n){
@@ -4883,8 +4927,6 @@ function init(){
     showScreen('screen-dashboard');
     try{
       updateDashboard();
-      const today=new Date().toDateString();
-      if(G.lastLogin!==today) setTimeout(tryShowDaily, 800);
       if(G.settings.music) BGM.start();
     }catch(e){
       // Show the error visibly — create a banner in the dashboard

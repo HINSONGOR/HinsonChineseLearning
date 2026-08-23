@@ -2057,6 +2057,13 @@ u.synword-ul {
   gap: 10px;
 }
 
+/* ── Check-in Toast ──────────────────────────────── */
+.checkin-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#1B5E20,#2E7D32);color:#fff;border-radius:14px;padding:14px 22px;box-shadow:0 6px 24px rgba(0,0,0,0.4);z-index:9999;opacity:0;transition:opacity 0.3s,transform 0.3s;pointer-events:none;text-align:center;min-width:240px;}
+.checkin-toast.ct-show{opacity:1;transform:translateX(-50%) translateY(0);}
+.ct-title{font-size:0.95rem;font-weight:700;margin-bottom:8px;}
+.ct-rewards{display:flex;gap:14px;justify-content:center;font-size:1rem;font-weight:800;}
+.ct-rewards span{background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 10px;}
+
 /* ── Check-in Widget ──────────────────────────────── */
 .ci-widget{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;margin-bottom:16px;}
 .ci-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}

@@ -101,10 +101,10 @@
       <span class="avatar-icon">🧑‍🎓</span>
       <div>
         <div class="welcome-name">歡迎，<span id="player-name-display">冒險者</span>！</div>
-        <div class="streak-line">🔥 連續登入 <span id="streak-count">0</span> 天</div>
+        <div class="streak-line">🔥 連續打卡 <span id="streak-count">0</span> 天</div>
       </div>
     </div>
-    <button class="daily-btn" id="daily-btn" onclick="tryShowDaily()">🎁 每日獎勵</button>
+    <button class="daily-btn" id="daily-btn" onclick="showReport()">📅 打卡記錄</button>
   </div>
 
   <h2 class="section-hd">⚔️ 選擇學習模組</h2>
@@ -579,7 +579,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=37"></script>
+<script src="app.js?v=38"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
