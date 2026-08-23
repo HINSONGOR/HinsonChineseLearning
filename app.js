@@ -4683,6 +4683,7 @@ function showParent(){
       <div class="module-report-row"><div class="mod-report-name">總答題數</div><div style="color:#A5D6A7">${G.totalAnswered} 題</div></div>
       <div class="module-report-row"><div class="mod-report-name">整體正確率</div><div style="color:${totalAcc>=80?'#4CAF50':totalAcc>=60?'#FF9800':'#F44336'};font-weight:700">${totalAcc}%</div></div>
       <div class="module-report-row"><div class="mod-report-name">連續登入</div><div style="color:#FF8A65">${G.streak} 天 🔥</div></div>
+      <div class="module-report-row"><div class="mod-report-name">金幣</div><div style="display:flex;align-items:center;gap:10px"><span style="color:#FFD54F">🪙 ${G.coins}</span><button onclick="if(confirm('確定清零金幣？')){G.coins=0;Store.save();showParent();}" style="padding:3px 10px;border-radius:6px;border:none;background:#E53935;color:#fff;font-size:0.8rem;cursor:pointer">清零</button></div></div>
     </div>
     <div class="parent-card"><div class="parent-card-title">📈 各科表現</div>
       ${mods.map(([m,st])=>{
