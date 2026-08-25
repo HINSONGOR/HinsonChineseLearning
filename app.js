@@ -4823,6 +4823,7 @@ function spawnGachaConfetti(){
   }
 }
 
+const PRIZE_EMOJIS=['🪙','💵','💶','🏪','🎮','🎬','🍕','🍦','🍭','🎂','🛍️','🎁','🧸','📱','💻','🎯','🏆','⭐','🎵','🎪','🏝️','🎠','🍔','✈️','🎢','🎭','🏖️','🚀','🎀','🧁'];
 function buildGachaParentConfig(){
   const prizes=getGachaPrizes();
   const total=prizes.reduce((s,p)=>s+p.weight,0);
@@ -4841,15 +4842,22 @@ function buildGachaParentConfig(){
       return `<div class="gacha-cfg-row">
         <span class="gacha-cfg-emoji">${p.emoji}</span>
         <span class="gacha-cfg-name">${p.name}</span>
-        <span class="gacha-cfg-pct">${pct}%</span>
+        <div class="gacha-weight-edit">
+          <input type="number" class="gacha-pct-input" value="${p.weight}" min="1" max="999"
+            onchange="updatePrizeWeight(${p.id},this.value)">
+          <span class="gacha-cfg-pct">${pct}%</span>
+        </div>
         <button onclick="deleteGachaPrize(${p.id})" class="gacha-del-btn">🗑️</button>
       </div>`;
     }).join('')}
-    <div style="margin:12px 0 6px;font-size:0.85rem;color:var(--text-dim)">新增獎品</div>
-    <div class="gacha-add-row">
-      <input id="np-emoji" type="text" placeholder="📦" maxlength="4" class="gacha-input-emoji">
+    <div style="margin:12px 0 6px;font-size:0.85rem;color:var(--text-dim)">新增獎品 — 揀圖案：</div>
+    <div class="gacha-emoji-grid">
+      ${PRIZE_EMOJIS.map(e=>`<button class="emoji-pick-btn" onclick="document.getElementById('cn-np-emoji-sel').textContent=this.textContent;document.querySelectorAll('#parent-body .emoji-pick-btn').forEach(b=>b.classList.remove('ep-sel'));this.classList.add('ep-sel')">${e}</button>`).join('')}
+    </div>
+    <div class="gacha-add-row" style="margin-top:8px">
+      <span id="cn-np-emoji-sel" class="np-emoji-display">🎁</span>
       <input id="np-name" type="text" placeholder="獎品名稱" class="gacha-input-name">
-      <input id="np-weight" type="number" min="1" max="999" placeholder="權重" value="25" class="gacha-input-sm">
+      <input id="np-weight" type="number" min="1" max="999" placeholder="權重%" value="25" class="gacha-input-sm">
       <button onclick="addGachaPrize()" class="gacha-save-btn">新增</button>
     </div>
     <p style="font-size:0.75rem;color:var(--text-dim);margin-top:6px">權重越高抽中機率越大，系統自動換算成百分比。</p>
@@ -4857,13 +4865,18 @@ function buildGachaParentConfig(){
 }
 
 function addGachaPrize(){
-  const emoji=(document.getElementById('np-emoji').value.trim()||'🎁');
+  const emoji=(document.getElementById('cn-np-emoji-sel')?.textContent.trim()||'🎁');
   const name=document.getElementById('np-name').value.trim();
   const weight=parseInt(document.getElementById('np-weight').value)||25;
   if(!name){alert('請輸入獎品名稱');return;}
   const prizes=getGachaPrizes();
   const maxId=prizes.reduce((m,p)=>Math.max(m,p.id||0),0);
   G.gachaPrizes=[...prizes,{id:maxId+1,emoji,name,weight}];
+  Store.save(); showParent();
+}
+function updatePrizeWeight(id,val){
+  const w=Math.max(1,Math.min(999,parseInt(val)||1));
+  G.gachaPrizes=getGachaPrizes().map(p=>p.id===id?{...p,weight:w}:p);
   Store.save(); showParent();
 }
 
