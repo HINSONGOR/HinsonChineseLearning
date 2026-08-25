@@ -122,12 +122,15 @@
       <div class="mc-xp">+8 XP / 題</div>
       <div class="mc-bar"><div class="mc-bar-fill" id="pb-rhetoric"></div></div>
     </button>
-    <button class="mod-card mc-red" onclick="launchModule('idiom')">
+    <div class="mod-card mc-red" style="position:relative;pointer-events:none;opacity:0.45;cursor:default">
       <div class="mc-icon">🏮</div>
       <div class="mc-name">成語挑戰賽</div>
       <div class="mc-xp">+8 XP / 題</div>
       <div class="mc-bar"><div class="mc-bar-fill" id="pb-idiom"></div></div>
-    </button>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:inherit;background:rgba(0,0,0,0.55)">
+        <span style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:3px;text-shadow:0 2px 8px #000">🔒 BLOCKED</span>
+      </div>
+    </div>
     <button class="mod-card mc-purple" onclick="launchModule('vocab')">
       <div class="mc-icon">📚</div>
       <div class="mc-name">詞語運用中心</div>
@@ -657,7 +660,7 @@ window.addEventListener('error', function(e){
   }
 }, true);
 </script>
-<script src="app.js?v=42"></script>
+<script src="app.js?v=43"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
