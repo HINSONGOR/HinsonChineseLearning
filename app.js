@@ -4037,7 +4037,7 @@ function startQuiz(type, questions, reviewing){
    QUIZ ENGINE
    ============================================================ */
 const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, synword:7, dictation:5 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:4, vocab:3, punctuation:3, tsa:8, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, synword:4, dictation:3 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, synword:4, dictation:3 };
 
 const WORD_ENG={
   '汗流浹背':'dripping with sweat','大汗淋漓':'perspiring profusely','揮汗如雨':'sweating like rain','頭昏腦脹':'dizzy and groggy',
@@ -4194,7 +4194,7 @@ function loadQuestion(i){
       (q.opts||[]).forEach((opt,idx)=>{
         const btn=document.createElement('button');
         btn.className='opt-btn';
-        const eng=WORD_ENG[opt]||'';
+        const eng=(Q.module==='fillin'||Q.module==='fillin2')?'':(WORD_ENG[opt]||'');
         btn.innerHTML=`<span class="opt-label">${'ABCD'[idx]}</span><span class="opt-text">${opt}${eng?`<span class="opt-eng">${eng}</span>`:''}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
         btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt); return; } checkAnswer(idx); };
         og.appendChild(btn);
