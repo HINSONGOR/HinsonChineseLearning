@@ -3599,6 +3599,7 @@ let G = {
   gachaPrizes:[],
   gachaHistory:[],
   gachaCost:300,
+  parentPin:null,
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
 };
 
@@ -4665,8 +4666,19 @@ function openParentPin(){
 }
 function verifyPin(){
   const pin=document.getElementById('pin-input').value;
-  if(pin==='1234'){ closeModal('modal-parent-pin'); showParent(); }
+  const correct=G.parentPin||'1234';
+  if(pin===correct){ closeModal('modal-parent-pin'); showParent(); }
   else{ alert('密碼錯誤！請輸入正確的4位數密碼。'); document.getElementById('pin-input').value=''; }
+}
+function changeParentPin(){
+  const a=document.getElementById('pp-new').value.trim();
+  const b=document.getElementById('pp-confirm').value.trim();
+  if(!/^\d{4}$/.test(a)){ alert('請輸入4位數字密碼'); return; }
+  if(a!==b){ alert('兩次密碼不一致，請重新輸入'); return; }
+  G.parentPin=a; Store.save();
+  document.getElementById('pp-new').value='';
+  document.getElementById('pp-confirm').value='';
+  alert('✅ 密碼已更改！');
 }
 function showParent(){
   showScreen('screen-parent');
@@ -4677,6 +4689,16 @@ function showParent(){
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;
 
   body.innerHTML=`
+    <div class="parent-card"><div class="parent-card-title">🔑 更改家長密碼</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+        <input id="pp-new" type="password" maxlength="4" inputmode="numeric" placeholder="新密碼（4位數字）"
+          style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
+        <input id="pp-confirm" type="password" maxlength="4" inputmode="numeric" placeholder="確認新密碼"
+          style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
+        <button onclick="changeParentPin()" class="big-btn green-btn" style="margin-top:4px">儲存新密碼</button>
+      </div>
+      <p style="font-size:0.75rem;color:rgba(255,255,255,0.45);margin-top:8px">預設密碼為 1234，請更改後妥善保管。</p>
+    </div>
     <div class="parent-card"><div class="parent-card-title">📊 總體學習情況</div>
       <div class="module-report-row"><div class="mod-report-name">學生名稱</div><div style="color:#E8F5E9;font-weight:700">${G.name}</div></div>
       <div class="module-report-row"><div class="mod-report-name">目前等級</div><div style="color:#FFE082;font-weight:700">Lv.${G.level} ${LEVEL_NAMES[G.level]||''}</div></div>
