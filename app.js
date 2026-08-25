@@ -4842,15 +4842,16 @@ function buildGachaParentConfig(){
       return `<div class="gacha-cfg-row">
         <span class="gacha-cfg-emoji">${p.emoji}</span>
         <span class="gacha-cfg-name">${p.name}</span>
-        <div class="gacha-weight-edit">
-          <span class="gacha-cfg-pct" style="cursor:default" title="點擊輸入框修改機率">${pct}%</span>
+        <div class="gacha-weight-edit" title="機率約 ${pct}%">
           <input type="number" class="gacha-pct-input" value="${p.weight}" min="1" max="999"
-            onchange="updatePrizeWeight(${p.id},this.value)" title="相對權重（數字越大機率越高）">
+            onchange="updatePrizeWeight(${p.id},this.value)"
+            style="width:44px">
+          <span style="font-size:0.7rem;color:rgba(255,213,0,0.65)">≈${pct}%</span>
         </div>
         <button onclick="deleteGachaPrize(${p.id})" class="gacha-del-btn">🗑️</button>
       </div>`;
     }).join('')}
-    <div style="font-size:0.72rem;color:rgba(255,213,0,0.6);margin:-4px 0 8px">← 機率　　　　　　　　　　權重 →</div>
+    <div style="font-size:0.72rem;color:rgba(255,213,0,0.6);margin:-4px 0 8px">← 權重　　　　機率 →</div>
     <div style="margin:12px 0 6px;font-size:0.85rem;color:var(--text-dim)">新增獎品 — 揀圖案：</div>
     <div class="gacha-emoji-grid">
       ${PRIZE_EMOJIS.map(e=>`<button class="emoji-pick-btn" onclick="document.getElementById('cn-np-emoji-sel').textContent=this.textContent;document.querySelectorAll('#parent-body .emoji-pick-btn').forEach(b=>b.classList.remove('ep-sel'));this.classList.add('ep-sel')">${e}</button>`).join('')}
