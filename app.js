@@ -4791,8 +4791,13 @@ function showParent(){
       <p style="font-size:0.85rem;color:#A5D6A7">孩子已有 ${G.wrongQuestions.length} 道錯題，可在「錯題重溫中心」進行針對性練習。</p>
     </div>
     ${buildGachaParentConfig()}
+    <div class="parent-card">
+      <div class="parent-card-title">📋 所有玩家學習報告</div>
+      <div id="all-players-report"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
+    </div>
   `;
   loadPlayerMgmt();
+  loadAllPlayersReport();
 }
 
 /* ============================================================
@@ -5260,12 +5265,42 @@ async function parentAddPlayer(){
 }
 
 async function parentDeletePlayer(id,name){
+  if(name==='Hinson'){ alert('Hinson 係主角，不能刪除！'); return; }
   if(!confirm(`確定刪除玩家「${name}」？\n所有遊戲數據將會永久刪除！`)) return;
   initDB();
   try{
     await db.from('players').delete().eq('id',id);
     await loadPlayerMgmt();
   }catch(e){ alert('刪除失敗：'+e.message); }
+}
+
+async function loadAllPlayersReport(){
+  const el=document.getElementById('all-players-report');
+  if(!el) return;
+  if(!db&&!initDB()){ el.innerHTML='<span style="color:#f88;font-size:0.8rem">載入失敗</span>'; return; }
+  try{
+    const {data:players}=await db.from('players').select('id,name,avatar,sort_order,player_state(state_json)').order('sort_order');
+    if(!players?.length){ el.innerHTML='<span style="color:rgba(255,255,255,0.4);font-size:0.85rem">暫無玩家</span>'; return; }
+    el.innerHTML=players.map(p=>{
+      const s=p.player_state?.state_json||{};
+      const acc=s.totalAnswered>0?Math.round((s.totalCorrect/s.totalAnswered)*100):null;
+      const accCol=acc===null?'#aaa':acc>=80?'#4CAF50':acc>=60?'#FF9800':'#F44336';
+      return `<div style="background:rgba(0,0,0,0.25);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <span style="font-size:1.5rem">${p.avatar}</span>
+          <span style="font-weight:700;color:#FFD700;font-size:1rem">${p.name}</span>
+          <span style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin-left:auto">Lv.${s.level||1}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;font-size:0.82rem">
+          <div style="color:rgba(255,255,255,0.6)">金幣</div><div style="color:#FFD54F">🪙 ${s.coins||0}</div>
+          <div style="color:rgba(255,255,255,0.6)">答題數</div><div style="color:#A5D6A7">${s.totalAnswered||0} 題</div>
+          <div style="color:rgba(255,255,255,0.6)">正確率</div><div style="color:${accCol}">${acc!==null?acc+'%':'未練習'}</div>
+          <div style="color:rgba(255,255,255,0.6)">連續登入</div><div style="color:#FF8A65">${s.streak||0} 天 🔥</div>
+          <div style="color:rgba(255,255,255,0.6)">錯題數</div><div style="color:#EF9A9A">${(s.wrongQuestions||[]).length} 題</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){ el.innerHTML='<span style="color:#f88;font-size:0.8rem">載入失敗</span>'; }
 }
 
 /* ============================================================
