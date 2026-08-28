@@ -3646,6 +3646,7 @@ const Store = {
     currentPlayerId=playerId;
     const key=`hinson_v1_${playerId}`;
     G=JSON.parse(DEFAULT_G_JSON);
+    // Try cloud first
     if(db){
       try{
         const {data,error}=await db.from('player_state').select('state_json').eq('player_id',playerId).single();
@@ -3659,14 +3660,19 @@ const Store = {
         }
       }catch(e){}
     }
-    try{
-      const d=JSON.parse(localStorage.getItem(key)||'null');
-      if(d){
-        Object.assign(G,d);
-        G.stats=Object.assign({...DEFAULT_STATS},d.stats||{});
-        G.settings=Object.assign({music:false,volume:0.3,sfx:true,timerMode:true},d.settings||{});
-      }
-    }catch(e){}
+    // Try new per-player localStorage key
+    let d=null;
+    try{ d=JSON.parse(localStorage.getItem(key)||'null'); }catch(e){}
+    // Fall back to legacy single-player key (migration)
+    if(!d){ try{ d=JSON.parse(localStorage.getItem('hinson_v1')||'null'); }catch(e){} }
+    if(d){
+      Object.assign(G,d);
+      G.stats=Object.assign({...DEFAULT_STATS},d.stats||{});
+      G.settings=Object.assign({music:false,volume:0.3,sfx:true,timerMode:true},d.settings||{});
+      // Immediately push legacy data to cloud so other devices can see it
+      localStorage.setItem(key,JSON.stringify(G));
+      this._push();
+    }
   }
 };
 
