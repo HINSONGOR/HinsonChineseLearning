@@ -65,6 +65,25 @@
 </div>
 
 <!-- ══════════════════════════════════════════════
+     APP LOGIN
+══════════════════════════════════════════════ -->
+<div id="screen-app-login" class="screen">
+  <div class="loading-sky">
+    <div class="cloud-anim c1">☁️</div>
+    <div class="cloud-anim c2">☁️</div>
+  </div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 20px;text-align:center">
+    <div style="font-size:2.8rem;margin-bottom:6px">🏰</div>
+    <h1 class="game-main-title" style="margin-bottom:4px">中文冒險王國</h1>
+    <p style="color:rgba(255,255,255,0.65);font-size:0.95rem;margin-bottom:28px">請輸入登入密碼</p>
+    <input id="app-pin-input" type="password" maxlength="4" inputmode="numeric" placeholder="● ● ● ●"
+      style="width:180px;padding:14px;border-radius:14px;border:2px solid rgba(255,255,255,0.25);background:rgba(0,0,0,0.35);color:#fff;font-size:1.4rem;text-align:center;letter-spacing:8px;margin-bottom:16px;outline:none"
+      onkeydown="if(event.key==='Enter')verifyAppPin()">
+    <button onclick="verifyAppPin()" class="big-btn green-btn" style="width:180px">進入 →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
      PLAYER SELECT
 ══════════════════════════════════════════════ -->
 <div id="screen-player-select" class="screen" style="position:relative;overflow:hidden">
@@ -708,7 +727,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=44"></script>
+<script src="app.js?v=45"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

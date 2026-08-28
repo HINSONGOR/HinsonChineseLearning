@@ -3620,6 +3620,7 @@ let db=null;
 let currentPlayerId=null;
 let currentPlayerName=null;
 let cachedParentPin=localStorage.getItem('hinson_parent_pin')||'1234';
+let cachedAppPin=localStorage.getItem('hinson_app_pin')||'1234';
 
 function initDB(){
   if(db||typeof supabase==='undefined') return !!db;
@@ -4736,15 +4737,32 @@ async function changeParentPin(){
   document.getElementById('pp-confirm').value='';
   alert('✅ 密碼已更改！所有裝置均即時生效。');
 }
-async function loadParentPin(){
+async function loadPins(){
   if(!db&&!initDB()) return;
   try{
-    const {data}=await db.from('app_config').select('value').eq('key','parent_pin').single();
-    if(data?.value){
-      cachedParentPin=data.value;
-      localStorage.setItem('hinson_parent_pin',data.value);
-    }
+    const {data}=await db.from('app_config').select('key,value').in('key',['parent_pin','app_pin']);
+    if(data) data.forEach(r=>{
+      if(r.key==='parent_pin'){ cachedParentPin=r.value; localStorage.setItem('hinson_parent_pin',r.value); }
+      if(r.key==='app_pin'){ cachedAppPin=r.value; localStorage.setItem('hinson_app_pin',r.value); }
+    });
   }catch(e){}
+}
+async function changeAppPin(){
+  const a=document.getElementById('ap-new').value.trim();
+  const b=document.getElementById('ap-confirm').value.trim();
+  if(!/^\d{4}$/.test(a)){ alert('請輸入4位數字密碼'); return; }
+  if(a!==b){ alert('兩次密碼不一致'); return; }
+  cachedAppPin=a;
+  localStorage.setItem('hinson_app_pin',a);
+  if(db||initDB()){
+    try{
+      const {error}=await db.from('app_config').upsert({key:'app_pin',value:a},{onConflict:'key'});
+      if(error) throw error;
+    }catch(e){ alert('⚠️ 雲端儲存失敗：'+e.message); return; }
+  }
+  document.getElementById('ap-new').value='';
+  document.getElementById('ap-confirm').value='';
+  alert('✅ 登入密碼已更改！所有裝置即時生效。');
 }
 function showParent(){
   showScreen('screen-parent');
@@ -4777,15 +4795,25 @@ function showParent(){
       <div class="parent-card-title">📋 所有玩家學習報告</div>
       <div id="all-players-report"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
     </div>`:''}
+    <div class="parent-card"><div class="parent-card-title">🔒 更改登入密碼</div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin:4px 0 10px">開 App 第一關，所有人須輸入</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input id="ap-new" type="password" maxlength="4" inputmode="numeric" placeholder="新登入密碼（4位數字）"
+          style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
+        <input id="ap-confirm" type="password" maxlength="4" inputmode="numeric" placeholder="確認新密碼"
+          style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
+        <button onclick="changeAppPin()" class="big-btn green-btn" style="margin-top:4px">儲存登入密碼</button>
+      </div>
+    </div>
     <div class="parent-card"><div class="parent-card-title">🔑 更改家長密碼</div>
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin:4px 0 10px">進入家長後台專用，請勿告訴小朋友</p>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
         <input id="pp-new" type="password" maxlength="4" inputmode="numeric" placeholder="新密碼（4位數字）"
           style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
         <input id="pp-confirm" type="password" maxlength="4" inputmode="numeric" placeholder="確認新密碼"
           style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem;width:100%;box-sizing:border-box">
-        <button onclick="changeParentPin()" class="big-btn green-btn" style="margin-top:4px">儲存新密碼</button>
+        <button onclick="changeParentPin()" class="big-btn green-btn" style="margin-top:4px">儲存家長密碼</button>
       </div>
-      <p style="font-size:0.75rem;color:rgba(255,255,255,0.45);margin-top:8px">預設密碼為 1234，請更改後妥善保管。</p>
     </div>
     <div class="parent-card"><div class="parent-card-title">📊 總體學習情況</div>
       <div class="module-report-row"><div class="mod-report-name">學生名稱</div><div style="color:#E8F5E9;font-weight:700">${G.name}</div></div>
@@ -5215,7 +5243,7 @@ async function showPlayerSelect(){
   if(!grid) return;
   grid.innerHTML='<p style="color:rgba(255,255,255,0.5);text-align:center">載入中...</p>';
   initDB();
-  loadParentPin();
+  loadPins();
   try{
     const {data:players,error}=await db.from('players').select('*').order('sort_order');
     if(error) throw error;
@@ -5361,15 +5389,28 @@ async function loadAllPlayersReport(){
    INIT
    ============================================================ */
 let _initDone=false;
+function verifyAppPin(){
+  const pin=document.getElementById('app-pin-input').value;
+  if(pin===cachedAppPin){
+    document.getElementById('app-pin-input').value='';
+    showPlayerSelect();
+  } else {
+    const box=document.getElementById('app-pin-input');
+    box.style.animation='none'; box.offsetHeight; box.style.animation='eggShake 0.4s ease';
+    box.value=''; box.focus();
+  }
+}
+
 function init(){
   if(_initDone) return;
   _initDone=true;
   initDB();
+  loadPins();
 
   const msg=document.getElementById('load-msg');
   if(msg) msg.textContent='載入中...';
 
-  setTimeout(()=>{ showPlayerSelect(); }, 1500);
+  setTimeout(()=>{ showScreen('screen-app-login'); document.getElementById('app-pin-input')?.focus(); }, 1500);
 }
 
 window.addEventListener('load', init);
