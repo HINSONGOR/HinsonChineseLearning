@@ -5227,11 +5227,50 @@ async function showPlayerSelect(){
       <button class="player-btn" onclick="selectPlayer('${p.id}','${p.name}','${p.avatar}')">
         <div class="player-btn-avatar">${p.avatar}</div>
         <div class="player-btn-name">${p.name}</div>
-      </button>`).join('');
+      </button>`).join('')+`
+      <button class="player-btn player-add-btn" onclick="showAddPlayerOverlay()">
+        <div class="player-btn-avatar" style="font-size:2rem;font-weight:300;color:rgba(255,255,255,0.6)">＋</div>
+        <div class="player-btn-name" style="color:rgba(255,255,255,0.5);font-size:0.85rem">新增玩家</div>
+      </button>`;
   }catch(e){
     grid.innerHTML=`<p style="color:#f88;text-align:center;font-size:0.85rem">無法連線，請檢查網絡</p>
       <button onclick="showPlayerSelect()" style="margin:16px auto;display:block;padding:10px 24px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:1rem">重試</button>`;
   }
+}
+
+const PS_AVLIST=['🦁','🐯','🐼','🐻','🐸','🐱','🐶','🦊','🐰','🐨','🐮','🦄','🐙','🦋','🌟','🚀','⚽','🎮','🎯','👑'];
+function showAddPlayerOverlay(){
+  const ov=document.getElementById('ps-add-overlay');
+  ov.style.display='flex';
+  document.getElementById('ps-step1').style.display='block';
+  document.getElementById('ps-step2').style.display='none';
+  document.getElementById('ps-pin').value='';
+  setTimeout(()=>document.getElementById('ps-pin').focus(),100);
+}
+function psVerifyPin(){
+  const pin=document.getElementById('ps-pin').value;
+  if(pin!==cachedParentPin){ alert('密碼錯誤'); document.getElementById('ps-pin').value=''; return; }
+  document.getElementById('ps-step1').style.display='none';
+  document.getElementById('ps-step2').style.display='block';
+  document.getElementById('ps-name').value='';
+  document.getElementById('ps-av').textContent='🧒';
+  const grid=document.getElementById('ps-av-grid');
+  grid.innerHTML=PS_AVLIST.map(a=>`<span onclick="document.getElementById('ps-av').textContent='${a}';document.getElementById('ps-av-grid').style.display='none'" style="font-size:1.4rem;cursor:pointer;padding:4px;border-radius:6px" class="emoji-pick-btn">${a}</span>`).join('');
+  setTimeout(()=>document.getElementById('ps-name').focus(),100);
+}
+async function psSubmitNewPlayer(){
+  const name=document.getElementById('ps-name').value.trim();
+  const avatar=document.getElementById('ps-av').textContent;
+  if(!name){ alert('請輸入玩家名稱'); return; }
+  initDB();
+  try{
+    const {data:ex}=await db.from('players').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+    const next=(ex?.[0]?.sort_order||0)+1;
+    const {error}=await db.from('players').insert({name,avatar,sort_order:next});
+    if(error) throw error;
+    document.getElementById('ps-add-overlay').style.display='none';
+    showPlayerSelect();
+  }catch(e){ alert('新增失敗：'+e.message); }
 }
 
 async function selectPlayer(id,name,avatar){

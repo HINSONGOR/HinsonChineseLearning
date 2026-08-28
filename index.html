@@ -67,7 +67,7 @@
 <!-- ══════════════════════════════════════════════
      PLAYER SELECT
 ══════════════════════════════════════════════ -->
-<div id="screen-player-select" class="screen">
+<div id="screen-player-select" class="screen" style="position:relative;overflow:hidden">
   <div class="loading-sky">
     <div class="cloud-anim c1">☁️</div>
     <div class="cloud-anim c2">☁️</div>
@@ -77,6 +77,37 @@
     <h1 class="game-main-title" style="margin-bottom:4px">中文冒險王國</h1>
     <p style="color:rgba(255,255,255,0.65);font-size:1rem;margin-bottom:36px">選擇你的冒險者</p>
     <div id="player-grid" style="display:flex;flex-wrap:wrap;gap:20px;justify-content:center;max-width:480px"></div>
+  </div>
+  <!-- Add player overlay -->
+  <div id="ps-add-overlay" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,0.75);z-index:50;align-items:center;justify-content:center">
+    <div style="background:#1b3d1b;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:28px 24px;width:300px;max-width:90vw">
+      <h3 style="color:#FFD700;margin:0 0 4px;font-size:1.1rem">➕ 新增玩家</h3>
+      <div id="ps-step1">
+        <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:8px 0 14px">請先輸入家長密碼</p>
+        <input id="ps-pin" type="password" maxlength="4" inputmode="numeric" placeholder="● ● ● ●"
+          style="width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.35);color:#fff;font-size:1.1rem;text-align:center;letter-spacing:6px;margin-bottom:12px"
+          onkeydown="if(event.key==='Enter')psVerifyPin()">
+        <div style="display:flex;gap:10px">
+          <button onclick="document.getElementById('ps-add-overlay').style.display='none'" style="flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.12);color:#fff;cursor:pointer;font-size:0.95rem">取消</button>
+          <button onclick="psVerifyPin()" style="flex:1;padding:10px;border-radius:10px;border:none;background:#388E3C;color:#fff;cursor:pointer;font-size:0.95rem;font-weight:700">確認</button>
+        </div>
+      </div>
+      <div id="ps-step2" style="display:none">
+        <p style="color:rgba(255,255,255,0.65);font-size:0.85rem;margin:8px 0 12px">選圖案，輸入名稱</p>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+          <span id="ps-av" style="font-size:2rem;border:2px solid rgba(255,255,255,0.25);border-radius:10px;padding:4px 8px;cursor:pointer"
+            onclick="document.getElementById('ps-av-grid').style.display=document.getElementById('ps-av-grid').style.display==='none'?'flex':'none'">🧒</span>
+          <input id="ps-name" type="text" maxlength="8" placeholder="玩家名稱"
+            style="flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.35);color:#fff;font-size:1rem"
+            onkeydown="if(event.key==='Enter')psSubmitNewPlayer()">
+        </div>
+        <div id="ps-av-grid" style="display:none;flex-wrap:wrap;gap:5px;margin-bottom:10px"></div>
+        <div style="display:flex;gap:10px">
+          <button onclick="document.getElementById('ps-add-overlay').style.display='none'" style="flex:1;padding:10px;border-radius:10px;border:none;background:rgba(255,255,255,0.12);color:#fff;cursor:pointer">取消</button>
+          <button onclick="psSubmitNewPlayer()" style="flex:1;padding:10px;border-radius:10px;border:none;background:#388E3C;color:#fff;cursor:pointer;font-weight:700">新增</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
