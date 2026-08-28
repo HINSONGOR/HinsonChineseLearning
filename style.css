@@ -2147,3 +2147,11 @@ u.synword-ul {
 .ci-legend{display:flex;gap:14px;font-size:0.78rem;color:var(--text-dim);}
 .ci-leg-item{display:flex;align-items:center;gap:5px;}
 .ci-leg-dot{width:12px;height:12px;border-radius:3px;display:inline-block;flex-shrink:0;}
+
+/* ============================================================
+   PLAYER SELECT SCREEN
+   ============================================================ */
+.player-btn{background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.2);border-radius:20px;padding:28px 24px;cursor:pointer;min-width:120px;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.player-btn:hover,.player-btn:active{background:rgba(255,255,255,0.22);border-color:#FFD700;transform:scale(1.06);}
+.player-btn-avatar{font-size:3rem;line-height:1;}
+.player-btn-name{color:#fff;font-size:1.1rem;font-weight:700;}

@@ -3599,7 +3599,6 @@ let G = {
   gachaPrizes:[],
   gachaHistory:[],
   gachaCost:300,
-  parentPin:null,
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
 };
 
@@ -3610,20 +3609,63 @@ let Q = { module:'', questions:[], index:0, correct:0, sessionXP:0, sessionCoins
 let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionCoins:0, reviewing:false, startTime:0 };
 
 /* ============================================================
+   SUPABASE + MULTI-PLAYER
+   ============================================================ */
+const DEFAULT_G_JSON = JSON.stringify(G);
+const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
+
+const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
+const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
+let db=null;
+let currentPlayerId=null;
+
+function initDB(){
+  if(db||typeof supabase==='undefined') return !!db;
+  db=supabase.createClient(SUPA_URL,SUPA_KEY);
+  return true;
+}
+
+/* ============================================================
    STORAGE
    ============================================================ */
 const Store = {
-  save(){ try{ localStorage.setItem('hinson_v1', JSON.stringify(G)); }catch(e){} },
-  load(){
+  _key(){ return currentPlayerId?`hinson_v1_${currentPlayerId}`:'hinson_v1_guest'; },
+  save(){
+    try{ localStorage.setItem(this._key(),JSON.stringify(G)); }catch(e){}
+    if(currentPlayerId){ this._push(); }
+  },
+  async _push(){
+    if(!db&&!initDB()) return;
     try{
-      // One-time data wipe requested 2026-07-31
-      if(!localStorage.getItem('hinson_wiped_20260731')){
-        localStorage.removeItem('hinson_v1');
-        localStorage.setItem('hinson_wiped_20260731','1');
-        return;
+      await db.from('player_state').upsert({player_id:currentPlayerId,state_json:G,updated_at:new Date().toISOString()},{onConflict:'player_id'});
+    }catch(e){}
+  },
+  load(){},
+  async loadPlayer(playerId){
+    initDB();
+    currentPlayerId=playerId;
+    const key=`hinson_v1_${playerId}`;
+    G=JSON.parse(DEFAULT_G_JSON);
+    if(db){
+      try{
+        const {data,error}=await db.from('player_state').select('state_json').eq('player_id',playerId).single();
+        if(!error&&data?.state_json){
+          const s=data.state_json;
+          Object.assign(G,s);
+          G.stats=Object.assign({...DEFAULT_STATS},s.stats||{});
+          G.settings=Object.assign({music:false,volume:0.3,sfx:true,timerMode:true},s.settings||{});
+          localStorage.setItem(key,JSON.stringify(G));
+          return;
+        }
+      }catch(e){}
+    }
+    try{
+      const d=JSON.parse(localStorage.getItem(key)||'null');
+      if(d){
+        Object.assign(G,d);
+        G.stats=Object.assign({...DEFAULT_STATS},d.stats||{});
+        G.settings=Object.assign({music:false,volume:0.3,sfx:true,timerMode:true},d.settings||{});
       }
-      const d = JSON.parse(localStorage.getItem('hinson_v1')||'null');
-      if(d){ G = Object.assign(G, d); G.stats = Object.assign({reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}}, d.stats||{}); G.settings = Object.assign({music:false,volume:0.3,sfx:true}, d.settings||{}); }
     }catch(e){}
   }
 };
@@ -4666,7 +4708,7 @@ function openParentPin(){
 }
 function verifyPin(){
   const pin=document.getElementById('pin-input').value;
-  const correct=G.parentPin||'1234';
+  const correct=localStorage.getItem('hinson_parent_pin')||'1234';
   if(pin===correct){ closeModal('modal-parent-pin'); showParent(); }
   else{ alert('密碼錯誤！請輸入正確的4位數密碼。'); document.getElementById('pin-input').value=''; }
 }
@@ -4675,7 +4717,7 @@ function changeParentPin(){
   const b=document.getElementById('pp-confirm').value.trim();
   if(!/^\d{4}$/.test(a)){ alert('請輸入4位數字密碼'); return; }
   if(a!==b){ alert('兩次密碼不一致，請重新輸入'); return; }
-  G.parentPin=a; Store.save();
+  localStorage.setItem('hinson_parent_pin',a);
   document.getElementById('pp-new').value='';
   document.getElementById('pp-confirm').value='';
   alert('✅ 密碼已更改！');
@@ -4688,7 +4730,24 @@ function showParent(){
   const weak=mods.filter(([,st])=>st.answered>0&&(st.correct/st.answered)<0.7).sort((a,b)=>(a[1].correct/a[1].answered)-(b[1].correct/b[1].answered));
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;
 
+  const AVLIST=['🦁','🐯','🐼','🐻','🐸','🐱','🐶','🦊','🐰','🐨','🐮','🦄','🐙','🦋','🌟','🚀','⚽','🎮','🎯','👑'];
   body.innerHTML=`
+    <div class="parent-card">
+      <div class="parent-card-title">👥 玩家管理</div>
+      <div id="player-list-mgmt" style="margin-bottom:10px"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0">
+      <div style="font-size:0.85rem;color:var(--text-dim);margin-bottom:8px">新增玩家</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span id="cn-np-av" style="font-size:1.6rem;border:2px solid rgba(255,255,255,0.25);border-radius:10px;padding:4px 8px;cursor:pointer"
+          onclick="document.getElementById('cn-av-grid').style.display=document.getElementById('cn-av-grid').style.display==='none'?'flex':'none'">🧒</span>
+        <input id="cn-np-name" type="text" maxlength="8" placeholder="玩家名稱（最多8字）"
+          style="flex:1;min-width:100px;padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.3);color:#fff;font-size:1rem">
+        <button onclick="parentAddPlayer()" class="big-btn green-btn" style="margin:0;padding:8px 16px;font-size:0.85rem">新增</button>
+      </div>
+      <div id="cn-av-grid" style="display:none;flex-wrap:wrap;gap:6px;margin-top:8px">
+        ${AVLIST.map(a=>`<span onclick="document.getElementById('cn-np-av').textContent='${a}';document.getElementById('cn-av-grid').style.display='none'" style="font-size:1.5rem;cursor:pointer;padding:4px;border-radius:6px" class="emoji-pick-btn">${a}</span>`).join('')}
+      </div>
+    </div>
     <div class="parent-card"><div class="parent-card-title">🔑 更改家長密碼</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
         <input id="pp-new" type="password" maxlength="4" inputmode="numeric" placeholder="新密碼（4位數字）"
@@ -4723,6 +4782,7 @@ function showParent(){
     </div>
     ${buildGachaParentConfig()}
   `;
+  loadPlayerMgmt();
 }
 
 /* ============================================================
@@ -5118,41 +5178,98 @@ function clearCharTile(){
 }
 
 /* ============================================================
+   PLAYER SELECT + MANAGEMENT
+   ============================================================ */
+async function showPlayerSelect(){
+  showScreen('screen-player-select');
+  const grid=document.getElementById('player-grid');
+  if(!grid) return;
+  grid.innerHTML='<p style="color:rgba(255,255,255,0.5);text-align:center">載入中...</p>';
+  initDB();
+  try{
+    const {data:players,error}=await db.from('players').select('*').order('sort_order');
+    if(error) throw error;
+    if(!players?.length){
+      grid.innerHTML='<p style="color:rgba(255,255,255,0.5);text-align:center;font-size:0.9rem">未有玩家<br>請家長在家長模式新增</p>';
+      return;
+    }
+    grid.innerHTML=players.map(p=>`
+      <button class="player-btn" onclick="selectPlayer('${p.id}','${p.name}','${p.avatar}')">
+        <div class="player-btn-avatar">${p.avatar}</div>
+        <div class="player-btn-name">${p.name}</div>
+      </button>`).join('');
+  }catch(e){
+    grid.innerHTML=`<p style="color:#f88;text-align:center;font-size:0.85rem">無法連線，請檢查網絡</p>
+      <button onclick="showPlayerSelect()" style="margin:16px auto;display:block;padding:10px 24px;border-radius:10px;border:none;background:rgba(255,255,255,0.15);color:#fff;cursor:pointer;font-size:1rem">重試</button>`;
+  }
+}
+
+async function selectPlayer(id,name,avatar){
+  const grid=document.getElementById('player-grid');
+  if(grid) grid.innerHTML=`<p style="color:rgba(255,255,255,0.7);text-align:center">${avatar} 載入 ${name} 的資料...</p>`;
+  await Store.loadPlayer(id);
+  if(!G.name||G.name==='冒險者') G.name=name;
+  showScreen('screen-dashboard');
+  try{ updateDashboard(); if(G.settings.music) BGM.start(); }catch(e){}
+}
+
+async function loadPlayerMgmt(){
+  const el=document.getElementById('player-list-mgmt');
+  if(!el) return;
+  initDB();
+  try{
+    const {data:players,error}=await db.from('players').select('*').order('sort_order');
+    if(error) throw error;
+    if(!players?.length){ el.innerHTML='<span style="color:rgba(255,255,255,0.4);font-size:0.85rem">暫無玩家</span>'; return; }
+    el.innerHTML=players.map(p=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.08)">
+        <span style="font-size:1.3rem">${p.avatar}</span>
+        <span style="flex:1;color:#fff;font-weight:600">${p.name}</span>
+        <button onclick="parentDeletePlayer('${p.id}','${p.name}')"
+          style="padding:3px 10px;border-radius:6px;border:none;background:#E53935;color:#fff;font-size:0.78rem;cursor:pointer">刪除</button>
+      </div>`).join('');
+  }catch(e){ el.innerHTML='<span style="color:#f88;font-size:0.8rem">載入失敗</span>'; }
+}
+
+async function parentAddPlayer(){
+  const name=document.getElementById('cn-np-name').value.trim();
+  const avatar=document.getElementById('cn-np-av').textContent;
+  if(!name){ alert('請輸入玩家名稱'); return; }
+  initDB();
+  try{
+    const {data:ex}=await db.from('players').select('sort_order').order('sort_order',{ascending:false}).limit(1);
+    const next=(ex?.[0]?.sort_order||0)+1;
+    const {error}=await db.from('players').insert({name,avatar,sort_order:next});
+    if(error) throw error;
+    document.getElementById('cn-np-name').value='';
+    document.getElementById('cn-np-av').textContent='🧒';
+    await loadPlayerMgmt();
+    alert(`✅ 已新增玩家「${name}」`);
+  }catch(e){ alert('新增失敗：'+e.message); }
+}
+
+async function parentDeletePlayer(id,name){
+  if(!confirm(`確定刪除玩家「${name}」？\n所有遊戲數據將會永久刪除！`)) return;
+  initDB();
+  try{
+    await db.from('players').delete().eq('id',id);
+    await loadPlayerMgmt();
+  }catch(e){ alert('刪除失敗：'+e.message); }
+}
+
+/* ============================================================
    INIT
    ============================================================ */
 let _initDone=false;
 function init(){
   if(_initDone) return;
   _initDone=true;
-  try{ Store.load(); }catch(e){}
+  initDB();
 
   const msg=document.getElementById('load-msg');
-  // Immediate confirmation JS is alive (user can see this text change right away)
-  if(msg) msg.textContent='載入題目庫...';
+  if(msg) msg.textContent='載入中...';
 
-  const messages=['準備冒險旅程...','幾乎完成了！'];
-  let mi=0;
-  const msgIv=setInterval(()=>{
-    if(msg && mi<messages.length){ msg.textContent=messages[mi++]; }
-    else clearInterval(msgIv);
-  },1000);
-
-  // Transition to dashboard after CSS animation finishes (~2.6s)
-  // showScreen is OUTSIDE the try-catch so any updateDashboard error doesn't block the transition
-  setTimeout(()=>{
-    clearInterval(msgIv);
-    showScreen('screen-dashboard');
-    try{
-      updateDashboard();
-      if(G.settings.music) BGM.start();
-    }catch(e){
-      // Show the error visibly — create a banner in the dashboard
-      const errDiv=document.createElement('div');
-      errDiv.style.cssText='position:fixed;top:10px;left:10px;right:10px;background:#c00;color:#fff;padding:10px;border-radius:8px;z-index:9999;font-size:0.85rem;';
-      errDiv.textContent='初始化錯誤：'+e.message;
-      document.body.appendChild(errDiv);
-    }
-  }, 2700);
+  setTimeout(()=>{ showPlayerSelect(); }, 1500);
 }
 
 window.addEventListener('load', init);
