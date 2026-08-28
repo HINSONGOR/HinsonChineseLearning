@@ -4712,15 +4712,25 @@ function verifyPin(){
   if(pin===correct){ closeModal('modal-parent-pin'); showParent(); }
   else{ alert('密碼錯誤！請輸入正確的4位數密碼。'); document.getElementById('pin-input').value=''; }
 }
-function changeParentPin(){
+async function changeParentPin(){
   const a=document.getElementById('pp-new').value.trim();
   const b=document.getElementById('pp-confirm').value.trim();
   if(!/^\d{4}$/.test(a)){ alert('請輸入4位數字密碼'); return; }
   if(a!==b){ alert('兩次密碼不一致，請重新輸入'); return; }
   localStorage.setItem('hinson_parent_pin',a);
+  if(db||initDB()){
+    try{ await db.from('app_config').upsert({key:'parent_pin',value:a}); }catch(e){}
+  }
   document.getElementById('pp-new').value='';
   document.getElementById('pp-confirm').value='';
-  alert('✅ 密碼已更改！');
+  alert('✅ 密碼已更改！所有裝置均即時生效。');
+}
+async function loadParentPin(){
+  if(!db&&!initDB()) return;
+  try{
+    const {data}=await db.from('app_config').select('value').eq('key','parent_pin').single();
+    if(data?.value) localStorage.setItem('hinson_parent_pin',data.value);
+  }catch(e){}
 }
 function showParent(){
   showScreen('screen-parent');
@@ -5186,6 +5196,7 @@ async function showPlayerSelect(){
   if(!grid) return;
   grid.innerHTML='<p style="color:rgba(255,255,255,0.5);text-align:center">載入中...</p>';
   initDB();
+  loadParentPin();
   try{
     const {data:players,error}=await db.from('players').select('*').order('sort_order');
     if(error) throw error;
