@@ -3621,6 +3621,7 @@ let currentPlayerId=null;
 let currentPlayerName=null;
 let cachedParentPin=localStorage.getItem('hinson_parent_pin')||'1234';
 let cachedAppPin=localStorage.getItem('hinson_app_pin')||'1234';
+let pendingPlayer=null;
 
 function initDB(){
   if(db||typeof supabase==='undefined') return !!db;
@@ -5301,14 +5302,13 @@ async function psSubmitNewPlayer(){
   }catch(e){ alert('新增失敗：'+e.message); }
 }
 
-async function selectPlayer(id,name,avatar){
-  const grid=document.getElementById('player-grid');
-  if(grid) grid.innerHTML=`<p style="color:rgba(255,255,255,0.7);text-align:center">${avatar} 載入 ${name} 的資料...</p>`;
-  currentPlayerName=name;
-  await Store.loadPlayer(id);
-  if(!G.name||G.name==='冒險者') G.name=name;
-  showScreen('screen-dashboard');
-  try{ updateDashboard(); if(G.settings.music) BGM.start(); }catch(e){}
+function selectPlayer(id,name,avatar){
+  pendingPlayer={id,name,avatar};
+  const sub=document.getElementById('app-login-sub');
+  if(sub) sub.textContent=`歡迎，${avatar} ${name}！請輸入密碼`;
+  document.getElementById('app-pin-input').value='';
+  showScreen('screen-app-login');
+  setTimeout(()=>document.getElementById('app-pin-input')?.focus(),150);
 }
 
 async function loadPlayerMgmt(){
@@ -5389,11 +5389,21 @@ async function loadAllPlayersReport(){
    INIT
    ============================================================ */
 let _initDone=false;
-function verifyAppPin(){
+async function verifyAppPin(){
   const pin=document.getElementById('app-pin-input').value;
   if(pin===cachedAppPin){
     document.getElementById('app-pin-input').value='';
-    showPlayerSelect();
+    if(pendingPlayer){
+      const {id,name,avatar}=pendingPlayer; pendingPlayer=null;
+      currentPlayerName=name;
+      showScreen('screen-player-select');
+      const grid=document.getElementById('player-grid');
+      if(grid) grid.innerHTML=`<p style="color:rgba(255,255,255,0.7);text-align:center">${avatar} 載入 ${name} 的資料...</p>`;
+      await Store.loadPlayer(id);
+      if(!G.name||G.name==='冒險者') G.name=name;
+      showScreen('screen-dashboard');
+      try{ updateDashboard(); if(G.settings.music) BGM.start(); }catch(e){}
+    }
   } else {
     const box=document.getElementById('app-pin-input');
     box.style.animation='none'; box.offsetHeight; box.style.animation='eggShake 0.4s ease';
@@ -5410,7 +5420,7 @@ function init(){
   const msg=document.getElementById('load-msg');
   if(msg) msg.textContent='載入中...';
 
-  setTimeout(()=>{ showScreen('screen-app-login'); document.getElementById('app-pin-input')?.focus(); }, 1500);
+  setTimeout(()=>{ showPlayerSelect(); }, 1500);
 }
 
 window.addEventListener('load', init);
