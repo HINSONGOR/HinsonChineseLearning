@@ -3618,6 +3618,8 @@ const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
 const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
 let db=null;
 let currentPlayerId=null;
+let currentPlayerName=null;
+let cachedParentPin=localStorage.getItem('hinson_parent_pin')||'1234';
 
 function initDB(){
   if(db||typeof supabase==='undefined') return !!db;
@@ -4714,8 +4716,7 @@ function openParentPin(){
 }
 function verifyPin(){
   const pin=document.getElementById('pin-input').value;
-  const correct=localStorage.getItem('hinson_parent_pin')||'1234';
-  if(pin===correct){ closeModal('modal-parent-pin'); showParent(); }
+  if(pin===cachedParentPin){ closeModal('modal-parent-pin'); showParent(); }
   else{ alert('密碼錯誤！請輸入正確的4位數密碼。'); document.getElementById('pin-input').value=''; }
 }
 async function changeParentPin(){
@@ -4723,9 +4724,13 @@ async function changeParentPin(){
   const b=document.getElementById('pp-confirm').value.trim();
   if(!/^\d{4}$/.test(a)){ alert('請輸入4位數字密碼'); return; }
   if(a!==b){ alert('兩次密碼不一致，請重新輸入'); return; }
+  cachedParentPin=a;
   localStorage.setItem('hinson_parent_pin',a);
   if(db||initDB()){
-    try{ await db.from('app_config').upsert({key:'parent_pin',value:a}); }catch(e){}
+    try{
+      const {error}=await db.from('app_config').upsert({key:'parent_pin',value:a},{onConflict:'key'});
+      if(error) throw error;
+    }catch(e){ alert('⚠️ 雲端儲存失敗，密碼只在本機更改：'+e.message); return; }
   }
   document.getElementById('pp-new').value='';
   document.getElementById('pp-confirm').value='';
@@ -4735,7 +4740,10 @@ async function loadParentPin(){
   if(!db&&!initDB()) return;
   try{
     const {data}=await db.from('app_config').select('value').eq('key','parent_pin').single();
-    if(data?.value) localStorage.setItem('hinson_parent_pin',data.value);
+    if(data?.value){
+      cachedParentPin=data.value;
+      localStorage.setItem('hinson_parent_pin',data.value);
+    }
   }catch(e){}
 }
 function showParent(){
@@ -4746,9 +4754,10 @@ function showParent(){
   const weak=mods.filter(([,st])=>st.answered>0&&(st.correct/st.answered)<0.7).sort((a,b)=>(a[1].correct/a[1].answered)-(b[1].correct/b[1].answered));
   const totalAcc=G.totalAnswered>0?Math.round((G.totalCorrect/G.totalAnswered)*100):0;
 
+  const isAdmin=(currentPlayerName==='Hinson');
   const AVLIST=['🦁','🐯','🐼','🐻','🐸','🐱','🐶','🦊','🐰','🐨','🐮','🦄','🐙','🦋','🌟','🚀','⚽','🎮','🎯','👑'];
   body.innerHTML=`
-    <div class="parent-card">
+    ${isAdmin?`<div class="parent-card">
       <div class="parent-card-title">👥 玩家管理</div>
       <div id="player-list-mgmt" style="margin-bottom:10px"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
       <hr style="border:none;border-top:1px solid rgba(255,255,255,0.12);margin:10px 0">
@@ -4763,7 +4772,11 @@ function showParent(){
       <div id="cn-av-grid" style="display:none;flex-wrap:wrap;gap:6px;margin-top:8px">
         ${AVLIST.map(a=>`<span onclick="document.getElementById('cn-np-av').textContent='${a}';document.getElementById('cn-av-grid').style.display='none'" style="font-size:1.5rem;cursor:pointer;padding:4px;border-radius:6px" class="emoji-pick-btn">${a}</span>`).join('')}
       </div>
-    </div>
+    </div>`:''}
+    ${isAdmin?`<div class="parent-card">
+      <div class="parent-card-title">📋 所有玩家學習報告</div>
+      <div id="all-players-report"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
+    </div>`:''}
     <div class="parent-card"><div class="parent-card-title">🔑 更改家長密碼</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
         <input id="pp-new" type="password" maxlength="4" inputmode="numeric" placeholder="新密碼（4位數字）"
@@ -4797,13 +4810,8 @@ function showParent(){
       <p style="font-size:0.85rem;color:#A5D6A7">孩子已有 ${G.wrongQuestions.length} 道錯題，可在「錯題重溫中心」進行針對性練習。</p>
     </div>
     ${buildGachaParentConfig()}
-    <div class="parent-card">
-      <div class="parent-card-title">📋 所有玩家學習報告</div>
-      <div id="all-players-report"><span style="color:rgba(255,255,255,0.4)">載入中...</span></div>
-    </div>
   `;
-  loadPlayerMgmt();
-  loadAllPlayersReport();
+  if(isAdmin){ loadPlayerMgmt(); loadAllPlayersReport(); }
 }
 
 /* ============================================================
@@ -5229,6 +5237,7 @@ async function showPlayerSelect(){
 async function selectPlayer(id,name,avatar){
   const grid=document.getElementById('player-grid');
   if(grid) grid.innerHTML=`<p style="color:rgba(255,255,255,0.7);text-align:center">${avatar} 載入 ${name} 的資料...</p>`;
+  currentPlayerName=name;
   await Store.loadPlayer(id);
   if(!G.name||G.name==='冒險者') G.name=name;
   showScreen('screen-dashboard');
