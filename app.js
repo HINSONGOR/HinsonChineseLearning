@@ -467,6 +467,109 @@ idiom:[
     why:{0:'追求完美不是「實事求是」的意思。',2:'只信親眼見到的太絕對，不是「實事求是」的意思。',3:'尋找本質和規律雖接近，但不如「根據實際情況，客觀分析」準確。'} },
 ],
 
+idiom2:[
+  { id:'id63', text:'「鶴立雞群」形容什麼？',
+    opts:['鶴和雞在一起相處','在眾人中特別突出，與眾不同','非常高大的人','一個人感到孤獨'], ans:1,
+    expl:'「鶴立雞群」比喻<strong class="correct-hl">在眾人中特別突出，與眾不同</strong>，就像仙鶴站在雞群中，格外顯眼。',
+    why:{0:'這是字面解釋，成語有比喻意思。',2:'成語的重點是突出，不是形容身高。',3:'鶴突出是因為出眾，不是因為孤獨。'} },
+  { id:'id64', text:'「老馬識途」比喻什麼？',
+    opts:['老馬走路很慢','有豐富經驗的人熟悉情況，能帶領大家','年老的人不如年輕人','馬能找到回家的路'], ans:1,
+    expl:'「老馬識途」出自管仲的故事，比喻<strong class="correct-hl">有豐富經驗的人熟悉情況，能夠帶領大家走正確的方向</strong>。',
+    why:{0:'速度慢不是這成語的意思。',2:'成語是讚美經驗豐富，不是批評老人。',3:'這是字面解釋，成語有引申含義。'} },
+  { id:'id65', text:'「螳螂捕蟬，黃雀在後」警告我們什麼？',
+    opts:['螳螂、蟬和黃雀都很危險','自然界弱肉強食的道理','只顧眼前利益，不知身後有更大危機','做事要快，搶先一步'], ans:2,
+    expl:'「螳螂捕蟬，黃雀在後」比喻<strong class="correct-hl">只顧眼前利益，沒有察覺身後更大的危機</strong>，警告我們要有危機意識。',
+    why:{0:'成語是警示，不是描述動物的危險性。',1:'說的是人的警覺心，不只是弱肉強食。',3:'成語是提醒提防危機，不是叫人搶快。'} },
+  { id:'id66', text:'「黔驢技窮」的意思是什麼？',
+    opts:['驢子技術高超，本領很多','把所有辦法和本領都用盡了','在貴州的驢子很特別','形容人學習能力強'], ans:1,
+    expl:'「黔驢技窮」出自寓言，比喻<strong class="correct-hl">把所有辦法和本領都用盡了，再也沒有辦法</strong>。「黔」是貴州，「技窮」是技巧用盡。',
+    why:{0:'這成語是說本領已盡，不是形容技術高超。',2:'「黔」只是故事背景，不是主要含義。',3:'成語是說無計可施，不是讚美學習能力。'} },
+  { id:'id67', text:'「神采飛揚」形容什麼？',
+    opts:['心神不定，精神渙散','飛翔時神氣的樣子','精神奕奕，活力充沛','面色蒼白，精神疲倦'], ans:2,
+    expl:'「神采飛揚」形容<strong class="correct-hl">精神奕奕，活力充沛，面容生動</strong>，給人充滿活力的感覺。',
+    why:{0:'「心神不定」是精神散亂，意思相反。',1:'這是字面解釋，成語有引申含義。',3:'「面色蒼白、精神疲倦」是相反的描述。'} },
+  { id:'id68', text:'「怒髮衝冠」的意思是什麼？',
+    opts:['頭髮長得太高，頂到帽子','非常憤怒，怒火沖天','戴帽子戴得太緊','形容頭髮凌亂'], ans:1,
+    expl:'「怒髮衝冠」形容<strong class="correct-hl">非常憤怒，怒火沖天</strong>。憤怒得頭髮豎起，把帽子都衝了起來，極言憤怒之甚。',
+    why:{0:'這是比喻，不是字面意思。',2:'帽子不舒服與憤怒無關。',3:'頭髮凌亂不是這成語的意思。'} },
+  { id:'id69', text:'「山明水秀」形容什麼？',
+    opts:['山很高，水很深','山裏有很多溪水','山水景色清麗秀美','天氣晴朗，有山有水'], ans:2,
+    expl:'「山明水秀」形容<strong class="correct-hl">山水景色清麗秀美</strong>。「明」是光亮清晰，「秀」是秀麗，形容自然風景優美。',
+    why:{0:'高和深是量度，不是「山明水秀」的意思。',1:'多溪水不是「山明水秀」的意思。',3:'天氣和光線不是這成語的重點。'} },
+  { id:'id70', text:'「萬紫千紅」通常用來形容什麼景象？',
+    opts:['秋天楓葉飄落的景色','百花盛開，色彩繽紛','彩虹出現後的天空','節日時的燈飾'], ans:1,
+    expl:'「萬紫千紅」形容<strong class="correct-hl">百花盛開，色彩繽紛</strong>，最常形容春天百花齊放的美麗景象。',
+    why:{0:'秋葉主要是紅橙色，不是「萬紫千紅」。',2:'彩虹雖多彩，但不是這成語的主要用途。',3:'燈飾雖多彩，但「萬紫千紅」主要用於自然花卉。'} },
+  { id:'id71', text:'「春暖花開」描述什麼情景？',
+    opts:['夏天陽光燦爛的景象','冬天雪後初融的情景','春天天氣溫暖，百花盛開','秋天涼風送爽的景象'], ans:2,
+    expl:'「春暖花開」描述<strong class="correct-hl">春天天氣溫暖，百花盛開</strong>的美麗景象，形容春季生機盎然的情景。',
+    why:{0:'夏天炎熱，不是「春暖花開」的季節。',1:'雪後初融是冬末，「春暖花開」指春暖後花盛開。',3:'秋天涼風不符合「春暖花開」的描述。'} },
+  { id:'id72', text:'「一望無際」中「際」的意思是什麼？',
+    opts:['邊界、盡頭','機會、時機','距離、長度','中間、四方'], ans:0,
+    expl:'「一望無際」中「際」是<strong class="correct-hl">邊界、盡頭</strong>的意思，整個成語形容一眼望去廣闊無邊，看不到盡頭。',
+    why:{1:'機會是「際遇」的「際」，不是這裏的意思。',2:'「際」不是距離的意思。',3:'「際」不是中間的意思。'} },
+  { id:'id73', text:'「層巒疊嶂」形容什麼景象？',
+    opts:['海浪一層一層地湧來','山嶺連綿重疊，一層又一層','雲霧層層遮蔽天空','一層一層的瀑布'], ans:1,
+    expl:'「層巒疊嶂」形容<strong class="correct-hl">山嶺連綿重疊，一層又一層</strong>。「巒」和「嶂」都是山的意思，形容山勢綿延壯闊。',
+    why:{0:'「巒」和「嶂」都指山，不是形容海浪。',2:'成語是寫山，不是寫雲霧。',3:'瀑布也不是這成語的意思。'} },
+  { id:'id74', text:'「溫故知新」是什麼意思？',
+    opts:['溫習舊的，同時學新的知識','複習舊知識，從中領悟新體會和發現','先學新知識，再溫習舊的','把新舊知識合二為一'], ans:1,
+    expl:'「溫故知新」出自《論語》，意思是<strong class="correct-hl">通過複習舊知識，從中領悟新的體會和發現</strong>，不是單純同時學新舊知識。',
+    why:{0:'「知新」不是學習新知識，而是從舊知識中獲得新領悟。',2:'應先複習舊的，再從中悟出新的，不是先學新。',3:'不是把新舊知識合在一起，而是從舊的中獲得新領悟。'} },
+  { id:'id75', text:'「舉一反三」的意思是什麼？',
+    opts:['舉手回答三條問題','從一個例子推算出三個答案','由一個例子，類推出其他道理','只需學一樣，便能全部明白'], ans:2,
+    expl:'「舉一反三」出自《論語》，比喻<strong class="correct-hl">從一個例子推論出其他道理</strong>，形容學習能力強、觸類旁通。',
+    why:{0:'這是字面解釋，不是成語含義。',1:'不是特指三個答案，而是能類推出更多道理。',3:'「只需學一樣便全懂」太絕對，成語是說能類推。'} },
+  { id:'id76', text:'「學以致用」告訴我們什麼？',
+    opts:['為了實際用途才去學習','學習的目的是考取好成績','把學到的知識應用在實際生活中','學習比工作更重要'], ans:2,
+    expl:'「學以致用」的意思是<strong class="correct-hl">把所學到的知識應用在實際生活中</strong>，強調學習與應用並重。',
+    why:{0:'不是說學習的目的，而是說把所學應用出來。',1:'考好成績不是「學以致用」的意思。',3:'成語沒有比較學習和工作哪個更重要。'} },
+  { id:'id77', text:'「勤能補拙」的意思是什麼？',
+    opts:['勤奮努力，一定能成功','勤奮努力可以彌補天資不足','只有天才才能成功','努力一定比天分重要'], ans:1,
+    expl:'「勤能補拙」形容<strong class="correct-hl">勤奮努力可以彌補天資不足的缺點</strong>。「拙」是笨拙，「補」是彌補。',
+    why:{0:'成語是說補救不足，不是保證一定成功。',2:'這成語說普通人靠努力也能改善，意思相反。',3:'成語說的是勤奮能補足拙，不是比較哪個更重要。'} },
+  { id:'id78', text:'「一鼓作氣」的意思是什麼？',
+    opts:['敲一下鼓，大家開始行動','做事要有節奏，步步推進','趁著士氣旺盛，一口氣完成','一邊打鼓一邊工作'], ans:2,
+    expl:'「一鼓作氣」出自曹劌論戰，比喻<strong class="correct-hl">趁著勇氣和士氣旺盛時，一口氣完成</strong>，不給自己鬆懈的機會。',
+    why:{0:'這是字面解釋，成語有引申含義。',1:'步步推進是「循序漸進」的意思，不是「一鼓作氣」。',3:'打鼓和工作同時是字面理解，不是成語含義。'} },
+  { id:'id79', text:'「有備無患」告訴我們什麼道理？',
+    opts:['做了準備也未必能避免問題','事先做好準備，便可避免禍患','患難來臨時才需要準備','有了備用品就不用擔心'], ans:1,
+    expl:'「有備無患」的意思是<strong class="correct-hl">事先做好充分準備，便可以避免日後的禍患</strong>，強調預防勝於治療。',
+    why:{0:'「有備」就是為了「無患」，成語表達肯定的關係。',2:'事先準備才有效，患難來了才準備已太遲。',3:'不只是備用品，而是廣泛的事先準備。'} },
+  { id:'id80', text:'「好高騖遠」是什麼意思？',
+    opts:['喜歡爬山，志向高遠','有遠大的夢想，值得讚揚','目標訂得過高，脫離實際，難以達到','努力向上，不自我設限'], ans:2,
+    expl:'「好高騖遠」形容<strong class="correct-hl">目標訂得過高，脫離實際，難以達到</strong>，是貶義成語，批評不切實際的態度。',
+    why:{0:'爬山是字面解釋，這是貶義成語。',1:'「好高騖遠」是批評，不是讚揚。',3:'成語是批評脫離實際，不是鼓勵不設限。'} },
+  { id:'id81', text:'「眼高手低」批評什麼？',
+    opts:['不肯幫助別人，只看不做','眼光太高，看不起身邊的人','眼光高，但實際能力不足','只懂欣賞，不懂創作'], ans:2,
+    expl:'「眼高手低」批評<strong class="correct-hl">眼光高，要求多，但實際能力卻不足</strong>，是貶義成語。',
+    why:{0:'不肯幫忙是懶惰，不是「眼高手低」的意思。',1:'看不起別人是「自高自大」，不是「眼高手低」。',3:'只懂欣賞與「眼高手低」不同，後者是眼光高但能力低。'} },
+  { id:'id82', text:'「助人為樂」形容什麼精神？',
+    opts:['為了得到快樂而去幫忙','以幫助別人為自己的快樂','一起快樂地幫助他人','幫助快樂的人'], ans:1,
+    expl:'「助人為樂」形容<strong class="correct-hl">以幫助別人為自己的快樂</strong>，出於善心無私地幫助他人。',
+    why:{0:'動機不是為了「得到快樂」，而是把幫助人本身當作快樂。',2:'不是一起，而是形容助人的心態。',3:'「助人」是指去幫助別人，不是幫助快樂的人。'} },
+  { id:'id83', text:'「捨己為人」的意思是什麼？',
+    opts:['放棄自己的目標','讓自己和別人都快樂','犧牲自己的利益，為別人著想','努力工作，讓家人得益'], ans:2,
+    expl:'「捨己為人」形容<strong class="correct-hl">犧牲自己的利益，為別人著想</strong>，是一種無私奉獻的精神。',
+    why:{0:'不只是放棄目標，而是為了別人而犧牲自己。',1:'「捨己」是要有所犧牲，不是說大家都快樂。',3:'努力工作是付出，但「捨己為人」強調犧牲自己的利益。'} },
+  { id:'id84', text:'「無微不至」形容什麼？',
+    opts:['什麼都不在乎，漫不經心','關懷體貼，十分周到，連細微之處都顧及','非常細心，看不到任何缺點','做事粗心，遺漏了細節'], ans:1,
+    expl:'「無微不至」形容<strong class="correct-hl">關懷體貼，十分周到，連細微之處都顧及到</strong>。「微」是細微，「至」是到達，沒有一處細節被忽略。',
+    why:{0:'漫不經心是相反意思。',2:'「看不到缺點」不是「無微不至」的意思。',3:'粗心是相反意思。'} },
+  { id:'id85', text:'「設身處地」的意思是什麼？',
+    opts:['把自己安置在某個地方','站在對方的角度，替對方設想','根據所在環境決定做什麼','要求別人替自己著想'], ans:1,
+    expl:'「設身處地」形容<strong class="correct-hl">站在對方的角度，替對方設想</strong>，即換位思考、將心比心。',
+    why:{0:'這是字面解釋，不是成語的比喻意思。',2:'根據環境決定做法是「隨機應變」，不是「設身處地」。',3:'成語是自己替別人設想，不是要求別人替自己著想。'} },
+  { id:'id86', text:'「患難與共」的意思是什麼？',
+    opts:['各自面對困難，互不干涉','一起分享快樂，互相扶持','一起面對困難和危險，不離不棄','因為共同患病而走在一起'], ans:2,
+    expl:'「患難與共」形容<strong class="correct-hl">一起面對困難和危難，不離不棄</strong>，形容友情或情誼深厚的成語。',
+    why:{0:'各自面對是相反意思。',1:'「患難與共」重點在共患難，不只是一起快樂。',3:'「患難」不是患病，而是困難和危難。'} },
+  { id:'id87', text:'「投桃報李」比喻什麼？',
+    opts:['把桃子和李子送給別人','互相交換水果','受到別人的好意，要懂得回報','送禮物給好朋友'], ans:2,
+    expl:'「投桃報李」出自《詩經》，比喻<strong class="correct-hl">受到別人的好意，要懂得回報</strong>。你送我桃，我回禮送李，強調禮尚往來、知恩圖報。',
+    why:{0:'這是字面解釋，成語有引申含義。',1:'互換水果是字面解釋，成語重點是回報別人的好意。',3:'不只是送禮，而是強調受到好意後的回報。'} },
+],
+
 vocab:[
   { id:'v1', text:'下列哪個詞語可以填入「他非常___，每次都主動幫助有需要的人。」？',
     opts:['自私','慷慨','懶惰','冷漠'], ans:1,
@@ -3612,7 +3715,7 @@ let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionC
    SUPABASE + MULTI-PLAYER
    ============================================================ */
 const DEFAULT_G_JSON = JSON.stringify(G);
-const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
+const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},idiom2:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
 
 const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
 const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
@@ -3773,7 +3876,7 @@ function updateDashboard(){
   document.getElementById('xp-fill').style.width=pct+'%';
   document.getElementById('xp-label').textContent=`${G.xp} / ${nextXP} XP → Lv.${G.level+1}`;
 
-  ['reading','rhetoric','idiom','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','synword','dictation','wrong'].forEach(m=>{
+  ['reading','rhetoric','idiom','idiom2','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','synword','dictation','wrong'].forEach(m=>{
     const el=document.getElementById('pb-'+m);
     if(!el) return;
     const st=G.stats[m]||{answered:0,correct:0};
@@ -4074,7 +4177,7 @@ function buildQuestions(type){
 
 function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
-  const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽',
+  const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
                 wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', synword:'🔄 以詞代意訓練' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;

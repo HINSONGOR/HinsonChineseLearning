@@ -198,6 +198,12 @@
         <span style="font-size:1rem;font-weight:900;color:#fff;letter-spacing:3px;text-shadow:0 2px 8px #000">🔒 BLOCKED</span>
       </div>
     </div>
+    <button class="mod-card mc-red" onclick="launchModule('idiom2')">
+      <div class="mc-icon">🏮</div>
+      <div class="mc-name">成語挑戰賽2</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-idiom2"></div></div>
+    </button>
     <button class="mod-card mc-purple" onclick="launchModule('vocab')">
       <div class="mc-icon">📚</div>
       <div class="mc-name">詞語運用中心</div>
@@ -728,7 +734,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=45"></script>
+<script src="app.js?v=46"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
