@@ -3908,7 +3908,40 @@ const Store = {
   async _push(){
     if(!db&&!initDB()) return;
     try{
-      await db.from('player_state').upsert({player_id:currentPlayerId,state_json:G,updated_at:new Date().toISOString()},{onConflict:'player_id'});
+      // Read cloud first so we never overwrite a higher count from another device
+      const {data} = await db.from('player_state').select('state_json').eq('player_id',currentPlayerId).single();
+      let toSave = G;
+      if(data?.state_json){
+        const cloud = data.state_json;
+        // Only merge if cloud has MORE total activity (another device has been busy)
+        if((cloud.totalAnswered||0) > (G.totalAnswered||0)){
+          toSave = {...G};
+          toSave.totalAnswered = Math.max(G.totalAnswered||0, cloud.totalAnswered||0);
+          toSave.totalCorrect  = Math.max(G.totalCorrect||0,  cloud.totalCorrect||0);
+          toSave.totalStudyTime= Math.max(G.totalStudyTime||0,cloud.totalStudyTime||0);
+          toSave.xp            = Math.max(G.xp||0,            cloud.xp||0);
+          toSave.coins         = Math.max(G.coins||0,         cloud.coins||0);
+          toSave.level         = Math.max(G.level||1,         cloud.level||1);
+          toSave.streak        = Math.max(G.streak||0,        cloud.streak||0);
+          toSave.maxStreak     = Math.max(G.maxStreak||0,     cloud.maxStreak||0);
+          toSave.perfectRuns   = Math.max(G.perfectRuns||0,   cloud.perfectRuns||0);
+          // Merge per-module stats: take max of each counter
+          const merged = {...(G.stats||{})};
+          Object.entries(cloud.stats||{}).forEach(([m,cv])=>{
+            const lv = merged[m]||{answered:0,correct:0,sessions:0};
+            merged[m] = {
+              answered: Math.max(lv.answered||0, cv.answered||0),
+              correct:  Math.max(lv.correct||0,  cv.correct||0),
+              sessions: Math.max(lv.sessions||0, cv.sessions||0)
+            };
+          });
+          toSave.stats = merged;
+          // Sync merged result back to local G and localStorage
+          Object.assign(G, toSave);
+          try{ localStorage.setItem(this._key(), JSON.stringify(G)); }catch(e){}
+        }
+      }
+      await db.from('player_state').upsert({player_id:currentPlayerId,state_json:toSave,updated_at:new Date().toISOString()},{onConflict:'player_id'});
     }catch(e){}
   },
   load(){},
