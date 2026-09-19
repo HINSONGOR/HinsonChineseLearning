@@ -4175,6 +4175,15 @@ const Store = {
             };
           });
           toSave.stats = merged;
+          /* Merge dailyLog: combine both arrays, deduplicate by date+module+timeSec */
+          const cloudLog=cloud.dailyLog||[];
+          const localLog=G.dailyLog||[];
+          const seen=new Set();
+          const mergedLog=[...localLog,...cloudLog].filter(r=>{
+            const k=`${r.date}|${r.module}|${r.timeSec}|${r.correct}`;
+            if(seen.has(k)) return false; seen.add(k); return true;
+          });
+          toSave.dailyLog=mergedLog;
           // Sync merged result back to local G and localStorage
           Object.assign(G, toSave);
           try{ localStorage.setItem(this._key(), JSON.stringify(G)); }catch(e){}
@@ -4195,9 +4204,21 @@ const Store = {
         const {data,error}=await db.from('player_state').select('state_json').eq('player_id',playerId).single();
         if(!error&&data?.state_json){
           const s=data.state_json;
+          /* Preserve any dailyLog entries that are in localStorage but not in cloud */
+          let localLog=[];
+          try{ const loc=JSON.parse(localStorage.getItem(key)||'null'); localLog=loc?.dailyLog||[]; }catch(e){}
           Object.assign(G,s);
           G.stats=Object.assign({...DEFAULT_STATS},s.stats||{});
           G.settings=Object.assign({music:false,volume:0.3,sfx:true,timerMode:true},s.settings||{});
+          if(localLog.length){
+            const cloudLog=s.dailyLog||[];
+            const seen=new Set(); const merged=[];
+            [...cloudLog,...localLog].forEach(r=>{
+              const k=`${r.date}|${r.module}|${r.timeSec}|${r.correct}`;
+              if(!seen.has(k)){ seen.add(k); merged.push(r); }
+            });
+            G.dailyLog=merged;
+          }
           localStorage.setItem(key,JSON.stringify(G));
           return;
         }
@@ -5582,9 +5603,9 @@ function buildDailyLog(){
   const log=(G.dailyLog||[]);
   if(!log.length) return '<div style="text-align:center;color:var(--text-dim);font-size:0.82rem;padding:10px 0">完成練習後會自動記錄每日活動 📋</div>';
   const MOD_NAMES={
-    reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', vocab:'詞語運用',
+    reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', idiom2:'成語2', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
-    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', synword:'以詞代意', wrong:'錯題重溫',
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充', synword:'以詞代意', wrong:'錯題重溫',
     dictation:'默書練習'
   };
   // group by date, most recent first
