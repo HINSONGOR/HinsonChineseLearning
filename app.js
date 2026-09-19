@@ -1,4 +1,4 @@
-'use strict';
+﻿'use strict';
 
 // Show any JS error on the loading screen so it's visible without console
 window.onerror=function(msg,src,line){
@@ -4437,8 +4437,43 @@ function launchModule(type){
 }
 
 /* ============================================================
-   默書園地（DICTATION）— 睇螢幕聽讀、紙筆書寫，自己核對
+   默書園地（DICTATION）v2 — 4 types · paragraph builder · typing mode
    ============================================================ */
+const DICT_TYPES=[
+  {id:'chars',    icon:'✏️', label:'生字'},
+  {id:'sentences',icon:'📄', label:'句子'},
+  {id:'passage',  icon:'📚', label:'成段課文'},
+  {id:'mixed',    icon:'🔤', label:'詞語+課文'},
+];
+
+function _cnNum(n){
+  const ns=['一','二','三','四','五','六','七','八','九','十',
+    '十一','十二','十三','十四','十五','十六','十七','十八','十九','二十',
+    '二十一','二十二','二十三','二十四','二十五','二十六','二十七','二十八','二十九','三十'];
+  return ns[n-1]||String(n);
+}
+
+function _setIcon(set){
+  return ({chars:'✏️',sentences:'📄',passage:'📚',mixed:'🔤'})[set.type||'sentences']||'📄';
+}
+
+function _flattenSet(set){
+  const type=set.type||'sentences';
+  if(type==='chars'||type==='sentences'){
+    return (set.items||[]).map((it,i)=>
+      typeof it==='string'?{id:set.id+'_i'+i,text:it}:it
+    );
+  }
+  const sentItems=(set.paragraphs||[]).flatMap((p,pi)=>
+    (p.sentences||[]).map((s,si)=>({id:s.id||`${set.id}_p${pi}_s${si}`,text:s.text}))
+  );
+  if(type==='mixed'){
+    const words=(set.words||[]).map((w,i)=>({id:w.id||`${set.id}_w${i}`,text:w.text}));
+    return [...words,...sentItems];
+  }
+  return sentItems;
+}
+
 function openDictationPicker(){
   document.getElementById('dict-picker-view').style.display='';
   document.getElementById('dict-add-view').style.display='none';
@@ -4454,74 +4489,141 @@ function _renderDictPicker(){
   const byLesson={};
   all.forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
   const lessons=Object.entries(byLesson);
-  body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
-    <div class="dict-lesson-title">
-      📖 ${lesson}
-      <span class="dict-lesson-actions">
-        <button class="dict-lesson-play-btn" onclick="launchFullLesson(this.dataset.lesson)" data-lesson="${lesson}">▶ 全課</button>
-        <button class="dict-lesson-add-btn" onclick="showDictAddForm(null,this.dataset.lesson)" data-lesson="${lesson}">➕ 加段</button>
-      </span>
-    </div>
-    <div class="tsa-cat-grid">
-      ${sets.map(s=> myIds.has(s.id) ? `
-        <div class="dict-my-card">
-          <button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>
-          <div class="dict-my-actions">
-            <button class="dict-edit-btn" onclick="showDictAddForm('${s.id}')">✏️ 修改</button>
-            <button class="dict-del-btn" onclick="deleteMyDictSet('${s.id}')">🗑️ 刪除</button>
-          </div>
-        </div>` :
-        `<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`
-      ).join('')}
-    </div>
-  `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容，點「➕ 新增我的默書」開始！</p>';
-}
-
-let _editingDictId=null;
-let _dictType='text';
-
-function setDictType(type){
-  _dictType=type;
-  document.getElementById('dict-type-text').classList.toggle('dict-type-active',type==='text');
-  document.getElementById('dict-type-vocab').classList.toggle('dict-type-active',type==='vocab');
-  const segLabel=document.getElementById('dict-seg-label');
-  const titleInput=document.getElementById('dict-add-title');
-  const itemsTA=document.getElementById('dict-add-items');
-  if(type==='vocab'){
-    segLabel.textContent='詞語組名稱';
-    if(!titleInput.value||titleInput.value.match(/^第[一二三四五六七八九十百]+段$/)) titleInput.value='重點詞語';
-    itemsTA.placeholder='每行一個詞語\n例：\n威風\n對峙\n沮喪\n精神煥發';
-  } else {
-    segLabel.textContent='段落名稱（例：第一段）';
-    if(titleInput.value==='重點詞語') titleInput.value='';
-    itemsTA.placeholder='每行一項句子\n例：\n婷婷在幫媽媽清理雜物的時候，\n扔掉了那把老藤椅。';
+  if(!lessons.length){
+    body.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容，點「➕ 新增我的默書」開始！</p>';
+    return;
   }
+  body.innerHTML=lessons.map(([lesson,sets])=>{
+    const setsHtml=sets.map(s=>{
+      const type=s.type||'sentences';
+      const isOwn=myIds.has(s.id);
+      const icon=_setIcon(s);
+      const editDel=isOwn?`<div class="dict-my-actions">
+          <button class="dict-edit-btn" onclick="showDictAddForm('${s.id}')">✏️ 修改</button>
+          <button class="dict-del-btn" onclick="deleteMyDictSet('${s.id}')">🗑️ 刪除</button>
+        </div>`:'';
+      if(type==='passage'||type==='mixed'){
+        const paras=s.paragraphs||[];
+        const totalItems=_flattenSet(s).length;
+        const maxN=paras.length;
+        const nOpts=Array.from({length:maxN},(_,i)=>i+1)
+          .map(n=>`<option value="${n}">${n} 段</option>`).join('');
+        const paraGrid=paras.map((p,pi)=>{
+          const cnt=(p.sentences||[]).length;
+          return `<button class="dict-para-block" onclick="launchDictPara('${s.id}',${pi})">📄 ${p.label}<span class="dict-para-cnt">${cnt} 項</span></button>`;
+        }).join('');
+        return `<div class="dict-set-card${isOwn?' dict-set-card-own':''}">
+            <div class="dict-set-card-hd">
+              <span class="dict-set-title">${icon} ${s.title}</span>
+              <span class="dict-set-meta">${totalItems} 項</span>
+            </div>
+            <div class="dict-set-actions">
+              <select id="dict-rand-n-${s.id}" class="dict-rand-select">${nOpts}</select>
+              <button class="dict-action-btn dict-rand-btn" onclick="launchDictRandom('${s.id}')">🎲 隨機</button>
+              <button class="dict-action-btn dict-all-btn" onclick="launchDictationSet('${s.id}')">📖 全 ${maxN} 段</button>
+            </div>
+            ${editDel}
+          </div>
+          ${paras.length?`<div class="dict-para-grid-section">
+            <div class="dict-para-sec-title">📑 ${s.title} — 分段練習</div>
+            <div class="dict-para-block-grid">${paraGrid}</div>
+          </div>`:''}`;
+      }
+      const cnt=(s.items||[]).length;
+      return `<div class="dict-simple-card${isOwn?' dict-set-card-own':''}">
+          <button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${icon} ${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${cnt} 項）</span></button>
+          ${editDel}
+        </div>`;
+    }).join('');
+    return `<div class="dict-lesson-title">📖 ${lesson}
+        <span class="dict-lesson-actions">
+          <button class="dict-lesson-play-btn" onclick="launchFullLesson(this.dataset.lesson)" data-lesson="${lesson}">▶ 全課</button>
+          <button class="dict-lesson-add-btn" onclick="showDictAddForm(null,this.dataset.lesson)" data-lesson="${lesson}">➕ 加段</button>
+        </span>
+      </div>
+      <div class="dict-lesson-sets">${setsHtml}</div>`;
+  }).join('');
 }
+
+/* --- 練習啟動 --- */
+function launchDictationSet(setId){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const set=all.find(s=>s.id===setId);
+  if(!set) return;
+  closeModal('modal-dictation');
+  startDictation((set.lesson?set.lesson+' · ':'')+set.title, _flattenSet(set), false);
+}
+
+function launchDictPara(setId, paraIdx){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const set=all.find(s=>s.id===setId);
+  if(!set) return;
+  const para=(set.paragraphs||[])[paraIdx];
+  if(!para) return;
+  closeModal('modal-dictation');
+  const items=(para.sentences||[]).map(s=>({id:s.id,text:s.text}));
+  startDictation((set.lesson?set.lesson+' · ':'')+set.title+' · '+para.label, items, false);
+}
+
+function launchDictRandom(setId){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const set=all.find(s=>s.id===setId);
+  if(!set) return;
+  const n=parseInt((document.getElementById('dict-rand-n-'+setId)||{value:'1'}).value);
+  const paras=[...(set.paragraphs||[])];
+  const chosen=shuffle(paras).slice(0,n);
+  chosen.sort((a,b)=>(set.paragraphs||[]).indexOf(a)-(set.paragraphs||[]).indexOf(b));
+  const items=chosen.flatMap(p=>(p.sentences||[]).map(s=>({id:s.id,text:s.text})));
+  if(!items.length) return;
+  closeModal('modal-dictation');
+  startDictation((set.lesson?set.lesson+' · ':'')+set.title+' · 隨機'+n+'段', items, false);
+}
+
+function launchFullLesson(lesson){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const sets=all.filter(s=>s.lesson===lesson);
+  if(!sets.length) return;
+  closeModal('modal-dictation');
+  startDictation(lesson+' · 全課', sets.flatMap(s=>_flattenSet(s)), false);
+}
+
+/* --- 新增 / 修改表單 --- */
+let _editingDictId=null;
+let _dictFormType='sentences';
+let _dictParas=[];
 
 function showDictAddForm(id, presetLesson){
   _editingDictId=id||null;
   document.getElementById('dict-picker-view').style.display='none';
   document.getElementById('dict-add-view').style.display='';
   document.getElementById('dict-add-err').textContent='';
+  let typeToSet='sentences';
   if(id){
     const set=(G.my_dictation||[]).find(s=>s.id===id);
     if(set){
+      typeToSet=set.type||'sentences';
       document.getElementById('dict-add-lesson').value=set.lesson||'';
-      document.getElementById('dict-add-title').value=set.title||'';
-      document.getElementById('dict-add-items').value=(set.items||[]).join('\n');
-      const isVocab=(set.title||'').includes('詞語');
-      setDictType(isVocab?'vocab':'text');
+      document.getElementById('dict-add-setname').value=set.title||'';
+      if(typeToSet==='passage'||typeToSet==='mixed'){
+        _dictParas=(set.paragraphs||[]).map(p=>({
+          label:p.label,
+          text:(p.sentences||[]).map(s=>s.text).join('\n')
+        }));
+        if(!_dictParas.length) _dictParas=[{label:'第一段',text:''}];
+      }
     }
     document.getElementById('dict-add-title-label').textContent='✏️ 修改默書';
     document.getElementById('dict-save-btn').textContent='💾 儲存修改';
   } else {
     document.getElementById('dict-add-lesson').value=presetLesson||'';
-    document.getElementById('dict-add-title').value='';
-    document.getElementById('dict-add-items').value='';
-    setDictType('text');
+    document.getElementById('dict-add-setname').value='';
+    _dictParas=[{label:'第一段',text:''}];
     document.getElementById('dict-add-title-label').textContent='➕ 新增默書';
-    document.getElementById('dict-save-btn').textContent='💾 新增段落';
+    document.getElementById('dict-save-btn').textContent='💾 新增';
   }
+  _dictFormType=typeToSet;
+  _renderDictTypeRow(!!id, typeToSet);
+  _renderDictFormBody(typeToSet, id?(G.my_dictation||[]).find(s=>s.id===id):null);
 }
 
 function hideDictAddForm(){
@@ -4530,21 +4632,146 @@ function hideDictAddForm(){
   _editingDictId=null;
 }
 
+function _renderDictTypeRow(locked, activeType){
+  const row=document.getElementById('dict-type-row');
+  if(!row) return;
+  row.innerHTML=DICT_TYPES.map(t=>`
+    <button class="dict-type-btn${t.id===activeType?' dict-type-active':''}"
+      ${locked?'disabled title="編輯時不可更改類型"':''}
+      onclick="if(!this.disabled)_switchDictFormType('${t.id}')">${t.icon} ${t.label}</button>`
+  ).join('');
+}
+
+function _switchDictFormType(type){
+  _syncParasFromDOM();
+  _dictFormType=type;
+  _renderDictTypeRow(false,type);
+  _renderDictFormBody(type,null);
+}
+
+function _syncParasFromDOM(){
+  if(_dictFormType==='passage'||_dictFormType==='mixed'){
+    _dictParas=_dictParas.map((p,i)=>({
+      ...p,text:(document.getElementById('dict-para-text-'+i)||{value:p.text}).value
+    }));
+  }
+}
+
+function _renderDictFormBody(type, existingSet){
+  const area=document.getElementById('dict-form-body');
+  if(!area) return;
+  if(type==='chars'||type==='sentences'){
+    const existing=existingSet&&(existingSet.type||'sentences')===type
+      ?(existingSet.items||[]).map(it=>typeof it==='string'?it:it.text).join('\n'):'';
+    area.innerHTML=`<label class="dict-form-lbl">${type==='chars'?'生字（每行一個）':'句子（每行一句）'}</label>
+      <textarea id="dict-add-items" rows="8" class="dict-form-ta"
+        placeholder="${type==='chars'?'每行一個生字\n例：\n威風\n對峙':'每行一句\n例：\n婷婷在幫媽媽清理雜物的時候，\n扔掉了那把老藤椅。'}">${existing}</textarea>`;
+  } else {
+    if(!_dictParas.length) _dictParas=[{label:'第一段',text:''}];
+    const wordsExisting=existingSet&&existingSet.type==='mixed'
+      ?(existingSet.words||[]).map(w=>w.text).join('\n'):'';
+    const wordsSection=type==='mixed'?`<label class="dict-form-lbl">詞語（每行一個）</label>
+      <textarea id="dict-add-words" rows="4" class="dict-form-ta"
+        placeholder="每行一個詞語\n例：\n威風\n對峙\n沮喪">${wordsExisting}</textarea>`:'';
+    area.innerHTML=`${wordsSection}
+      <label class="dict-form-lbl">課文段落</label>
+      <div id="dict-para-builder"></div>
+      <button class="big-btn grey-btn mt8" style="font-size:.85rem" onclick="_dictAddPara()">➕ 加多一段</button>
+      <div class="dict-paste-helper mt8">
+        <button class="dict-paste-toggle" onclick="_dictTogglePaste()">📋 貼上成段課文，自動分段</button>
+        <div id="dict-paste-area" style="display:none;margin-top:8px">
+          <textarea id="dict-paste-input" rows="6" class="dict-form-ta"
+            placeholder="貼入完整課文，用空行分隔段落…"></textarea>
+          <button class="big-btn mt4" style="font-size:.85rem" onclick="_dictAutoSplit()">📋 自動分段（分好記得核對！）</button>
+        </div>
+      </div>`;
+    _reRenderParaBuilder();
+  }
+}
+
+function _reRenderParaBuilder(){
+  const el=document.getElementById('dict-para-builder');
+  if(!el) return;
+  el.innerHTML=_dictParas.map((p,i)=>`
+    <div class="dict-para-entry">
+      <div class="dict-para-hd">
+        <span class="dict-para-lbl">${p.label}</span>
+        <button class="dict-para-del" onclick="_dictRemovePara(${i})">✕ 刪除呢段</button>
+      </div>
+      <textarea id="dict-para-text-${i}" class="dict-form-ta" rows="4"
+        placeholder="每行一句">${p.text}</textarea>
+    </div>`).join('');
+}
+
+function _dictAddPara(){
+  _syncParasFromDOM();
+  _dictParas.push({label:'第'+_cnNum(_dictParas.length+1)+'段',text:''});
+  _reRenderParaBuilder();
+}
+
+function _dictRemovePara(idx){
+  _syncParasFromDOM();
+  _dictParas.splice(idx,1);
+  _dictParas=_dictParas.map((p,i)=>({...p,label:'第'+_cnNum(i+1)+'段'}));
+  _reRenderParaBuilder();
+}
+
+function _dictTogglePaste(){
+  const el=document.getElementById('dict-paste-area');
+  if(el) el.style.display=el.style.display==='none'?'':'none';
+}
+
+function _dictAutoSplit(){
+  const raw=(document.getElementById('dict-paste-input')||{value:''}).value;
+  const paras=raw.split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean);
+  if(!paras.length) return;
+  _dictParas=paras.map((text,i)=>({label:'第'+_cnNum(i+1)+'段',text}));
+  _reRenderParaBuilder();
+  const pa=document.getElementById('dict-paste-area');
+  if(pa) pa.style.display='none';
+}
+
 function saveNewDictSet(){
   const lesson=(document.getElementById('dict-add-lesson').value||'').trim();
-  const title=(document.getElementById('dict-add-title').value||'').trim();
-  const items=(document.getElementById('dict-add-items').value||'').split('\n').map(l=>l.trim()).filter(Boolean);
+  const title=(document.getElementById('dict-add-setname').value||'').trim();
   const err=document.getElementById('dict-add-err');
   if(!lesson){err.textContent='請填寫課文名稱';return;}
-  if(!title){err.textContent='請填寫段落名稱';return;}
-  if(!items.length){err.textContent='請輸入至少一項默書內容';return;}
+  if(!title){err.textContent='請填寫默書表名稱';return;}
+  const type=_editingDictId
+    ?((G.my_dictation||[]).find(s=>s.id===_editingDictId)||{}).type||'sentences'
+    :_dictFormType;
+  const idBase=_editingDictId||'mydict_'+Date.now();
+  let newSet;
+  if(type==='chars'||type==='sentences'){
+    const rawItems=(document.getElementById('dict-add-items').value||'').split('\n').map(l=>l.trim()).filter(Boolean);
+    if(!rawItems.length){err.textContent='請輸入至少一項內容';return;}
+    newSet={id:idBase,lesson,title,type,items:rawItems.map((text,i)=>({id:`${idBase}_i${i}`,text}))};
+  } else {
+    _syncParasFromDOM();
+    const validParas=_dictParas.filter(p=>p.text.trim());
+    if(!validParas.length){err.textContent='請至少輸入一段內容';return;}
+    const paragraphs=validParas.map((p,pi)=>({
+      id:`${idBase}_p${pi}`,label:p.label,
+      sentences:p.text.split('\n').map(l=>l.trim()).filter(Boolean)
+        .map((text,si)=>({id:`${idBase}_p${pi}_s${si}`,text}))
+    }));
+    const sentItems=paragraphs.flatMap(p=>p.sentences);
+    if(type==='mixed'){
+      const rawWords=(document.getElementById('dict-add-words').value||'').split('\n').map(l=>l.trim()).filter(Boolean);
+      if(!rawWords.length){err.textContent='請輸入至少一個詞語';return;}
+      const words=rawWords.map((text,i)=>({id:`${idBase}_w${i}`,text}));
+      newSet={id:idBase,lesson,title,type,words,paragraphs,items:[...words,...sentItems]};
+    } else {
+      newSet={id:idBase,lesson,title,type,paragraphs,items:sentItems};
+    }
+  }
   if(!G.my_dictation) G.my_dictation=[];
   if(_editingDictId){
     const idx=G.my_dictation.findIndex(s=>s.id===_editingDictId);
-    if(idx>=0) G.my_dictation[idx]={...G.my_dictation[idx],lesson,title,items};
+    if(idx>=0) G.my_dictation[idx]=newSet;
     _editingDictId=null;
   } else {
-    G.my_dictation.push({id:'mydict_'+Date.now(), lesson, title, items});
+    G.my_dictation.push(newSet);
   }
   Store.save();
   hideDictAddForm();
@@ -4552,57 +4779,20 @@ function saveNewDictSet(){
 }
 
 function deleteMyDictSet(id){
-  if(!confirm('確定刪除這個段落？')) return;
+  if(!confirm('確定刪除這個默書表？')) return;
   G.my_dictation=(G.my_dictation||[]).filter(s=>s.id!==id);
   Store.save();
   _renderDictPicker();
 }
 
-let _dictStartOrdered=[];
-let _dictStartLesson='';
 
-function launchFullLesson(lesson){
-  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
-  const sets=all.filter(s=>s.lesson===lesson);
-  if(!sets.length) return;
-  const vocab=sets.filter(s=>(s.title||'').includes('詞語'));
-  const passages=sets.filter(s=>!(s.title||'').includes('詞語'));
-  _dictStartOrdered=[...vocab,...passages];
-  _dictStartLesson=lesson;
-  document.getElementById('dict-picker-view').style.display='none';
-  document.getElementById('dict-start-view').style.display='';
-  document.getElementById('dict-start-lesson-name').textContent=lesson;
-  const el=document.getElementById('dict-start-list');
-  el.innerHTML='<div class="tsa-cat-grid">'+
-    _dictStartOrdered.map((s,i)=>{
-      const remaining=_dictStartOrdered.slice(i).flatMap(x=>x.items).length;
-      const icon=(s.title||'').includes('詞語')?'📝':'📄';
-      return `<button class="tsa-cat-btn" onclick="launchFromSegment(${i})">${icon} 從「${s.title}」起<span style="opacity:.6;font-size:.75em;margin-left:4px">（${remaining}項）</span></button>`;
-    }).join('')+
-  '</div>';
-}
+let _dictMode='paper';
 
-function launchFromSegment(startIdx){
-  if(!_dictStartOrdered.length) return;
-  const ordered=_dictStartOrdered.slice(startIdx);
-  const items=ordered.flatMap(s=>s.items.map((text,i)=>({id:s.id+'_i'+i,text})));
-  const label=startIdx===0?'全課':'從「'+_dictStartOrdered[startIdx].title+'」起';
-  closeModal('modal-dictation');
-  startDictation(_dictStartLesson+' · '+label, items, false);
-}
-
-function hideDictStartView(){
-  document.getElementById('dict-start-view').style.display='none';
-  document.getElementById('dict-picker-view').style.display='';
-}
-
-function launchDictationSet(setId){
-  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
-  const set=all.find(s=>s.id===setId);
-  if(!set) return;
-  closeModal('modal-dictation');
-  const items=set.items.map((text,i)=>({id:set.id+'_i'+i, text}));
-  startDictation((set.lesson?set.lesson+' · ':'')+set.title, items, false);
+function setDictMode(mode){
+  _dictMode=mode;
+  document.getElementById('dict-mode-paper').classList.toggle('dict-mode-active',mode==='paper');
+  document.getElementById('dict-mode-type').classList.toggle('dict-mode-active',mode==='type');
+  loadDictItem(D.index);
 }
 
 function startDictation(title, items, reviewing){
@@ -4611,6 +4801,8 @@ function startDictation(title, items, reviewing){
   document.getElementById('dict-mod-name').textContent='🖊️ '+title;
   document.getElementById('dict-live-xp').textContent=0;
   document.getElementById('dict-live-coins').textContent=0;
+  document.getElementById('dict-mode-paper').classList.toggle('dict-mode-active',_dictMode==='paper');
+  document.getElementById('dict-mode-type').classList.toggle('dict-mode-active',_dictMode==='type');
   showScreen('screen-dictation');
   loadDictItem(0);
 }
@@ -4621,11 +4813,44 @@ function loadDictItem(i){
   document.getElementById('dict-prog').textContent=`${i+1} / ${D.items.length}`;
   document.getElementById('dict-answer-text').textContent=it.text;
   document.getElementById('dict-answer-panel').classList.add('hidden');
-  document.getElementById('dict-reveal-btn').classList.remove('hidden');
   document.getElementById('dict-selfcheck').classList.add('hidden');
   document.getElementById('dict-next-btn').classList.add('hidden');
-  document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。';
+  if(_dictMode==='type'){
+    document.getElementById('dict-reveal-btn').classList.add('hidden');
+    document.getElementById('dict-typing-area').style.display='';
+    document.getElementById('dict-type-input').value='';
+    document.getElementById('dict-typing-result').classList.add('hidden');
+    document.getElementById('dict-play-hint').textContent='聽清楚後，喺下面打入答案：';
+  } else {
+    document.getElementById('dict-reveal-btn').classList.remove('hidden');
+    document.getElementById('dict-typing-area').style.display='none';
+    document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。';
+  }
   playDictAudio('yue');
+}
+
+function normDictText(s){
+  return (s||'').trim().toLowerCase()
+    .replace(/\s*([，。？！、：；「」』【】（）—…·,!?;:'"()\[\]])\s*/g,'$1')
+    .replace(/\s+/g,' ');
+}
+
+function submitTypingAnswer(){
+  const it=D.items[D.index];
+  const input=(document.getElementById('dict-type-input')||{value:''}).value;
+  const correct=normDictText(it.text)===normDictText(input);
+  const resultEl=document.getElementById('dict-typing-result');
+  resultEl.classList.remove('hidden');
+  if(correct){
+    resultEl.innerHTML='<div class="dict-type-correct">✓ 啱哂！</div>';
+  } else {
+    resultEl.innerHTML=`<div class="dict-type-wrong">✗ 唔啱</div>
+      <div style="margin-top:6px;font-size:.85rem;color:var(--text-dim)">📖 正確答案：</div>
+      <div class="dict-answer-text" style="margin-top:4px">${it.text}</div>`;
+  }
+  document.getElementById('dict-answer-panel').classList.remove('hidden');
+  document.getElementById('dict-typing-area').style.display='none';
+  markDict(correct);
 }
 
 function playDictAudio(mode){

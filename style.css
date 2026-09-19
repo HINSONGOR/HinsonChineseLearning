@@ -2162,6 +2162,65 @@ u.synword-ul {
   gap: 10px;
 }
 
+/* ── Dictation v2 additions ─────────────────────── */
+/* Mode toggle */
+.dict-mode-toggle{display:flex;gap:6px;justify-content:center;margin-bottom:4px;}
+.dict-mode-btn{padding:5px 18px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text-dim);cursor:pointer;font-size:.88rem;font-family:var(--font-cn);transition:all .15s;}
+.dict-mode-active{background:var(--btn-green);color:#fff;border-color:var(--btn-green);}
+
+/* Typing input area */
+.dict-typing-input{width:100%;padding:12px;border-radius:10px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:var(--text-main);font-size:1.1rem;font-family:var(--font-cn);resize:vertical;margin-bottom:8px;}
+.dict-typing-input:focus{outline:none;border-color:var(--btn-green);}
+.dict-type-correct{color:#66BB6A;font-size:1.2rem;font-weight:700;text-align:center;padding:8px;}
+.dict-type-wrong{color:#EF5350;font-size:1.05rem;font-weight:700;text-align:center;padding:4px;}
+
+/* Picker — lesson sets wrapper */
+.dict-lesson-sets{margin-bottom:14px;}
+
+/* Picker — passage/mixed set card */
+.dict-set-card{border:1px solid var(--card-border);border-radius:12px;padding:12px;margin-bottom:8px;background:var(--card-bg);}
+.dict-set-card-own{border-color:var(--card-border2);}
+.dict-set-card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.dict-set-title{font-weight:700;font-size:.95rem;color:var(--text-main);}
+.dict-set-meta{font-size:.78rem;color:var(--text-dim);}
+.dict-set-actions{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.dict-rand-select{padding:5px 8px;border-radius:8px;border:1px solid var(--card-border);background:var(--bg-panel);color:var(--text-main);font-size:.85rem;font-family:var(--font-cn);}
+.dict-action-btn{padding:5px 12px;border-radius:8px;border:none;color:#fff;cursor:pointer;font-size:.82rem;font-family:var(--font-cn);font-weight:600;}
+.dict-rand-btn{background:var(--btn-gold);}
+.dict-all-btn{background:var(--btn-green);}
+.dict-action-btn:hover{filter:brightness(1.12);}
+
+/* Picker — simple (chars/sentences) card */
+.dict-simple-card{display:flex;flex-direction:column;gap:4px;margin-bottom:6px;}
+.dict-simple-card .tsa-cat-btn{width:100%;}
+
+/* Picker — segment grid section */
+.dict-para-grid-section{margin-bottom:12px;}
+.dict-para-sec-title{font-size:.8rem;color:var(--text-dim);margin:4px 0 8px;font-weight:600;}
+.dict-para-block-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;}
+.dict-para-block{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;border-radius:12px;border:2px solid var(--card-border);background:var(--card-bg);color:var(--text-main);cursor:pointer;font-size:.88rem;font-weight:700;text-align:center;min-height:72px;transition:all .15s;font-family:var(--font-cn);}
+.dict-para-block:hover{border-color:var(--btn-green);background:rgba(76,175,80,.18);color:#90EE90;}
+.dict-para-cnt{display:block;font-size:.72rem;font-weight:400;color:var(--text-dim);margin-top:4px;}
+
+/* Add/edit form */
+.dict-form-lbl{font-size:.82rem;color:var(--text-dim);display:block;margin:10px 0 4px;}
+.dict-form-input{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--card-border);background:rgba(255,255,255,.06);color:var(--text-main);font-size:.95rem;font-family:var(--font-cn);margin-bottom:2px;}
+.dict-form-ta{width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--card-border);background:rgba(255,255,255,.06);color:var(--text-main);font-size:.88rem;resize:vertical;font-family:var(--font-cn);margin-bottom:4px;}
+.dict-form-input:focus,.dict-form-ta:focus{outline:none;border-color:var(--btn-green);}
+
+/* Paragraph builder */
+.dict-para-entry{border:1px solid var(--card-border);border-radius:10px;padding:10px;margin-bottom:10px;background:rgba(255,255,255,.04);}
+.dict-para-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.dict-para-lbl{font-weight:700;color:var(--text-gold);font-size:.88rem;}
+.dict-para-del{background:none;border:1px solid rgba(239,83,80,.5);color:#EF5350;border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer;font-family:var(--font-cn);}
+.dict-para-del:hover{background:rgba(239,83,80,.15);}
+
+/* Paste helper */
+.dict-paste-helper{border-top:1px dashed rgba(255,255,255,.12);padding-top:10px;}
+.dict-paste-toggle{background:none;border:1px dashed rgba(165,214,167,.4);color:var(--text-dim);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.82rem;width:100%;font-family:var(--font-cn);}
+.dict-paste-toggle:hover{border-color:var(--text-dim);}
+
+/* Gacha */
 /* ── Gacha Machine ───────────────────────────────── */
 .mc-gacha{background:linear-gradient(135deg,#E65100,#F57F17,#BF360C);background-size:200%;animation:gacha-shimmer 3s linear infinite;border:2px solid #FFD54F!important;}
 @keyframes gacha-shimmer{from{background-position:0%}to{background-position:200%}}

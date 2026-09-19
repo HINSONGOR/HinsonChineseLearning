@@ -418,12 +418,24 @@
     <div class="quiz-questions-area">
 
       <div class="q-card dict-card">
+        <div class="dict-mode-toggle">
+          <button id="dict-mode-paper" class="dict-mode-btn dict-mode-active" onclick="setDictMode('paper')">✍️ 紙筆</button>
+          <button id="dict-mode-type" class="dict-mode-btn" onclick="setDictMode('type')">⌨️ 打字</button>
+        </div>
+
         <div class="dict-play-wrap">
           <div class="dict-lang-btns">
             <button class="dict-play-btn dict-lang-yue" onclick="playDictAudio('yue')" title="廣東話播放">🔊 廣東話</button>
             <button class="dict-play-btn dict-lang-pth" onclick="playDictAudio('pth')" title="普通話播放">🔊 普通話</button>
           </div>
           <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。</p>
+        </div>
+
+        <!-- 打字模式輸入區 -->
+        <div id="dict-typing-area" style="display:none">
+          <textarea id="dict-type-input" class="dict-typing-input" rows="3" placeholder="喺此打入答案…"></textarea>
+          <button class="big-btn green-btn" onclick="submitTypingAnswer()">✓ 提交答案</button>
+          <div id="dict-typing-result" class="hidden"></div>
         </div>
 
         <div class="dict-answer-panel hidden" id="dict-answer-panel">
@@ -657,31 +669,20 @@
       <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
     </div>
 
-    <!-- 揀起點視圖（全課用） -->
-    <div id="dict-start-view" style="display:none">
-      <h2 class="modal-title">📖 <span id="dict-start-lesson-name"></span></h2>
-      <p class="tsa-cat-desc">從哪一段開始默書？</p>
-      <div id="dict-start-list"></div>
-      <button class="big-btn grey-btn mt8" onclick="hideDictStartView()">返回</button>
-    </div>
-
     <!-- 新增/修改默書視圖 -->
     <div id="dict-add-view" style="display:none">
       <h2 class="modal-title" id="dict-add-title-label">➕ 新增默書</h2>
-      <div style="text-align:left">
-        <div class="dict-type-row">
-          <button id="dict-type-text" class="dict-type-btn dict-type-active" onclick="setDictType('text')">📄 段落</button>
-          <button id="dict-type-vocab" class="dict-type-btn" onclick="setDictType('vocab')">📝 詞語</button>
-        </div>
-        <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">課文名稱（例：竹節人）</label>
-        <input id="dict-add-lesson" type="text" placeholder="課文名稱" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:10px">
-        <label id="dict-seg-label" style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">段落名稱（例：第一段）</label>
-        <input id="dict-add-title" type="text" placeholder="段落名稱" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:10px">
-        <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">默書內容（每行一項）</label>
-        <textarea id="dict-add-items" rows="6" placeholder="每行一項句子" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.95rem;resize:vertical;font-family:inherit;margin-bottom:4px"></textarea>
-        <p id="dict-add-err" style="color:#ff6b6b;font-size:.85rem;min-height:18px;margin-bottom:8px"></p>
+      <div style="text-align:left;overflow-y:auto;max-height:62vh;padding-right:2px">
+        <label class="dict-form-lbl">課文名稱（例：竹節人）</label>
+        <input id="dict-add-lesson" type="text" placeholder="課文名稱" class="dict-form-input">
+        <label class="dict-form-lbl">默書表名稱（例：生字、全文、第一段）</label>
+        <input id="dict-add-setname" type="text" placeholder="默書表名稱" class="dict-form-input">
+        <label class="dict-form-lbl">類型</label>
+        <div id="dict-type-row" class="dict-type-row"></div>
+        <div id="dict-form-body"></div>
+        <p id="dict-add-err" style="color:#ff6b6b;font-size:.85rem;min-height:18px;margin:4px 0 8px"></p>
       </div>
-      <button class="big-btn" id="dict-save-btn" onclick="saveNewDictSet()">💾 新增段落</button>
+      <button class="big-btn" id="dict-save-btn" onclick="saveNewDictSet()">💾 新增</button>
       <button class="big-btn grey-btn mt8" onclick="hideDictAddForm()">返回</button>
     </div>
 
@@ -775,7 +776,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=59"></script>
+<script src="app.js?v=60"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
