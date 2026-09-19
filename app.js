@@ -4960,7 +4960,7 @@ function loadDictItem(i){
       nsBtn.onclick=advanceDict;
     }
   }
-  playDictAudio('yue');
+  playDictAudio('pth');
 }
 
 function normDictText(s){
