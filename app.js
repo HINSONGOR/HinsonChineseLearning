@@ -4345,7 +4345,13 @@ function _renderDictPicker(){
   all.forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
   const lessons=Object.entries(byLesson);
   body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
-    <div class="dict-lesson-title">📖 ${lesson}</div>
+    <div class="dict-lesson-title">
+      📖 ${lesson}
+      <span class="dict-lesson-actions">
+        ${sets.length>1?`<button class="dict-lesson-play-btn" onclick="launchFullLesson(this.dataset.lesson)" data-lesson="${lesson}">▶ 全課</button>`:''}
+        <button class="dict-lesson-add-btn" onclick="showDictAddForm(null,this.dataset.lesson)" data-lesson="${lesson}">➕ 加段</button>
+      </span>
+    </div>
     <div class="tsa-cat-grid">
       ${sets.map(s=> myIds.has(s.id) ? `
         <div class="dict-my-card">
@@ -4358,12 +4364,31 @@ function _renderDictPicker(){
         `<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`
       ).join('')}
     </div>
-  `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容</p>';
+  `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容，點「➕ 新增我的默書」開始！</p>';
 }
 
 let _editingDictId=null;
+let _dictType='text';
 
-function showDictAddForm(id){
+function setDictType(type){
+  _dictType=type;
+  document.getElementById('dict-type-text').classList.toggle('dict-type-active',type==='text');
+  document.getElementById('dict-type-vocab').classList.toggle('dict-type-active',type==='vocab');
+  const segLabel=document.getElementById('dict-seg-label');
+  const titleInput=document.getElementById('dict-add-title');
+  const itemsTA=document.getElementById('dict-add-items');
+  if(type==='vocab'){
+    segLabel.textContent='詞語組名稱';
+    if(!titleInput.value||titleInput.value.match(/^第[一二三四五六七八九十百]+段$/)) titleInput.value='重點詞語';
+    itemsTA.placeholder='每行一個詞語\n例：\n威風\n對峙\n沮喪\n精神煥發';
+  } else {
+    segLabel.textContent='段落名稱（例：第一段）';
+    if(titleInput.value==='重點詞語') titleInput.value='';
+    itemsTA.placeholder='每行一項句子\n例：\n婷婷在幫媽媽清理雜物的時候，\n扔掉了那把老藤椅。';
+  }
+}
+
+function showDictAddForm(id, presetLesson){
   _editingDictId=id||null;
   document.getElementById('dict-picker-view').style.display='none';
   document.getElementById('dict-add-view').style.display='';
@@ -4374,13 +4399,16 @@ function showDictAddForm(id){
       document.getElementById('dict-add-lesson').value=set.lesson||'';
       document.getElementById('dict-add-title').value=set.title||'';
       document.getElementById('dict-add-items').value=(set.items||[]).join('\n');
+      const isVocab=(set.title||'').includes('詞語');
+      setDictType(isVocab?'vocab':'text');
     }
     document.getElementById('dict-add-title-label').textContent='✏️ 修改默書';
     document.getElementById('dict-save-btn').textContent='💾 儲存修改';
   } else {
-    document.getElementById('dict-add-lesson').value='';
+    document.getElementById('dict-add-lesson').value=presetLesson||'';
     document.getElementById('dict-add-title').value='';
     document.getElementById('dict-add-items').value='';
+    setDictType('text');
     document.getElementById('dict-add-title-label').textContent='➕ 新增默書';
     document.getElementById('dict-save-btn').textContent='💾 新增段落';
   }
@@ -4418,6 +4446,19 @@ function deleteMyDictSet(id){
   G.my_dictation=(G.my_dictation||[]).filter(s=>s.id!==id);
   Store.save();
   _renderDictPicker();
+}
+
+function launchFullLesson(lesson){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const sets=all.filter(s=>s.lesson===lesson);
+  if(!sets.length) return;
+  // 詞語先，段落後
+  const vocab=sets.filter(s=>(s.title||'').includes('詞語'));
+  const passages=sets.filter(s=>!(s.title||'').includes('詞語'));
+  const ordered=[...vocab,...passages];
+  const items=ordered.flatMap(s=>s.items.map((text,i)=>({id:s.id+'_i'+i, text})));
+  closeModal('modal-dictation');
+  startDictation(lesson+' · 全課', items, false);
 }
 
 function launchDictationSet(setId){

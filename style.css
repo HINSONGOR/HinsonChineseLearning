@@ -2004,8 +2004,50 @@ u.synword-ul {
   color: var(--text-gold);
   text-align: left;
   margin: 14px 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .dict-lesson-title:first-child { margin-top: 0; }
+.dict-lesson-actions { display:flex; gap:4px; margin-left:auto; }
+.dict-lesson-add-btn, .dict-lesson-play-btn {
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-cn);
+  transition: all 0.15s;
+}
+.dict-lesson-add-btn {
+  background: rgba(91,196,245,0.12);
+  color: #5bc4f5;
+  border: 1px solid rgba(91,196,245,0.25);
+}
+.dict-lesson-add-btn:hover { background: rgba(91,196,245,0.25); }
+.dict-lesson-play-btn {
+  background: rgba(93,204,122,0.12);
+  color: #5dcc7a;
+  border: 1px solid rgba(93,204,122,0.25);
+}
+.dict-lesson-play-btn:hover { background: rgba(93,204,122,0.25); }
+.dict-type-row { display:flex; gap:6px; margin-bottom:12px; }
+.dict-type-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-dim);
+  font-size: .9rem;
+  font-family: var(--font-cn);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.dict-type-active {
+  border-color: var(--text-gold);
+  color: var(--text-gold);
+  background: rgba(245,200,66,0.1);
+}
 
 /* custom dictation set card with edit/delete */
 .dict-my-card {
