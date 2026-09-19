@@ -4876,12 +4876,12 @@ function _spellPunct(text){
     .replace(/；/g,'，分號，')
     .replace(/「/g,'，開引號，')
     .replace(/」/g,'，關引號，')
-    .replace(/『/g,'，開引號，')
-    .replace(/』/g,'，關引號，')
-    .replace(/（/g,'，左括號，')
-    .replace(/）/g,'，右括號，')
+    .replace(/『/g,'，開雙引號，')
+    .replace(/』/g,'，關雙引號，')
+    .replace(/（/g,'，開括號，')
+    .replace(/）/g,'，關括號，')
     .replace(/—{1,2}/g,'，破折號，')
-    .replace(/[…⋯]/g,'，省略號，');
+    .replace(/[…⋯]/g,'，刪節號，');
 }
 
 /* 按句內標點拆分分句（保留標點在分句尾） */
