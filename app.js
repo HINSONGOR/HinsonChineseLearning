@@ -4894,11 +4894,13 @@ function _splitClauses(text){
 function loadDictItem(i){
   const it=D.items[i];
   if(!it) return;
+  const isLast=(i===D.items.length-1);
   document.getElementById('dict-prog').textContent=`${i+1} / ${D.items.length}`;
   document.getElementById('dict-answer-text').textContent=it.text;
   document.getElementById('dict-answer-panel').classList.add('hidden');
   document.getElementById('dict-selfcheck').classList.add('hidden');
   document.getElementById('dict-next-btn').classList.add('hidden');
+  document.getElementById('dict-final-panel').classList.add('hidden');
 
   /* 分句播放區 */
   const clauses=_splitClauses(it.text);
@@ -4916,15 +4918,27 @@ function loadDictItem(i){
   }
 
   if(_dictMode==='type'){
-    document.getElementById('dict-reveal-btn').classList.add('hidden');
+    /* 打字模式：每句逐一提交 */
     document.getElementById('dict-typing-area').style.display='';
     document.getElementById('dict-type-input').value='';
     document.getElementById('dict-typing-result').classList.add('hidden');
     document.getElementById('dict-play-hint').textContent='聽清楚後，喺下面打入答案：';
+    document.getElementById('dict-repeat-btn').style.display='none';
+    document.getElementById('dict-next-sentence-btn').style.display='none';
   } else {
-    document.getElementById('dict-reveal-btn').classList.remove('hidden');
+    /* 紙筆模式：聽 → 寫 → 下一句，最後顯示全部答案 */
     document.getElementById('dict-typing-area').style.display='none';
-    document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。';
+    document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。';
+    document.getElementById('dict-repeat-btn').style.display='';
+    const nsBtn=document.getElementById('dict-next-sentence-btn');
+    nsBtn.style.display='';
+    if(isLast){
+      nsBtn.textContent='✅ 默好了，顯示答案';
+      nsBtn.onclick=showFinalDictAnswer;
+    } else {
+      nsBtn.textContent='下一句 →';
+      nsBtn.onclick=advanceDict;
+    }
   }
   playDictAudio('yue');
 }
@@ -4969,8 +4983,42 @@ function playClause(clauseIdx, mode){
 
 function revealDictAnswer(){
   document.getElementById('dict-answer-panel').classList.remove('hidden');
-  document.getElementById('dict-reveal-btn').classList.add('hidden');
   document.getElementById('dict-selfcheck').classList.remove('hidden');
+}
+
+function showFinalDictAnswer(){
+  document.getElementById('dict-repeat-btn').style.display='none';
+  document.getElementById('dict-next-sentence-btn').style.display='none';
+  document.getElementById('dict-final-text').textContent=D.items.map(it=>it.text).join('\n');
+  document.getElementById('dict-final-panel').classList.remove('hidden');
+  document.getElementById('dict-selfcheck').classList.remove('hidden');
+}
+
+function markDictFinal(isCorrect){
+  document.getElementById('dict-selfcheck').classList.add('hidden');
+  D.items.forEach((it)=>{
+    G.totalAnswered++;
+    const mst=G.stats.dictation; if(mst) mst.answered++;
+    if(isCorrect){
+      D.correct++; G.totalCorrect++;
+      if(mst) mst.correct++;
+      const xpEarn=XP_TABLE.dictation, coinEarn=COIN_TABLE.dictation;
+      addXP(xpEarn); addCoins(coinEarn);
+      D.sessionXP+=xpEarn; D.sessionCoins+=coinEarn;
+      if(D.reviewing){ G.wrongRetryCorrect=(G.wrongRetryCorrect||0)+1; G.wrongQuestions=G.wrongQuestions.filter(w=>w.id!==it.id); }
+    } else {
+      D.wrong++;
+      const exists=G.wrongQuestions.find(w=>w.id===it.id);
+      if(!exists) G.wrongQuestions.push({id:it.id, type:'dictation', text:it.text, setTitle:D.title, wrongAt:Date.now()});
+    }
+  });
+  document.getElementById('dict-live-xp').textContent=D.sessionXP;
+  document.getElementById('dict-live-coins').textContent=D.sessionCoins;
+  if(isCorrect){ sfx('correct'); sfx('coin'); } else { sfx('wrong'); }
+  Store.save();
+  updateDashboard();
+  checkBadges();
+  endDictation();
 }
 
 function markDict(isCorrect){
