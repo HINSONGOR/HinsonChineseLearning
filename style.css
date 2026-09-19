@@ -1882,6 +1882,21 @@ u.synword-ul {
   text-decoration-color: #5bc4f5;
 }
 
+/* ── Quiz language toggle (廣/普) ─────────────────────── */
+.lang-toggle-btn {
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  color: var(--text-dim);
+  border-radius: 8px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-cn);
+  white-space: nowrap;
+}
+.lang-toggle-btn:hover { border-color: #ffb432; color: #ffb432; }
+
 /* ── Per-session timer toggle button ─────────────────── */
 .timer-toggle-btn {
   background: rgba(255,255,255,0.07);

@@ -3871,6 +3871,12 @@ let G = {
 
 /* quiz session (not saved) */
 let Q = { module:'', questions:[], index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:false };
+let quizLang = 'zh-HK';
+function toggleQuizLang(){
+  quizLang = quizLang==='zh-HK' ? 'zh-CN' : 'zh-HK';
+  const btn=document.getElementById('lang-toggle-btn');
+  if(btn) btn.textContent = quizLang==='zh-HK' ? '🌐 廣' : '🌐 普';
+}
 
 /* dictation session (not saved) */
 let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionCoins:0, reviewing:false, startTime:0 };
@@ -4044,7 +4050,7 @@ function speakText(type){
   if(type==='passage' && q?.passage) text=q.passage.title+' '+q.passage.text;
   if(type==='question' && q) text=q.text;
   if(type==='explanation' && q) text=q.expl.replace(/<[^>]*>/g,'');
-  if(text) Speech.speak(text);
+  if(text) Speech.speak(text, quizLang);
 }
 
 /* ============================================================
@@ -4377,6 +4383,8 @@ function buildQuestions(type){
 }
 
 function startQuiz(type, questions, reviewing){
+  quizLang='zh-HK';
+  const lb=document.getElementById('lang-toggle-btn'); if(lb) lb.textContent='🌐 廣';
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
@@ -4553,7 +4561,7 @@ function loadQuestion(i){
         btn.className='opt-btn';
         const eng=(Q.module==='fillin'||Q.module==='fillin2')?'':(WORD_ENG[opt]||'');
         btn.innerHTML=`<span class="opt-label">${'ABCDE'[idx]}</span><span class="opt-text">${opt}${eng?`<span class="opt-eng">${eng}</span>`:''}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
-        btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt); return; } checkAnswer(idx); };
+        btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt,quizLang); return; } checkAnswer(idx); };
         og.appendChild(btn);
       });
     } else if(mode==='char'){
@@ -4583,7 +4591,7 @@ function loadQuestion(i){
       const btn=document.createElement('button');
       btn.className='opt-btn';
       btn.innerHTML=`<span class="opt-label">${'ABCDE'[idx]}</span><span class="opt-text">${opt}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
-      btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt); return; } checkAnswer(idx); };
+      btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt,quizLang); return; } checkAnswer(idx); };
       og.appendChild(btn);
     });
   }
