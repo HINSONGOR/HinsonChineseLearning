@@ -4338,10 +4338,24 @@ function launchModule(type){
 /* ============================================================
    默書園地（DICTATION）— 睇螢幕聽讀、紙筆書寫，自己核對
    ============================================================ */
-function openDictationPicker(){
+let _customDictation=null;
+async function _loadCustomDictation(){
+  if(_customDictation!==null) return;
+  _customDictation=[];
+  if(!db&&!initDB()) return;
+  try{
+    const {data}=await db.from('player_state').select('state_json').eq('player_id','__dict_admin__').single();
+    if(Array.isArray(data?.state_json?.dictation)) _customDictation=data.state_json.dictation;
+  }catch(e){}
+}
+async function openDictationPicker(){
+  openModal('modal-dictation');
   const body=document.getElementById('dictation-set-list');
+  body.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:10px 0">載入中…</p>';
+  await _loadCustomDictation();
+  const all=[...(QB.dictation||[]),..._customDictation];
   const byLesson={};
-  (QB.dictation||[]).forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
+  all.forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
   const lessons=Object.entries(byLesson);
   body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
     <div class="dict-lesson-title">📖 ${lesson}</div>
@@ -4349,7 +4363,6 @@ function openDictationPicker(){
       ${sets.map(s=>`<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`).join('')}
     </div>
   `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容</p>';
-  openModal('modal-dictation');
 }
 
 function launchDictationSet(setId){

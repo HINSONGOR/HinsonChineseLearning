@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>默書後台管理</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC',sans-serif;background:#1a2332;color:#e8dcc8;min-height:100vh;padding:20px}
+h1{text-align:center;font-size:1.6rem;margin-bottom:6px;color:#f5c842}
+.subtitle{text-align:center;color:#aaa;font-size:.85rem;margin-bottom:24px}
+
+/* password screen */
+#pw-screen{max-width:360px;margin:80px auto;background:#243040;border-radius:14px;padding:32px;text-align:center}
+#pw-screen h2{color:#f5c842;margin-bottom:20px}
+#pw-input{width:100%;padding:12px;border-radius:8px;border:1px solid #3a4a5a;background:#1a2332;color:#e8dcc8;font-size:1rem;text-align:center;letter-spacing:4px;margin-bottom:14px}
+#pw-btn{width:100%;padding:12px;border-radius:8px;border:none;background:#f5c842;color:#1a2332;font-size:1rem;font-weight:700;cursor:pointer}
+#pw-err{color:#ff6b6b;font-size:.85rem;margin-top:8px;min-height:18px}
+
+/* main */
+#main{display:none;max-width:860px;margin:0 auto}
+.card{background:#243040;border-radius:12px;padding:20px;margin-bottom:20px}
+.card h2{color:#f5c842;font-size:1.1rem;margin-bottom:16px;border-bottom:1px solid #3a4a5a;padding-bottom:8px}
+
+label{display:block;font-size:.85rem;color:#aaa;margin-bottom:4px;margin-top:12px}
+input[type=text],textarea,select{
+  width:100%;padding:10px 12px;border-radius:8px;border:1px solid #3a4a5a;
+  background:#1a2332;color:#e8dcc8;font-size:.95rem;font-family:inherit
+}
+textarea{resize:vertical;min-height:120px;line-height:1.6}
+input[type=text]:focus,textarea:focus{outline:2px solid #f5c842;border-color:transparent}
+
+.btn{padding:10px 20px;border-radius:8px;border:none;font-size:.95rem;font-weight:700;cursor:pointer;transition:.15s}
+.btn-gold{background:#f5c842;color:#1a2332}
+.btn-gold:hover{background:#ffd966}
+.btn-red{background:#c0392b;color:#fff}
+.btn-red:hover{background:#e74c3c}
+.btn-grey{background:#3a4a5a;color:#e8dcc8}
+.btn-grey:hover{background:#4a5a6a}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+
+/* sets list */
+.lesson-group{margin-bottom:18px}
+.lesson-name{font-size:1rem;font-weight:700;color:#f5c842;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.set-item{background:#1a2332;border-radius:8px;padding:12px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.set-info{flex:1;min-width:0}
+.set-title{font-weight:700;font-size:.95rem}
+.set-count{font-size:.8rem;color:#aaa;margin-top:2px}
+.set-preview{font-size:.78rem;color:#7a9ab0;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{color:#666;font-size:.9rem;text-align:center;padding:20px}
+
+.status{padding:10px 14px;border-radius:8px;font-size:.9rem;margin-top:12px;display:none}
+.status.ok{background:#1e4a2a;color:#5dcc7a;display:block}
+.status.err{background:#4a1e1e;color:#ff6b6b;display:block}
+
+#refresh-btn{float:right;font-size:.8rem;padding:5px 12px}
+.clear{clear:both}
+</style>
+</head>
+<body>
+
+<!-- 密碼畫面 -->
+<div id="pw-screen">
+  <h2>🔐 後台管理</h2>
+  <input id="pw-input" type="password" placeholder="輸入密碼" onkeydown="if(event.key==='Enter')checkPw()">
+  <button id="pw-btn" class="btn btn-gold" onclick="checkPw()">進入</button>
+  <div id="pw-err"></div>
+</div>
+
+<!-- 主介面 -->
+<div id="main">
+  <h1>✏️ 默書後台管理</h1>
+  <p class="subtitle">新增或刪除默書課文，儲存後學生 app 即時更新</p>
+
+  <!-- 新增 set -->
+  <div class="card">
+    <h2>➕ 新增默書段落</h2>
+    <label>課文名稱（同一課文用相同名稱）</label>
+    <input id="f-lesson" type="text" placeholder="例：竹節人">
+    <label>段落名稱</label>
+    <input id="f-title" type="text" placeholder="例：重點詞語 / 第一段 / 第二段">
+    <label>默書內容（每行一項：詞語或一個句子）</label>
+    <textarea id="f-items" placeholder="例：
+威風
+對峙
+沮喪
+做竹節人很簡單，
+找一截毛筆桿，
+鑽上一個眼。"></textarea>
+    <div class="row">
+      <button class="btn btn-gold" onclick="addSet()">💾 新增段落</button>
+      <button class="btn btn-grey" onclick="clearForm()">清除</button>
+    </div>
+    <div id="add-status" class="status"></div>
+  </div>
+
+  <!-- 現有內容 -->
+  <div class="card">
+    <h2>📚 現有自訂默書
+      <button id="refresh-btn" class="btn btn-grey" onclick="loadSets()">↻ 重新載入</button>
+    </h2>
+    <div class="clear"></div>
+    <div id="sets-list"><p class="empty">載入中…</p></div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
+const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
+const ADMIN_PW='hinson888';
+const ADMIN_ID='__dict_admin__';
+
+let db=null;
+let sets=[];
+
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v===ADMIN_PW){
+    document.getElementById('pw-screen').style.display='none';
+    document.getElementById('main').style.display='block';
+    db=supabase.createClient(SUPA_URL,SUPA_KEY);
+    loadSets();
+  } else {
+    document.getElementById('pw-err').textContent='密碼錯誤，請重試';
+  }
+}
+
+async function loadSets(){
+  document.getElementById('sets-list').innerHTML='<p class="empty">載入中…</p>';
+  try{
+    const {data,error}=await db.from('player_state').select('state_json').eq('player_id',ADMIN_ID).single();
+    sets=(data?.state_json?.dictation)||[];
+    renderSets();
+  }catch(e){
+    sets=[];
+    renderSets();
+  }
+}
+
+function renderSets(){
+  const el=document.getElementById('sets-list');
+  if(!sets.length){el.innerHTML='<p class="empty">尚未新增任何自訂默書內容</p>';return;}
+  const byLesson={};
+  sets.forEach(s=>{const l=s.lesson||'其他';if(!byLesson[l])byLesson[l]=[];byLesson[l].push(s);});
+  el.innerHTML=Object.entries(byLesson).map(([lesson,arr])=>`
+    <div class="lesson-group">
+      <div class="lesson-name">📖 ${lesson} <span style="color:#aaa;font-size:.8rem;font-weight:400">(${arr.length} 個段落)</span></div>
+      ${arr.map(s=>`
+        <div class="set-item">
+          <div class="set-info">
+            <div class="set-title">${s.title} <span style="color:#aaa;font-size:.8rem;font-weight:400">(${s.items.length} 項)</span></div>
+            <div class="set-preview">${s.items.slice(0,4).join('　')}${s.items.length>4?'…':''}</div>
+          </div>
+          <button class="btn btn-red" onclick="deleteSet('${s.id}')">刪除</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+async function saveToSupabase(){
+  const payload={dictation:sets};
+  const {error}=await db.from('player_state').upsert(
+    {player_id:ADMIN_ID,state_json:payload,updated_at:new Date().toISOString()},
+    {onConflict:'player_id'}
+  );
+  return !error;
+}
+
+function showStatus(id,ok,msg){
+  const el=document.getElementById(id);
+  el.className='status '+(ok?'ok':'err');
+  el.textContent=msg;
+  setTimeout(()=>{el.style.display='none';},3000);
+}
+
+async function addSet(){
+  const lesson=document.getElementById('f-lesson').value.trim();
+  const title=document.getElementById('f-title').value.trim();
+  const raw=document.getElementById('f-items').value;
+  const items=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  if(!lesson||!title||!items.length){
+    showStatus('add-status',false,'請填寫所有欄位，並輸入至少一項默書內容');return;
+  }
+  const id='cdict_'+Date.now();
+  sets.push({id,lesson,title,items});
+  const ok=await saveToSupabase();
+  if(ok){
+    showStatus('add-status',true,'✅ 段落已儲存！');
+    clearForm();
+    renderSets();
+  } else {
+    sets.pop();
+    showStatus('add-status',false,'❌ 儲存失敗，請重試');
+  }
+}
+
+async function deleteSet(id){
+  if(!confirm('確定刪除這個段落？')) return;
+  sets=sets.filter(s=>s.id!==id);
+  const ok=await saveToSupabase();
+  if(ok){renderSets();}
+  else{
+    showStatus('add-status',false,'❌ 刪除失敗，請重試');
+    loadSets();
+  }
+}
+
+function clearForm(){
+  ['f-lesson','f-title','f-items'].forEach(id=>document.getElementById(id).value='');
+}
+</script>
+</body>
+</html>
