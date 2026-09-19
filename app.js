@@ -4357,27 +4357,49 @@ function _renderDictPicker(){
   body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
     <div class="dict-lesson-title">📖 ${lesson}</div>
     <div class="tsa-cat-grid">
-      ${sets.map(s=>`
-        <div style="position:relative;display:inline-block">
+      ${sets.map(s=> myIds.has(s.id) ? `
+        <div class="dict-my-card">
           <button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>
-          ${myIds.has(s.id)?`<button onclick="deleteMyDictSet('${s.id}')" title="刪除" style="position:absolute;top:-5px;right:-5px;background:#c0392b;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:18px;padding:0;cursor:pointer">✕</button>`:''}
-        </div>`).join('')}
+          <div class="dict-my-actions">
+            <button class="dict-edit-btn" onclick="showDictAddForm('${s.id}')">✏️ 修改</button>
+            <button class="dict-del-btn" onclick="deleteMyDictSet('${s.id}')">🗑️ 刪除</button>
+          </div>
+        </div>` :
+        `<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`
+      ).join('')}
     </div>
   `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容</p>';
 }
 
-function showDictAddForm(){
+let _editingDictId=null;
+
+function showDictAddForm(id){
+  _editingDictId=id||null;
   document.getElementById('dict-picker-view').style.display='none';
   document.getElementById('dict-add-view').style.display='';
-  document.getElementById('dict-add-lesson').value='';
-  document.getElementById('dict-add-title').value='';
-  document.getElementById('dict-add-items').value='';
   document.getElementById('dict-add-err').textContent='';
+  if(id){
+    const set=(G.my_dictation||[]).find(s=>s.id===id);
+    if(set){
+      document.getElementById('dict-add-lesson').value=set.lesson||'';
+      document.getElementById('dict-add-title').value=set.title||'';
+      document.getElementById('dict-add-items').value=(set.items||[]).join('\n');
+    }
+    document.getElementById('dict-add-title-label').textContent='✏️ 修改默書';
+    document.getElementById('dict-save-btn').textContent='💾 儲存修改';
+  } else {
+    document.getElementById('dict-add-lesson').value='';
+    document.getElementById('dict-add-title').value='';
+    document.getElementById('dict-add-items').value='';
+    document.getElementById('dict-add-title-label').textContent='➕ 新增默書';
+    document.getElementById('dict-save-btn').textContent='💾 新增段落';
+  }
 }
 
 function hideDictAddForm(){
   document.getElementById('dict-picker-view').style.display='';
   document.getElementById('dict-add-view').style.display='none';
+  _editingDictId=null;
 }
 
 function saveNewDictSet(){
@@ -4389,7 +4411,13 @@ function saveNewDictSet(){
   if(!title){err.textContent='請填寫段落名稱';return;}
   if(!items.length){err.textContent='請輸入至少一項默書內容';return;}
   if(!G.my_dictation) G.my_dictation=[];
-  G.my_dictation.push({id:'mydict_'+Date.now(), lesson, title, items});
+  if(_editingDictId){
+    const idx=G.my_dictation.findIndex(s=>s.id===_editingDictId);
+    if(idx>=0) G.my_dictation[idx]={...G.my_dictation[idx],lesson,title,items};
+    _editingDictId=null;
+  } else {
+    G.my_dictation.push({id:'mydict_'+Date.now(), lesson, title, items});
+  }
   Store.save();
   hideDictAddForm();
   _renderDictPicker();

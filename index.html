@@ -657,9 +657,9 @@
       <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
     </div>
 
-    <!-- 新增默書視圖 -->
+    <!-- 新增/修改默書視圖 -->
     <div id="dict-add-view" style="display:none">
-      <h2 class="modal-title">➕ 新增默書</h2>
+      <h2 class="modal-title" id="dict-add-title-label">➕ 新增默書</h2>
       <div style="text-align:left">
         <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">課文名稱（例：竹節人）</label>
         <input id="dict-add-lesson" type="text" placeholder="課文名稱" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:10px">
@@ -669,7 +669,7 @@
         <textarea id="dict-add-items" rows="6" placeholder="每行一項&#10;例：&#10;威風&#10;對峙&#10;做竹節人很簡單。" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.95rem;resize:vertical;font-family:inherit;margin-bottom:4px"></textarea>
         <p id="dict-add-err" style="color:#ff6b6b;font-size:.85rem;min-height:18px;margin-bottom:8px"></p>
       </div>
-      <button class="big-btn" onclick="saveNewDictSet()">💾 儲存</button>
+      <button class="big-btn" id="dict-save-btn" onclick="saveNewDictSet()">💾 新增段落</button>
       <button class="big-btn grey-btn mt8" onclick="hideDictAddForm()">返回</button>
     </div>
 
@@ -763,7 +763,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=53"></script>
+<script src="app.js?v=54"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

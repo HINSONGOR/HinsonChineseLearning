@@ -2007,6 +2007,42 @@ u.synword-ul {
 }
 .dict-lesson-title:first-child { margin-top: 0; }
 
+/* custom dictation set card with edit/delete */
+.dict-my-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dict-my-card .tsa-cat-btn {
+  width: 100%;
+}
+.dict-my-actions {
+  display: flex;
+  gap: 4px;
+}
+.dict-my-actions button {
+  flex: 1;
+  padding: 5px 4px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-cn);
+  transition: all 0.15s;
+}
+.dict-edit-btn {
+  background: rgba(91,196,245,0.12);
+  color: #5bc4f5;
+  border-color: rgba(91,196,245,0.25);
+}
+.dict-edit-btn:hover { background: rgba(91,196,245,0.25); }
+.dict-del-btn {
+  background: rgba(192,57,43,0.12);
+  color: #e74c3c;
+  border-color: rgba(192,57,43,0.25);
+}
+.dict-del-btn:hover { background: rgba(192,57,43,0.25); }
+
 .dict-card {
   display: flex;
   flex-direction: column;
