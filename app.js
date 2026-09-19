@@ -5486,7 +5486,22 @@ function resetAllData(){
 }
 
 function confirmExitQuiz(){ openModal('modal-confirm-exit'); }
-function doExitQuiz(){ Timer.stop(); closeModal('modal-confirm-exit'); showScreen('screen-dashboard'); updateDashboard(); }
+function doExitQuiz(){
+  Timer.stop();
+  /* 記錄未完成的練習（至少答過1題才記） */
+  if(Q && Q.module && Q.startTime && Q.index>0){
+    const sessionSec=Math.round((Date.now()-Q.startTime)/1000);
+    G.dailyLog=G.dailyLog||[];
+    G.dailyLog.push({date:new Date().toISOString().slice(0,10), module:Q.module, questions:Q.index, correct:Q.correct, timeSec:sessionSec});
+    const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-90);
+    G.dailyLog=G.dailyLog.filter(r=>r.date>=cutoff.toISOString().slice(0,10));
+    Store.save();
+    updateStudyCheckin();
+  }
+  closeModal('modal-confirm-exit');
+  showScreen('screen-dashboard');
+  updateDashboard();
+}
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
