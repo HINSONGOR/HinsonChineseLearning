@@ -421,8 +421,11 @@
 
       <div class="q-card dict-card">
         <div class="dict-play-wrap">
-          <button class="dict-play-btn" id="dict-play-btn" onclick="playDictAudio()" title="點擊播放，可重複點擊">🔊</button>
-          <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。想再聽可以撳幾多次都得。</p>
+          <div class="dict-lang-btns">
+            <button class="dict-play-btn dict-lang-yue" onclick="playDictAudio('yue')" title="廣東話播放">🔊 廣東話</button>
+            <button class="dict-play-btn dict-lang-pth" onclick="playDictAudio('pth')" title="普通話播放">🔊 普通話</button>
+          </div>
+          <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。</p>
         </div>
 
         <div class="dict-answer-panel hidden" id="dict-answer-panel">
@@ -740,7 +743,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=48"></script>
+<script src="app.js?v=49"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

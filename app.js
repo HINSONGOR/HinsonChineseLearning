@@ -4024,14 +4024,15 @@ const BGM = {
    SPEECH SYNTHESIS
    ============================================================ */
 const Speech = {
-  speak(text){
+  speak(text, lang='zh-HK'){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang='zh-HK'; u.rate=0.85; u.pitch=1.05;
+    u.lang=lang; u.rate=0.85; u.pitch=1.05;
     const voices=window.speechSynthesis.getVoices();
-    const hk=voices.find(v=>v.lang==='zh-HK')||voices.find(v=>v.lang.startsWith('zh'))||null;
-    if(hk) u.voice=hk;
+    const root=lang.split('-')[0];
+    const v=voices.find(v=>v.lang===lang)||voices.find(v=>v.lang.startsWith(root))||null;
+    if(v) u.voice=v;
     window.speechSynthesis.speak(u);
   }
 };
@@ -4240,13 +4241,15 @@ function loadDictItem(i){
   document.getElementById('dict-reveal-btn').classList.remove('hidden');
   document.getElementById('dict-selfcheck').classList.add('hidden');
   document.getElementById('dict-next-btn').classList.add('hidden');
-  document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。想再聽可以撳幾多次都得。';
-  playDictAudio();
+  document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。';
+  playDictAudio('yue');
 }
 
-function playDictAudio(){
+function playDictAudio(mode){
   const it=D.items[D.index];
-  if(it) Speech.speak(it.text);
+  if(!it) return;
+  const lang = mode==='pth' ? 'zh-CN' : 'zh-HK';
+  Speech.speak(it.text, lang);
 }
 
 function revealDictAnswer(){
