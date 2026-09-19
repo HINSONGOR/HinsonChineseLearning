@@ -4510,7 +4510,11 @@ function _renderDictPicker(){
           .map(n=>`<option value="${n}">${n} 段</option>`).join('');
         const paraGrid=paras.map((p,pi)=>{
           const cnt=(p.sentences||[]).length;
-          return `<button class="dict-para-block" onclick="launchDictPara('${s.id}',${pi})">📄 ${p.label}<span class="dict-para-cnt">${cnt} 項</span></button>`;
+          return `<button class="dict-para-block" onclick="launchDictPara('${s.id}',${pi})">
+            <span class="dict-para-block-icon">📄</span>
+            <span class="dict-para-block-label">${p.label}</span>
+            <span class="dict-para-cnt">${cnt} 項</span>
+          </button>`;
         }).join('');
         return `<div class="dict-set-card${isOwn?' dict-set-card-own':''}">
             <div class="dict-set-card-hd">
@@ -4530,8 +4534,15 @@ function _renderDictPicker(){
           </div>`:''}`;
       }
       const cnt=(s.items||[]).length;
+      const startFn=cnt>1?`showDictItemPicker('${s.id}')`:`launchDictationSet('${s.id}')`;
       return `<div class="dict-simple-card${isOwn?' dict-set-card-own':''}">
-          <button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${icon} ${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${cnt} 項）</span></button>
+          <div class="dict-para-block-grid" style="margin-bottom:4px">
+            <button class="dict-para-block dict-para-block-launch" onclick="${startFn}">
+              <span class="dict-para-block-icon">${icon}</span>
+              <span class="dict-para-block-label">${s.title}</span>
+              <span class="dict-para-cnt">${cnt} 項</span>
+            </button>
+          </div>
           ${editDel}
         </div>`;
     }).join('');
@@ -4585,6 +4596,52 @@ function launchFullLesson(lesson){
   if(!sets.length) return;
   closeModal('modal-dictation');
   startDictation(lesson+' · 全課', sets.flatMap(s=>_flattenSet(s)), false);
+}
+
+/* --- 句子/生字類型的揀項器 --- */
+let _dictPickerSet=null;
+
+function showDictItemPicker(setId){
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const set=all.find(s=>s.id===setId);
+  if(!set) return;
+  const items=_flattenSet(set);
+  if(items.length<=1){
+    closeModal('modal-dictation');
+    startDictation((set.lesson?set.lesson+' · ':'')+set.title, items, false);
+    return;
+  }
+  _dictPickerSet=set;
+  document.getElementById('dict-picker-view').style.display='none';
+  document.getElementById('dict-start-view').style.display='';
+  document.getElementById('dict-start-title').textContent=(set.lesson?set.lesson+' · ':'')+set.title;
+  const el=document.getElementById('dict-start-list');
+  el.innerHTML='<div class="dict-para-block-grid">'+
+    items.map((it,i)=>{
+      const preview=it.text.length>16?it.text.slice(0,16)+'…':it.text;
+      const remaining=items.length-i;
+      return `<button class="dict-para-block" onclick="launchFromItem(${i})">
+        <span class="dict-para-block-icon">📄</span>
+        <span class="dict-para-block-label">${preview}</span>
+        <span class="dict-para-cnt">剩 ${remaining} 項</span>
+      </button>`;
+    }).join('')+
+  '</div>';
+}
+
+function launchFromItem(startIdx){
+  if(!_dictPickerSet) return;
+  const items=_flattenSet(_dictPickerSet).slice(startIdx);
+  const label=startIdx===0?'':' · 從第'+(startIdx+1)+'項';
+  const set=_dictPickerSet;
+  closeModal('modal-dictation');
+  startDictation((set.lesson?set.lesson+' · ':'')+set.title+label, items, false);
+}
+
+function hideDictStartView(){
+  document.getElementById('dict-start-view').style.display='none';
+  document.getElementById('dict-picker-view').style.display='';
+  _dictPickerSet=null;
 }
 
 /* --- 新增 / 修改表單 --- */

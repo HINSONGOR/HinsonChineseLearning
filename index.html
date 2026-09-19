@@ -669,6 +669,14 @@
       <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
     </div>
 
+    <!-- 揀起點視圖（句子／生字用） -->
+    <div id="dict-start-view" style="display:none">
+      <h2 class="modal-title">📄 <span id="dict-start-title"></span></h2>
+      <p class="tsa-cat-desc">從哪一項開始默書？（揀咗之後只做該項及之後嘅項目）</p>
+      <div id="dict-start-list"></div>
+      <button class="big-btn grey-btn mt8" onclick="hideDictStartView()">返回</button>
+    </div>
+
     <!-- 新增/修改默書視圖 -->
     <div id="dict-add-view" style="display:none">
       <h2 class="modal-title" id="dict-add-title-label">➕ 新增默書</h2>
@@ -776,7 +784,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=60"></script>
+<script src="app.js?v=61"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
