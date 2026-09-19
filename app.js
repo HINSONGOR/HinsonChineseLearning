@@ -4618,12 +4618,11 @@ function showDictItemPicker(setId){
   const el=document.getElementById('dict-start-list');
   el.innerHTML='<div class="dict-para-block-grid">'+
     items.map((it,i)=>{
-      const preview=it.text.length>16?it.text.slice(0,16)+'…':it.text;
       const remaining=items.length-i;
       return `<button class="dict-para-block" onclick="launchFromItem(${i})">
         <span class="dict-para-block-icon">📄</span>
-        <span class="dict-para-block-label">${preview}</span>
-        <span class="dict-para-cnt">剩 ${remaining} 項</span>
+        <span class="dict-para-block-label">第 ${i+1} 句</span>
+        <span class="dict-para-cnt">剩 ${remaining} 句</span>
       </button>`;
     }).join('')+
   '</div>';
@@ -4907,9 +4906,9 @@ function loadDictItem(i){
   D.clauses=clauses;
   const clauseEl=document.getElementById('dict-clauses');
   if(clauses.length>1){
-    clauseEl.innerHTML='<div class="dict-clause-lbl">逐句聆聽：</div>'+
+    clauseEl.innerHTML='<div class="dict-clause-lbl">逐段聆聽：</div>'+
       clauses.map((c,ci)=>
-        `<button class="dict-clause-btn" onclick="playClause(${ci},'yue')" title="${c}">▶ ${c}</button>`
+        `<button class="dict-clause-btn" onclick="playClause(${ci},'yue')">▶ 第 ${ci+1} 段</button>`
       ).join('');
     clauseEl.style.display='';
   } else {
