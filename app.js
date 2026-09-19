@@ -4458,7 +4458,7 @@ function _renderDictPicker(){
     <div class="dict-lesson-title">
       📖 ${lesson}
       <span class="dict-lesson-actions">
-        ${sets.length>1?`<button class="dict-lesson-play-btn" onclick="launchFullLesson(this.dataset.lesson)" data-lesson="${lesson}">▶ 全課</button>`:''}
+        <button class="dict-lesson-play-btn" onclick="launchFullLesson(this.dataset.lesson)" data-lesson="${lesson}">▶ 全課</button>
         <button class="dict-lesson-add-btn" onclick="showDictAddForm(null,this.dataset.lesson)" data-lesson="${lesson}">➕ 加段</button>
       </span>
     </div>
