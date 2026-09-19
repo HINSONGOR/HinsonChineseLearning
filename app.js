@@ -4558,17 +4558,42 @@ function deleteMyDictSet(id){
   _renderDictPicker();
 }
 
+let _dictStartOrdered=[];
+let _dictStartLesson='';
+
 function launchFullLesson(lesson){
   const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
   const sets=all.filter(s=>s.lesson===lesson);
   if(!sets.length) return;
-  // 詞語先，段落後
   const vocab=sets.filter(s=>(s.title||'').includes('詞語'));
   const passages=sets.filter(s=>!(s.title||'').includes('詞語'));
-  const ordered=[...vocab,...passages];
-  const items=ordered.flatMap(s=>s.items.map((text,i)=>({id:s.id+'_i'+i, text})));
+  _dictStartOrdered=[...vocab,...passages];
+  _dictStartLesson=lesson;
+  document.getElementById('dict-picker-view').style.display='none';
+  document.getElementById('dict-start-view').style.display='';
+  document.getElementById('dict-start-lesson-name').textContent=lesson;
+  const el=document.getElementById('dict-start-list');
+  el.innerHTML='<div class="tsa-cat-grid">'+
+    _dictStartOrdered.map((s,i)=>{
+      const remaining=_dictStartOrdered.slice(i).flatMap(x=>x.items).length;
+      const icon=(s.title||'').includes('詞語')?'📝':'📄';
+      return `<button class="tsa-cat-btn" onclick="launchFromSegment(${i})">${icon} 從「${s.title}」起<span style="opacity:.6;font-size:.75em;margin-left:4px">（${remaining}項）</span></button>`;
+    }).join('')+
+  '</div>';
+}
+
+function launchFromSegment(startIdx){
+  if(!_dictStartOrdered.length) return;
+  const ordered=_dictStartOrdered.slice(startIdx);
+  const items=ordered.flatMap(s=>s.items.map((text,i)=>({id:s.id+'_i'+i,text})));
+  const label=startIdx===0?'全課':'從「'+_dictStartOrdered[startIdx].title+'」起';
   closeModal('modal-dictation');
-  startDictation(lesson+' · 全課', items, false);
+  startDictation(_dictStartLesson+' · '+label, items, false);
+}
+
+function hideDictStartView(){
+  document.getElementById('dict-start-view').style.display='none';
+  document.getElementById('dict-picker-view').style.display='';
 }
 
 function launchDictationSet(setId){
