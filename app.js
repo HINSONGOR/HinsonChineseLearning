@@ -4878,8 +4878,8 @@ function _spellPunct(text){
     .replace(/」/g,'，右引號，')
     .replace(/『/g,'，左雙引號，')
     .replace(/』/g,'，右雙引號，')
-    .replace(/（/g,'，開括號，')
-    .replace(/）/g,'，關括號，')
+    .replace(/（/g,'，左括號，')
+    .replace(/）/g,'，右括號，')
     .replace(/—{1,2}/g,'，破折號，')
     .replace(/[…⋯]/g,'，刪節號，');
 }
