@@ -3999,6 +3999,7 @@ let G = {
   gachaHistory:[],
   gachaCost:300,
   settings:{ music:false, volume:0.3, sfx:true, timerMode:true },
+  my_dictation:[],
 };
 
 /* quiz session (not saved) */
@@ -4338,35 +4339,72 @@ function launchModule(type){
 /* ============================================================
    默書園地（DICTATION）— 睇螢幕聽讀、紙筆書寫，自己核對
    ============================================================ */
-let _customDictation=null;
-async function _loadCustomDictation(){
-  if(_customDictation!==null) return;
-  _customDictation=[];
-  if(!db&&!initDB()) return;
-  try{
-    const {data}=await db.from('player_state').select('state_json').eq('player_id','__dict_admin__').single();
-    if(Array.isArray(data?.state_json?.dictation)) _customDictation=data.state_json.dictation;
-  }catch(e){}
-}
-async function openDictationPicker(){
+function openDictationPicker(){
+  document.getElementById('dict-picker-view').style.display='';
+  document.getElementById('dict-add-view').style.display='none';
   openModal('modal-dictation');
+  _renderDictPicker();
+}
+
+function _renderDictPicker(){
   const body=document.getElementById('dictation-set-list');
-  body.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:10px 0">載入中…</p>';
-  await _loadCustomDictation();
-  const all=[...(QB.dictation||[]),..._customDictation];
+  const myDict=G.my_dictation||[];
+  const myIds=new Set(myDict.map(s=>s.id));
+  const all=[...(QB.dictation||[]),...myDict];
   const byLesson={};
   all.forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
   const lessons=Object.entries(byLesson);
   body.innerHTML = lessons.length ? lessons.map(([lesson,sets])=>`
     <div class="dict-lesson-title">📖 ${lesson}</div>
     <div class="tsa-cat-grid">
-      ${sets.map(s=>`<button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>`).join('')}
+      ${sets.map(s=>`
+        <div style="position:relative;display:inline-block">
+          <button class="tsa-cat-btn" onclick="launchDictationSet('${s.id}')">${s.title}<span style="opacity:.6;font-size:.75em;margin-left:4px">（${s.items.length}項）</span></button>
+          ${myIds.has(s.id)?`<button onclick="deleteMyDictSet('${s.id}')" title="刪除" style="position:absolute;top:-5px;right:-5px;background:#c0392b;color:#fff;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;line-height:18px;padding:0;cursor:pointer">✕</button>`:''}
+        </div>`).join('')}
     </div>
   `).join('') : '<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容</p>';
 }
 
+function showDictAddForm(){
+  document.getElementById('dict-picker-view').style.display='none';
+  document.getElementById('dict-add-view').style.display='';
+  document.getElementById('dict-add-lesson').value='';
+  document.getElementById('dict-add-title').value='';
+  document.getElementById('dict-add-items').value='';
+  document.getElementById('dict-add-err').textContent='';
+}
+
+function hideDictAddForm(){
+  document.getElementById('dict-picker-view').style.display='';
+  document.getElementById('dict-add-view').style.display='none';
+}
+
+function saveNewDictSet(){
+  const lesson=(document.getElementById('dict-add-lesson').value||'').trim();
+  const title=(document.getElementById('dict-add-title').value||'').trim();
+  const items=(document.getElementById('dict-add-items').value||'').split('\n').map(l=>l.trim()).filter(Boolean);
+  const err=document.getElementById('dict-add-err');
+  if(!lesson){err.textContent='請填寫課文名稱';return;}
+  if(!title){err.textContent='請填寫段落名稱';return;}
+  if(!items.length){err.textContent='請輸入至少一項默書內容';return;}
+  if(!G.my_dictation) G.my_dictation=[];
+  G.my_dictation.push({id:'mydict_'+Date.now(), lesson, title, items});
+  Store.save();
+  hideDictAddForm();
+  _renderDictPicker();
+}
+
+function deleteMyDictSet(id){
+  if(!confirm('確定刪除這個段落？')) return;
+  G.my_dictation=(G.my_dictation||[]).filter(s=>s.id!==id);
+  Store.save();
+  _renderDictPicker();
+}
+
 function launchDictationSet(setId){
-  const set=(QB.dictation||[]).find(s=>s.id===setId);
+  const all=[...(QB.dictation||[]),...(G.my_dictation||[])];
+  const set=all.find(s=>s.id===setId);
   if(!set) return;
   closeModal('modal-dictation');
   const items=set.items.map((text,i)=>({id:set.id+'_i'+i, text}));

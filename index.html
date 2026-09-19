@@ -647,10 +647,32 @@
 <!-- Dictation Set Picker -->
 <div class="overlay hidden" id="modal-dictation">
   <div class="modal-box tsa-cat-box">
-    <h2 class="modal-title">🖊️ 默書園地</h2>
-    <p class="tsa-cat-desc">揀返要默嘅一課，睇螢幕聽讀、喺紙上書寫，寫完自己核對：</p>
-    <div id="dictation-set-list"></div>
-    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
+
+    <!-- 選課視圖 -->
+    <div id="dict-picker-view">
+      <h2 class="modal-title">🖊️ 默書園地</h2>
+      <p class="tsa-cat-desc">揀返要默嘅一課，睇螢幕聽讀、喺紙上書寫，寫完自己核對：</p>
+      <div id="dictation-set-list"></div>
+      <button class="big-btn mt8" onclick="showDictAddForm()">➕ 新增我的默書</button>
+      <button class="big-btn grey-btn mt8" onclick="closeModal('modal-dictation')">取消</button>
+    </div>
+
+    <!-- 新增默書視圖 -->
+    <div id="dict-add-view" style="display:none">
+      <h2 class="modal-title">➕ 新增默書</h2>
+      <div style="text-align:left">
+        <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">課文名稱（例：竹節人）</label>
+        <input id="dict-add-lesson" type="text" placeholder="課文名稱" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:10px">
+        <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">段落名稱（例：重點詞語）</label>
+        <input id="dict-add-title" type="text" placeholder="段落名稱" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:1rem;margin-bottom:10px">
+        <label style="font-size:.85rem;color:var(--text-dim);display:block;margin-bottom:4px">默書內容（每行一項詞語或句子）</label>
+        <textarea id="dict-add-items" rows="6" placeholder="每行一項&#10;例：&#10;威風&#10;對峙&#10;做竹節人很簡單。" style="width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.95rem;resize:vertical;font-family:inherit;margin-bottom:4px"></textarea>
+        <p id="dict-add-err" style="color:#ff6b6b;font-size:.85rem;min-height:18px;margin-bottom:8px"></p>
+      </div>
+      <button class="big-btn" onclick="saveNewDictSet()">💾 儲存</button>
+      <button class="big-btn grey-btn mt8" onclick="hideDictAddForm()">返回</button>
+    </div>
+
   </div>
 </div>
 
@@ -741,7 +763,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=52"></script>
+<script src="app.js?v=53"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
