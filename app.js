@@ -4864,6 +4864,33 @@ function startDictation(title, items, reviewing){
   loadDictItem(0);
 }
 
+/* 將標點符號轉換成口語讀出（供TTS使用） */
+function _spellPunct(text){
+  return (text||'')
+    .replace(/，/g,'，逗號，')
+    .replace(/。/g,'，句號')
+    .replace(/？/g,'，問號')
+    .replace(/！/g,'，感嘆號')
+    .replace(/、/g,'，頓號，')
+    .replace(/：/g,'，冒號，')
+    .replace(/；/g,'，分號，')
+    .replace(/「/g,'，左引號，')
+    .replace(/」/g,'，右引號，')
+    .replace(/『/g,'，左單引號，')
+    .replace(/』/g,'，右單引號，')
+    .replace(/（/g,'，左括號，')
+    .replace(/）/g,'，右括號，')
+    .replace(/—{1,2}/g,'，破折號，')
+    .replace(/[…⋯]/g,'，省略號，');
+}
+
+/* 按句內標點拆分分句（保留標點在分句尾） */
+function _splitClauses(text){
+  if(!text) return [];
+  const parts=text.split(/(?<=[，、；：])/);
+  return parts.map(p=>p.trim()).filter(Boolean);
+}
+
 function loadDictItem(i){
   const it=D.items[i];
   if(!it) return;
@@ -4872,6 +4899,22 @@ function loadDictItem(i){
   document.getElementById('dict-answer-panel').classList.add('hidden');
   document.getElementById('dict-selfcheck').classList.add('hidden');
   document.getElementById('dict-next-btn').classList.add('hidden');
+
+  /* 分句播放區 */
+  const clauses=_splitClauses(it.text);
+  D.clauses=clauses;
+  const clauseEl=document.getElementById('dict-clauses');
+  if(clauses.length>1){
+    clauseEl.innerHTML='<div class="dict-clause-lbl">逐句聆聽：</div>'+
+      clauses.map((c,ci)=>
+        `<button class="dict-clause-btn" onclick="playClause(${ci},'yue')" title="${c}">▶ ${c}</button>`
+      ).join('');
+    clauseEl.style.display='';
+  } else {
+    clauseEl.innerHTML='';
+    clauseEl.style.display='none';
+  }
+
   if(_dictMode==='type'){
     document.getElementById('dict-reveal-btn').classList.add('hidden');
     document.getElementById('dict-typing-area').style.display='';
@@ -4913,8 +4956,15 @@ function submitTypingAnswer(){
 function playDictAudio(mode){
   const it=D.items[D.index];
   if(!it) return;
-  const lang = mode==='pth' ? 'zh-CN' : 'zh-HK';
-  Speech.speak(it.text, lang);
+  const lang=mode==='pth'?'zh-CN':'zh-HK';
+  Speech.speak(_spellPunct(it.text), lang);
+}
+
+function playClause(clauseIdx, mode){
+  const clause=(D.clauses||[])[clauseIdx];
+  if(!clause) return;
+  const lang=mode==='pth'?'zh-CN':'zh-HK';
+  Speech.speak(_spellPunct(clause), lang);
 }
 
 function revealDictAnswer(){

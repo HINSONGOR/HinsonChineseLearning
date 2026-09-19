@@ -431,6 +431,9 @@
           <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。</p>
         </div>
 
+        <!-- 分句播放區（長句自動拆分） -->
+        <div id="dict-clauses" style="display:none"></div>
+
         <!-- 打字模式輸入區 -->
         <div id="dict-typing-area" style="display:none">
           <textarea id="dict-type-input" class="dict-typing-input" rows="3" placeholder="喺此打入答案…"></textarea>
@@ -784,7 +787,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=61"></script>
+<script src="app.js?v=62"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
