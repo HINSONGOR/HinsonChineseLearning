@@ -4367,11 +4367,11 @@ const Speech = {
 
   async _geminiTTS(text, rate){
     const key=this._geminiKey;
-    if(!key){ this._ttsToast('❌ 未設定 Gemini Key','#8B0000'); this._googleTTS(text,rate); return; }
+    if(!key){ this._ttsToast('❌ 未設定 Gemini Key','#8B0000'); this._mandarinTTS(text,rate); return; }
     this._ttsToast('🔄 普通話生成中…');
     try{
       const resp=await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key='+key,
         {method:'POST',headers:{'Content-Type':'application/json'},
          body:JSON.stringify({
            contents:[{parts:[{text}]}],
