@@ -4331,6 +4331,7 @@ const Speech = {
 
   cancel(){
     if('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if(window.responsiveVoice) try{responsiveVoice.cancel();}catch(e){}
     if(this._audio){ try{this._audio.pause();}catch(e){} this._audio=null; }
     if(this._audioSrc){ try{this._audioSrc.stop();}catch(e){} this._audioSrc=null; }
   },
@@ -4413,12 +4414,26 @@ const Speech = {
     this.cancel();
     if(!text) return;
     if(lang==='zh-CN'){
-      const k=this._geminiKey;
-      if(k){ this._geminiTTS(text,rate); }
-      else{ this._ttsToast('⚠️ 未設定 Gemini Key','#8B4000'); this._googleTTS(text,rate); }
+      this._mandarinTTS(text, rate);
       return;
     }
     this._webSpeech(text, lang, rate);
+  },
+
+  _mandarinTTS(text, rate){
+    /* ResponsiveVoice: proxies via overseas servers, bypasses HK geo-block */
+    if(window.responsiveVoice && responsiveVoice.voiceSupport()){
+      responsiveVoice.cancel();
+      responsiveVoice.speak(text,'Chinese Mandarin Female',{
+        rate: rate<0.7?0.4:0.85,
+        onend:()=>{},
+        onerror:()=>{ this._ttsToast('RV 失敗，改用其他方式','#8B4000'); this._googleTTS(text,rate); }
+      });
+      this._ttsToast('✅ 普通話','#1B4A1E');
+    } else {
+      /* ResponsiveVoice not loaded yet — fallback */
+      this._googleTTS(text, rate);
+    }
   },
 
   _webSpeech(text, lang, rate){
