@@ -4371,7 +4371,7 @@ const Speech = {
     this._ttsToast('🔄 普通話生成中…');
     try{
       const resp=await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key='+key,
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key,
         {method:'POST',headers:{'Content-Type':'application/json'},
          body:JSON.stringify({
            contents:[{parts:[{text}]}],
@@ -4396,9 +4396,9 @@ const Speech = {
       this._audioSrc=src;
       this._ttsToast('✅ 普通話','#1B4A1E');
     }catch(e){
-      this._ttsToast('⚠️ '+( e.message||e),'#8B4000');
+      this._ttsToast('⚠️ Gemini: '+(e.message||e),'#8B4000');
       console.warn('Gemini TTS error:',e.message||e);
-      this._googleTTS(text,rate);
+      this._mandarinTTS(text,rate); /* fallback to ResponsiveVoice */
     }
   },
 
@@ -4414,7 +4414,9 @@ const Speech = {
     this.cancel();
     if(!text) return;
     if(lang==='zh-CN'){
-      this._mandarinTTS(text, rate);
+      /* Gemini first if key set, else ResponsiveVoice */
+      if(this._geminiKey) this._geminiTTS(text,rate);
+      else this._mandarinTTS(text,rate);
       return;
     }
     this._webSpeech(text, lang, rate);
