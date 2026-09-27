@@ -4340,25 +4340,37 @@ const Speech = {
     return buf;
   },
 
+  _ttsToast(msg,color='#2D4A1E'){
+    let el=document.getElementById('_tts_dbg');
+    if(!el){ el=document.createElement('div'); el.id='_tts_dbg';
+      el.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);'
+        +'background:#2D4A1E;color:#FFE082;padding:8px 14px;border-radius:20px;'
+        +'font-size:0.8em;z-index:9999;max-width:90vw;text-align:center';
+      document.body.appendChild(el); }
+    el.style.background=color; el.textContent=msg; el.style.display='block';
+    clearTimeout(el._t); el._t=setTimeout(()=>{el.style.display='none';},4000);
+  },
+
   async _geminiTTS(text, rate){
     const key=this._geminiKey;
+    if(!key){ this._ttsToast('❌ 未設定 Gemini Key','#8B0000'); this._googleTTS(text,rate); return; }
+    this._ttsToast('🔄 普通話生成中…');
     try{
       const resp=await fetch(
-        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+key,
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key='+key,
         {method:'POST',headers:{'Content-Type':'application/json'},
          body:JSON.stringify({
-           system_instruction:{parts:[{text:'你是普通話朗讀員，請用標準普通話（北京音）朗讀所有中文內容。'}]},
            contents:[{parts:[{text}]}],
            generationConfig:{responseModalities:['AUDIO'],
              speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Aoede'}}}}
          })}
       );
       const data=await resp.json();
+      if(data.error) throw new Error(data.error.message||'API error');
       const b64=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if(!b64) throw new Error('no audio: '+JSON.stringify(data).slice(0,200));
+      if(!b64) throw new Error('no audio data in response');
       const pcm=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
       const wav=this._pcmToWav(pcm.buffer);
-      /* Use shared AudioContext (already unlocked by first tap) — works on iOS async */
       const ctx=this._getCtx();
       await ctx.resume();
       const audioBuf=await ctx.decodeAudioData(wav);
@@ -4368,8 +4380,10 @@ const Speech = {
       src.connect(ctx.destination);
       src.start(0);
       this._audioSrc=src;
+      this._ttsToast('✅ 普通話','#1B4A1E');
     }catch(e){
-      console.warn('Gemini TTS error, falling back:',e.message||e);
+      this._ttsToast('⚠️ '+( e.message||e),'#8B4000');
+      console.warn('Gemini TTS error:',e.message||e);
       this._googleTTS(text,rate);
     }
   },
