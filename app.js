@@ -4310,8 +4310,8 @@ const Speech = {
   speak(text, lang='zh-HK', rate=0.85){
     this.cancel();
     if(!text) return;
-    if(lang==='zh-CN' && !this._checkMandarin()){
-      /* No Mandarin TTS voice on device — use Google Translate audio (works on iOS/Android) */
+    if(lang==='zh-CN'){
+      /* Always use Google Translate TTS for Mandarin — Web Speech zh-CN unreliable on iOS/Android */
       const url='https://translate.google.com/translate_tts?ie=UTF-8'
         +'&q='+encodeURIComponent(text)
         +'&tl=zh-CN&client=tw-ob&ttspeed='+rate;
