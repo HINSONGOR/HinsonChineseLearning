@@ -755,6 +755,10 @@
         <span class="toggle-track"><span class="toggle-thumb"></span></span>
       </label>
     </div>
+    <div class="setting-row">
+      <label class="set-label">🗣️ Gemini 普通話 Key</label>
+      <input type="text" id="gemini-key-input" class="set-input" placeholder="AIza...（選填）">
+    </div>
     <button class="big-btn green-btn" onclick="applySettings()">✓ 儲存設定</button>
     <button class="big-btn red-btn mt8" onclick="openModal('modal-confirm-clear')">🗑️ 清除資料</button>
   </div>
@@ -829,7 +833,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=78"></script>
+<script src="app.js?v=79"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

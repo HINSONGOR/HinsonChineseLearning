@@ -4321,17 +4321,65 @@ const Speech = {
     if(this._audio){ try{this._audio.pause();}catch(e){} this._audio=null; }
   },
 
+  get _geminiKey(){ try{return localStorage.getItem('hcl_gemini_key')||'';}catch(e){return '';} },
+
+  _pcmToWav(pcm, sr=24000){
+    const ch=1,bd=16,dl=pcm.byteLength,buf=new ArrayBuffer(44+dl),v=new DataView(buf);
+    const w=(o,s)=>{for(let i=0;i<4;i++)v.setUint8(o+i,s.charCodeAt(i));};
+    w(0,'RIFF'); v.setUint32(4,36+dl,true); w(8,'WAVE');
+    w(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true);
+    v.setUint16(22,ch,true); v.setUint32(24,sr,true);
+    v.setUint32(28,sr*ch*bd/8,true); v.setUint16(32,ch*bd/8,true);
+    v.setUint16(34,bd,true); w(36,'data'); v.setUint32(40,dl,true);
+    new Uint8Array(buf,44).set(new Uint8Array(pcm));
+    return buf;
+  },
+
+  async _geminiTTS(text, rate){
+    const key=this._geminiKey;
+    try{
+      const resp=await fetch(
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key='+key,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+         body:JSON.stringify({
+           system_instruction:{parts:[{text:'你是普通話朗讀員，請用標準普通話（北京音）朗讀所有中文內容。'}]},
+           contents:[{parts:[{text}]}],
+           generationConfig:{responseModalities:['AUDIO'],
+             speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:'Aoede'}}}}
+         })}
+      );
+      const data=await resp.json();
+      const b64=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      if(!b64) throw new Error('no audio');
+      const pcm=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+      const wav=this._pcmToWav(pcm.buffer);
+      const blob=new Blob([wav],{type:'audio/wav'});
+      const url=URL.createObjectURL(blob);
+      const a=new Audio(url);
+      a.playbackRate=rate<0.7?0.65:1.0;
+      a.onended=()=>URL.revokeObjectURL(url);
+      a.play().catch(e=>console.warn('Gemini audio play failed',e));
+      this._audio=a;
+    }catch(e){
+      console.warn('Gemini TTS error, falling back',e);
+      this._googleTTS(text,rate);
+    }
+  },
+
+  _googleTTS(text, rate){
+    const url='https://translate.google.com/translate_tts?ie=UTF-8'
+      +'&q='+encodeURIComponent(text)+'&tl=zh-CN&client=tw-ob&ttspeed='+rate;
+    const a=new Audio(url);
+    a.play().catch(()=>this._webSpeech(text,'zh-CN',rate));
+    this._audio=a;
+  },
+
   speak(text, lang='zh-HK', rate=0.85){
     this.cancel();
     if(!text) return;
     if(lang==='zh-CN'){
-      /* Always use Google Translate TTS for Mandarin — Web Speech zh-CN unreliable on iOS/Android */
-      const url='https://translate.google.com/translate_tts?ie=UTF-8'
-        +'&q='+encodeURIComponent(text)
-        +'&tl=zh-CN&client=tw-ob&ttspeed='+rate;
-      const a=new Audio(url);
-      a.play().catch(()=>this._webSpeech(text,lang,rate));
-      this._audio=a;
+      if(this._geminiKey) this._geminiTTS(text,rate);
+      else this._googleTTS(text,rate);
       return;
     }
     this._webSpeech(text, lang, rate);
@@ -6255,6 +6303,7 @@ function openSettingsModal(){
   document.getElementById('name-input').value=G.name;
   document.getElementById('vol-input').value=G.settings.volume;
   document.getElementById('sfx-check').checked=G.settings.sfx;
+  try{ document.getElementById('gemini-key-input').value=localStorage.getItem('hcl_gemini_key')||''; }catch(e){}
   openModal('modal-settings');
 }
 function applySettings(){
@@ -6263,6 +6312,11 @@ function applySettings(){
   G.settings.volume=parseFloat(document.getElementById('vol-input').value);
   G.settings.sfx=document.getElementById('sfx-check').checked;
   BGM.setVol(G.settings.volume);
+  try{
+    const k=(document.getElementById('gemini-key-input').value||'').trim();
+    if(k) localStorage.setItem('hcl_gemini_key',k);
+    else localStorage.removeItem('hcl_gemini_key');
+  }catch(e){}
   Store.save(); updateDashboard(); closeModal('modal-settings');
 }
 function doResetData(){
