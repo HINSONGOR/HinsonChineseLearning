@@ -4289,21 +4289,25 @@ const Speech = {
   _audio:null,
 
   _unlocked:false,
+  _ctx:null,
+  _audioSrc:null,
+
+  _getCtx(){
+    if(!this._ctx||this._ctx.state==='closed')
+      this._ctx=new(window.AudioContext||window.webkitAudioContext)();
+    return this._ctx;
+  },
 
   init(){
     if(!('speechSynthesis' in window)) return;
     const load=()=>{ this._voices=window.speechSynthesis.getVoices(); this._hasMandarin=null; };
     load();
     window.speechSynthesis.addEventListener('voiceschanged', load);
-    /* iOS audio unlock: first user tap anywhere unblocks all async audio playback */
+    /* iOS audio unlock: first user tap resumes the shared AudioContext */
     document.addEventListener('click', ()=>{
       if(this._unlocked) return;
       this._unlocked=true;
-      try{
-        const ctx=new(window.AudioContext||window.webkitAudioContext)();
-        ctx.resume();
-      }catch(e){}
-      /* Play a silent WAV to unlock HTMLAudioElement on iOS */
+      try{ this._getCtx().resume(); }catch(e){}
       const s=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
       s.play().catch(()=>{});
     });
@@ -4319,6 +4323,7 @@ const Speech = {
   cancel(){
     if('speechSynthesis' in window) window.speechSynthesis.cancel();
     if(this._audio){ try{this._audio.pause();}catch(e){} this._audio=null; }
+    if(this._audioSrc){ try{this._audioSrc.stop();}catch(e){} this._audioSrc=null; }
   },
 
   get _geminiKey(){ try{return localStorage.getItem('hcl_gemini_key')||'';}catch(e){return '';} },
@@ -4350,18 +4355,21 @@ const Speech = {
       );
       const data=await resp.json();
       const b64=data?.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-      if(!b64) throw new Error('no audio');
+      if(!b64) throw new Error('no audio: '+JSON.stringify(data).slice(0,200));
       const pcm=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
       const wav=this._pcmToWav(pcm.buffer);
-      const blob=new Blob([wav],{type:'audio/wav'});
-      const url=URL.createObjectURL(blob);
-      const a=new Audio(url);
-      a.playbackRate=rate<0.7?0.65:1.0;
-      a.onended=()=>URL.revokeObjectURL(url);
-      a.play().catch(e=>console.warn('Gemini audio play failed',e));
-      this._audio=a;
+      /* Use shared AudioContext (already unlocked by first tap) — works on iOS async */
+      const ctx=this._getCtx();
+      await ctx.resume();
+      const audioBuf=await ctx.decodeAudioData(wav);
+      const src=ctx.createBufferSource();
+      src.buffer=audioBuf;
+      src.playbackRate.value=rate<0.7?0.65:1.0;
+      src.connect(ctx.destination);
+      src.start(0);
+      this._audioSrc=src;
     }catch(e){
-      console.warn('Gemini TTS error, falling back',e);
+      console.warn('Gemini TTS error, falling back:',e.message||e);
       this._googleTTS(text,rate);
     }
   },
