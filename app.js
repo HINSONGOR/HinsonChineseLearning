@@ -4284,14 +4284,25 @@ const BGM = {
    SPEECH SYNTHESIS
    ============================================================ */
 const Speech = {
+  _voices:[],
+  init(){
+    if(!('speechSynthesis' in window)) return;
+    const load=()=>{ this._voices=window.speechSynthesis.getVoices(); };
+    load();
+    window.speechSynthesis.addEventListener('voiceschanged', load);
+  },
   speak(text, lang='zh-HK', rate=0.85){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+    const u=new SpeechSynthesisUtterance(text);
     u.lang=lang; u.rate=rate; u.pitch=1.05;
-    const voices=window.speechSynthesis.getVoices();
+    const voices=this._voices.length?this._voices:window.speechSynthesis.getVoices();
     const root=lang.split('-')[0];
-    const v=voices.find(v=>v.lang===lang)||voices.find(v=>v.lang.startsWith(root))||null;
+    /* For zh-CN (Mandarin): also accept zh-TW as fallback on iOS */
+    const v=voices.find(v=>v.lang===lang)
+      ||voices.find(v=>lang==='zh-CN'&&v.lang==='zh-TW')
+      ||voices.find(v=>v.lang.startsWith(root))
+      ||null;
     if(v) u.voice=v;
     window.speechSynthesis.speak(u);
   }
@@ -4998,6 +5009,52 @@ function playDictSlow(){
   const it=D.items[D.index];
   if(!it) return;
   Speech.speak(_spellPunct(it.text), 'zh-CN', 0.55);
+}
+
+/* -------- 筆劃查詢 (Stroke Order) -------- */
+let _strokeWriter=null;
+function openStrokeModal(){
+  document.getElementById('stroke-char-input').value='';
+  document.getElementById('stroke-display').innerHTML='<p style="color:var(--text-dim);font-size:.9rem;margin:30px 0">輸入一個漢字，按查詢</p>';
+  document.getElementById('stroke-controls').style.display='none';
+  openModal('modal-stroke');
+}
+function lookupStroke(){
+  const char=(document.getElementById('stroke-char-input').value||'').trim();
+  if(!char||[...char].length!==1){alert('請輸入一個漢字');return;}
+  const container=document.getElementById('stroke-display');
+  container.innerHTML='<div id="stroke-writer-target" style="width:220px;height:220px;display:inline-block"></div>';
+  _strokeWriter=null;
+  const go=()=>{
+    try{
+      _strokeWriter=HanziWriter.create('stroke-writer-target',char,{
+        width:220,height:220,padding:12,
+        strokeColor:'#FFE082',outlineColor:'#4A7A1E',drawingColor:'#4CAF50',
+        showCharacter:false,showOutline:true,strokeAnimationSpeed:0.8,delayBetweenStrokes:200
+      });
+      document.getElementById('stroke-controls').style.display='flex';
+      _strokeWriter.animateCharacter();
+    }catch(e){
+      container.innerHTML='<p style="color:#EF9A9A;margin:30px 0">找不到「'+char+'」的筆劃資料</p>';
+    }
+  };
+  if(window.HanziWriter){ go(); }
+  else{
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js';
+    s.onload=go;
+    s.onerror=()=>{ container.innerHTML='<p style="color:#EF9A9A;margin:30px 0">載入失敗，請檢查網絡連接</p>'; };
+    document.head.appendChild(s);
+  }
+}
+function strokeAnimate(){ if(_strokeWriter) _strokeWriter.animateCharacter(); }
+function strokeQuiz(){
+  if(!_strokeWriter) return;
+  _strokeWriter.quiz({
+    onMistake(){ sfx('wrong'); },
+    onCorrectStroke(){ sfx('correct'); },
+    onComplete(){ sfx('coin'); }
+  });
 }
 
 function playClause(clauseIdx, mode){
@@ -6524,6 +6581,7 @@ async function verifyAppPin(){
 function init(){
   if(_initDone) return;
   _initDone=true;
+  Speech.init();
   initDB();
   loadPins();
 

@@ -429,6 +429,7 @@
             <button class="dict-play-btn dict-lang-pth" onclick="playDictAudio('pth')" title="普通話播放">🔊 普通話</button>
           </div>
           <p class="dict-play-hint" id="dict-play-hint">聽清楚後，喺紙上寫低。可分別用廣東話／普通話重複播放。</p>
+          <button class="dict-stroke-btn" onclick="openStrokeModal()" title="查詢筆劃寫法">✏️ 筆劃</button>
         </div>
 
         <!-- 分句播放區（長句自動拆分） -->
@@ -786,6 +787,27 @@
 </div>
 
 
+<!-- Stroke Order Lookup -->
+<div class="overlay hidden" id="modal-stroke">
+  <div class="modal-box" style="max-width:320px">
+    <h2 class="modal-title">✏️ 筆劃查詢</h2>
+    <div style="display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:14px">
+      <input id="stroke-char-input" type="text" maxlength="1" placeholder="一個字"
+        style="font-size:2rem;width:3.2rem;text-align:center;background:#1B2F14;border:2px solid #4A7A1E;border-radius:8px;color:#E8F5E9;padding:4px 6px"
+        onkeydown="if(event.key==='Enter')lookupStroke()">
+      <button class="big-btn green-btn" style="margin:0" onclick="lookupStroke()">查詢</button>
+    </div>
+    <div id="stroke-display" style="text-align:center;min-height:100px">
+      <p style="color:var(--text-dim);font-size:.9rem;margin:30px 0">輸入一個漢字，按查詢</p>
+    </div>
+    <div id="stroke-controls" style="display:none;gap:8px;justify-content:center;margin-top:8px">
+      <button class="big-btn grey-btn" style="margin:0;flex:1" onclick="strokeAnimate()">▶ 動畫示範</button>
+      <button class="big-btn green-btn" style="margin:0;flex:1" onclick="strokeQuiz()">✏️ 自己試寫</button>
+    </div>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-stroke')">關閉</button>
+  </div>
+</div>
+
 <!-- Particle Host -->
 <div id="particles" aria-hidden="true"></div>
 
@@ -801,7 +823,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=72"></script>
+<script src="app.js?v=73"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

@@ -2130,6 +2130,17 @@ u.synword-ul {
   max-width: 320px;
   line-height: 1.5;
 }
+.dict-stroke-btn {
+  background: rgba(255,224,130,0.12);
+  border: 1px solid rgba(255,224,130,0.3);
+  color: var(--text-gold);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background .15s;
+}
+.dict-stroke-btn:hover { background: rgba(255,224,130,0.22); }
 .dict-answer-panel {
   width: 100%;
   background: rgba(255,248,220,0.08);
