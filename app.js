@@ -4426,7 +4426,9 @@ const Speech = {
     const vs=this._voices.length?this._voices:window.speechSynthesis.getVoices();
     const nativeVoice=vs.find(v=>v.lang==='zh-CN')||vs.find(v=>v.lang==='zh-TW'&&v.name.match(/Mei-Jia|Meijia/i));
     if(nativeVoice){
-      this._webSpeech(text,'zh-CN',rate);
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='zh-CN'; u.voice=nativeVoice; u.rate=rate; u.pitch=1.05;
+      window.speechSynthesis.speak(u);
       return;
     }
     /* No native Mandarin voice — use ResponsiveVoice */
@@ -4451,6 +4453,9 @@ const Speech = {
       let v=null;
       if(lang==='zh-CN'){
         v=vs.find(v=>v.lang==='zh-CN')||vs.find(v=>v.lang==='zh-TW')||null;
+      } else if(lang==='zh-HK'){
+        /* exact match only — never fallback to zh-CN/zh-TW for Cantonese */
+        v=vs.find(v=>v.lang==='zh-HK')||null;
       } else {
         const root=lang.split('-')[0];
         v=vs.find(v=>v.lang===lang)||vs.find(v=>v.lang.startsWith(root))||null;
