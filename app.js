@@ -4135,6 +4135,15 @@ function initDB(){
   return true;
 }
 
+async function loadGeminiKey(){
+  try{
+    if(!db) initDB();
+    if(!db) return;
+    const {data}=await db.from('config').select('value').eq('key','gemini_api_key').maybeSingle();
+    if(data?.value){ Speech._cachedGeminiKey=data.value; }
+  }catch(e){}
+}
+
 /* ============================================================
    STORAGE
    ============================================================ */
@@ -4326,7 +4335,11 @@ const Speech = {
     if(this._audioSrc){ try{this._audioSrc.stop();}catch(e){} this._audioSrc=null; }
   },
 
-  get _geminiKey(){ try{return localStorage.getItem('hcl_gemini_key')||'';}catch(e){return '';} },
+  _cachedGeminiKey:'',
+  get _geminiKey(){
+    if(this._cachedGeminiKey) return this._cachedGeminiKey;
+    try{ return localStorage.getItem('hcl_gemini_key')||''; }catch(e){ return ''; }
+  },
 
   _pcmToWav(pcm, sr=24000){
     const ch=1,bd=16,dl=pcm.byteLength,buf=new ArrayBuffer(44+dl),v=new DataView(buf);
@@ -4400,8 +4413,9 @@ const Speech = {
     this.cancel();
     if(!text) return;
     if(lang==='zh-CN'){
-      if(this._geminiKey) this._geminiTTS(text,rate);
-      else this._googleTTS(text,rate);
+      const k=this._geminiKey;
+      if(k){ this._geminiTTS(text,rate); }
+      else{ this._ttsToast('⚠️ 未設定 Gemini Key','#8B4000'); this._googleTTS(text,rate); }
       return;
     }
     this._webSpeech(text, lang, rate);
@@ -6707,6 +6721,7 @@ function init(){
   _initDone=true;
   Speech.init();
   initDB();
+  loadGeminiKey();
   loadPins();
 
   const msg=document.getElementById('load-msg');
