@@ -4414,9 +4414,8 @@ const Speech = {
     this.cancel();
     if(!text) return;
     if(lang==='zh-CN'){
-      /* Gemini first if key set, else ResponsiveVoice */
-      if(this._geminiKey) this._geminiTTS(text,rate);
-      else this._mandarinTTS(text,rate);
+      /* ResponsiveVoice: called synchronously within user gesture — iOS requires this */
+      this._mandarinTTS(text,rate);
       return;
     }
     this._webSpeech(text, lang, rate);
