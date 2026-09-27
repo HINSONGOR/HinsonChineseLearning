@@ -4297,13 +4297,23 @@ const Speech = {
     const u=new SpeechSynthesisUtterance(text);
     u.lang=lang; u.rate=rate; u.pitch=1.05;
     const voices=this._voices.length?this._voices:window.speechSynthesis.getVoices();
-    const root=lang.split('-')[0];
-    /* For zh-CN (Mandarin): also accept zh-TW as fallback on iOS */
-    const v=voices.find(v=>v.lang===lang)
-      ||voices.find(v=>lang==='zh-CN'&&v.lang==='zh-TW')
-      ||voices.find(v=>v.lang.startsWith(root))
-      ||null;
-    if(v) u.voice=v;
+    if(voices.length){
+      let v=null;
+      if(lang==='zh-CN'){
+        /* Mandarin: prefer zh-CN, then zh-TW (also Mandarin),
+           but NEVER fall back to zh-HK (Cantonese) */
+        v=voices.find(v=>v.lang==='zh-CN')
+          ||voices.find(v=>v.lang==='zh-TW')
+          ||null;
+      } else {
+        const root=lang.split('-')[0];
+        v=voices.find(v=>v.lang===lang)
+          ||voices.find(v=>v.lang.startsWith(root))
+          ||null;
+      }
+      /* Only assign voice if found — if null, browser uses u.lang to choose */
+      if(v) u.voice=v;
+    }
     window.speechSynthesis.speak(u);
   }
 };
