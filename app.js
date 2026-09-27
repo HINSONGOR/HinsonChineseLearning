@@ -4422,7 +4422,14 @@ const Speech = {
   },
 
   _mandarinTTS(text, rate){
-    /* ResponsiveVoice: proxies via overseas servers, bypasses HK geo-block */
+    /* Prefer native zh-CN voice if installed (e.g. user downloaded Tingting/Lilian) */
+    const vs=this._voices.length?this._voices:window.speechSynthesis.getVoices();
+    const nativeVoice=vs.find(v=>v.lang==='zh-CN')||vs.find(v=>v.lang==='zh-TW'&&v.name.match(/Mei-Jia|Meijia/i));
+    if(nativeVoice){
+      this._webSpeech(text,'zh-CN',rate);
+      return;
+    }
+    /* No native Mandarin voice — use ResponsiveVoice */
     if(window.responsiveVoice && responsiveVoice.voiceSupport()){
       responsiveVoice.cancel();
       responsiveVoice.speak(text,'Chinese Mandarin Female',{
@@ -4430,9 +4437,7 @@ const Speech = {
         onend:()=>{},
         onerror:()=>{ this._ttsToast('RV 失敗，改用其他方式','#8B4000'); this._googleTTS(text,rate); }
       });
-      this._ttsToast('✅ 普通話','#1B4A1E');
     } else {
-      /* ResponsiveVoice not loaded yet — fallback */
       this._googleTTS(text, rate);
     }
   },
@@ -5151,12 +5156,16 @@ function playDictAudio(mode){
   if(!it) return;
   const lang=mode==='pth'?'zh-CN':'zh-HK';
   Speech.speak(_spellPunct(it.text), lang);
+  const sb=document.querySelector('[onclick="playDictSlow()"]');
+  if(sb){ sb.textContent='🐢 慢些讀'; sb.style.outline=''; }
 }
 
 function playDictSlow(){
   const it=D.items[D.index];
   if(!it) return;
   Speech.speak(_spellPunct(it.text), 'zh-CN', 0.55);
+  const sb=document.querySelector('[onclick="playDictSlow()"]');
+  if(sb){ sb.textContent='🐢 慢些讀 ×0.5'; sb.style.outline='2px solid #FFE082'; }
 }
 
 /* -------- 筆劃查詢 (Stroke Order) -------- */
