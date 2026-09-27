@@ -402,6 +402,7 @@ input  { font-family: inherit; }
 .mc-gold   { background: linear-gradient(145deg,#4A3800,#2D2100); border-color: var(--mc-gold); }
 .mc-dark   { background: linear-gradient(145deg,#1A1A1A,#0D0D0D); border-color: #455A64; }
 .mc-teal   { background: linear-gradient(145deg,#00332B,#001F1A); border-color: #00897B; }
+.mc-stroke { background: linear-gradient(145deg,#3E2723,#1B0000); border-color: #FFE082; }
 
 .tsa-glow {
   animation: tsaGlow 2.5s ease-in-out infinite;

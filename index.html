@@ -267,6 +267,12 @@
       <div class="mc-xp">+5 XP / 項</div>
       <div class="mc-bar"><div class="mc-bar-fill" id="pb-dictation"></div></div>
     </button>
+    <button class="mod-card mc-stroke" onclick="openStrokeModal()">
+      <div class="mc-icon">✏️</div>
+      <div class="mc-name">筆劃查詢</div>
+      <div class="mc-xp">動畫示範 · 練習寫法</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:100%;background:#FFE082"></div></div>
+    </button>
     <button class="mod-card mc-dark" onclick="launchModule('wrong')">
       <div class="mc-icon">🏆</div>
       <div class="mc-name">錯題重溫中心</div>
@@ -823,7 +829,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=74"></script>
+<script src="app.js?v=75"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
