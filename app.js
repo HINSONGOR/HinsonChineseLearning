@@ -4285,33 +4285,57 @@ const BGM = {
    ============================================================ */
 const Speech = {
   _voices:[],
+  _hasMandarin:null,
+  _audio:null,
+
   init(){
     if(!('speechSynthesis' in window)) return;
-    const load=()=>{ this._voices=window.speechSynthesis.getVoices(); };
+    const load=()=>{ this._voices=window.speechSynthesis.getVoices(); this._hasMandarin=null; };
     load();
     window.speechSynthesis.addEventListener('voiceschanged', load);
   },
+
+  _checkMandarin(){
+    if(this._hasMandarin!==null) return this._hasMandarin;
+    const vs=this._voices.length?this._voices:window.speechSynthesis.getVoices();
+    this._hasMandarin=!!(vs.find(v=>v.lang==='zh-CN')||vs.find(v=>v.lang==='zh-TW'));
+    return this._hasMandarin;
+  },
+
+  cancel(){
+    if('speechSynthesis' in window) window.speechSynthesis.cancel();
+    if(this._audio){ try{this._audio.pause();}catch(e){} this._audio=null; }
+  },
+
   speak(text, lang='zh-HK', rate=0.85){
+    this.cancel();
+    if(!text) return;
+    if(lang==='zh-CN' && !this._checkMandarin()){
+      /* No Mandarin TTS voice on device — use Google Translate audio (works on iOS/Android) */
+      const url='https://translate.google.com/translate_tts?ie=UTF-8'
+        +'&q='+encodeURIComponent(text)
+        +'&tl=zh-CN&client=tw-ob&ttspeed='+rate;
+      const a=new Audio(url);
+      a.play().catch(()=>this._webSpeech(text,lang,rate));
+      this._audio=a;
+      return;
+    }
+    this._webSpeech(text, lang, rate);
+  },
+
+  _webSpeech(text, lang, rate){
     if(!('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
     const u=new SpeechSynthesisUtterance(text);
     u.lang=lang; u.rate=rate; u.pitch=1.05;
-    const voices=this._voices.length?this._voices:window.speechSynthesis.getVoices();
-    if(voices.length){
+    const vs=this._voices.length?this._voices:window.speechSynthesis.getVoices();
+    if(vs.length){
       let v=null;
       if(lang==='zh-CN'){
-        /* Mandarin: prefer zh-CN, then zh-TW (also Mandarin),
-           but NEVER fall back to zh-HK (Cantonese) */
-        v=voices.find(v=>v.lang==='zh-CN')
-          ||voices.find(v=>v.lang==='zh-TW')
-          ||null;
+        v=vs.find(v=>v.lang==='zh-CN')||vs.find(v=>v.lang==='zh-TW')||null;
       } else {
         const root=lang.split('-')[0];
-        v=voices.find(v=>v.lang===lang)
-          ||voices.find(v=>v.lang.startsWith(root))
-          ||null;
+        v=vs.find(v=>v.lang===lang)||vs.find(v=>v.lang.startsWith(root))||null;
       }
-      /* Only assign voice if found — if null, browser uses u.lang to choose */
       if(v) u.voice=v;
     }
     window.speechSynthesis.speak(u);
