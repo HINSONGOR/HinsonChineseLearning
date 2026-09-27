@@ -4462,6 +4462,7 @@ const Speech = {
       }
       if(v) u.voice=v;
     }
+    if(u.voice) this._ttsToast('🔊 '+u.voice.name,'#1A3A1A');
     window.speechSynthesis.speak(u);
   }
 };
