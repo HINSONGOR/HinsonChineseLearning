@@ -441,8 +441,11 @@
           <div id="dict-typing-result" class="hidden"></div>
         </div>
 
-        <!-- 紙筆模式：重複 + 下一句 -->
-        <button class="big-btn grey-btn" id="dict-repeat-btn" style="display:none" onclick="playDictAudio('pth')">🔁 重複聆聽</button>
+        <!-- 紙筆模式：重複 + 慢些讀 + 下一句 -->
+        <div id="dict-repeat-row" style="display:none;gap:8px">
+          <button class="big-btn grey-btn" id="dict-repeat-btn" onclick="playDictAudio('pth')" style="flex:1;margin:0">🔁 重複聆聽</button>
+          <button class="big-btn grey-btn" onclick="playDictSlow()" style="flex:1;margin:0;background:#5D4037">🐢 慢些讀</button>
+        </div>
         <button class="big-btn green-btn" id="dict-next-sentence-btn" style="display:none">下一句 →</button>
 
         <!-- 打字模式：每句答案 -->
@@ -798,7 +801,7 @@ window.addEventListener('error', function(e){
 }, true);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="app.js?v=71"></script>
+<script src="app.js?v=72"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

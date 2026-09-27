@@ -4284,11 +4284,11 @@ const BGM = {
    SPEECH SYNTHESIS
    ============================================================ */
 const Speech = {
-  speak(text, lang='zh-HK'){
+  speak(text, lang='zh-HK', rate=0.85){
     if(!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang=lang; u.rate=0.85; u.pitch=1.05;
+    u.lang=lang; u.rate=rate; u.pitch=1.05;
     const voices=window.speechSynthesis.getVoices();
     const root=lang.split('-')[0];
     const v=voices.find(v=>v.lang===lang)||voices.find(v=>v.lang.startsWith(root))||null;
@@ -4943,13 +4943,13 @@ function loadDictItem(i){
     document.getElementById('dict-type-input').value='';
     document.getElementById('dict-typing-result').classList.add('hidden');
     document.getElementById('dict-play-hint').textContent='聽清楚後，喺下面打入答案：';
-    document.getElementById('dict-repeat-btn').style.display='none';
+    document.getElementById('dict-repeat-row').style.display='none';
     document.getElementById('dict-next-sentence-btn').style.display='none';
   } else {
     /* 紙筆模式：聽 → 寫 → 下一句，最後顯示全部答案 */
     document.getElementById('dict-typing-area').style.display='none';
     document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。';
-    document.getElementById('dict-repeat-btn').style.display='';
+    document.getElementById('dict-repeat-row').style.display='flex';
     const nsBtn=document.getElementById('dict-next-sentence-btn');
     nsBtn.style.display='';
     if(isLast){
@@ -4994,6 +4994,12 @@ function playDictAudio(mode){
   Speech.speak(_spellPunct(it.text), lang);
 }
 
+function playDictSlow(){
+  const it=D.items[D.index];
+  if(!it) return;
+  Speech.speak(_spellPunct(it.text), 'zh-CN', 0.55);
+}
+
 function playClause(clauseIdx, mode){
   const clause=(D.clauses||[])[clauseIdx];
   if(!clause) return;
@@ -5007,7 +5013,7 @@ function revealDictAnswer(){
 }
 
 function showFinalDictAnswer(){
-  document.getElementById('dict-repeat-btn').style.display='none';
+  document.getElementById('dict-repeat-row').style.display='none';
   document.getElementById('dict-next-sentence-btn').style.display='none';
   document.getElementById('dict-final-text').textContent=D.items.map(it=>it.text).join('\n');
   document.getElementById('dict-final-panel').classList.remove('hidden');
