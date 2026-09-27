@@ -4288,11 +4288,25 @@ const Speech = {
   _hasMandarin:null,
   _audio:null,
 
+  _unlocked:false,
+
   init(){
     if(!('speechSynthesis' in window)) return;
     const load=()=>{ this._voices=window.speechSynthesis.getVoices(); this._hasMandarin=null; };
     load();
     window.speechSynthesis.addEventListener('voiceschanged', load);
+    /* iOS audio unlock: first user tap anywhere unblocks all async audio playback */
+    document.addEventListener('click', ()=>{
+      if(this._unlocked) return;
+      this._unlocked=true;
+      try{
+        const ctx=new(window.AudioContext||window.webkitAudioContext)();
+        ctx.resume();
+      }catch(e){}
+      /* Play a silent WAV to unlock HTMLAudioElement on iOS */
+      const s=new Audio('data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+      s.play().catch(()=>{});
+    });
   },
 
   _checkMandarin(){
