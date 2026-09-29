@@ -5642,7 +5642,7 @@ function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
-                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練' };
+                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;
   const tBtn=document.getElementById('timer-toggle-btn');
   if(tBtn) tBtn.textContent=Q.timerDuration>0?`⏱ ${Q.timerDuration}s`:'⏱ 關';
@@ -5655,8 +5655,8 @@ function startQuiz(type, questions, reviewing){
 /* ============================================================
    QUIZ ENGINE
    ============================================================ */
-const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, synword:7, dictation:5 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, synword:4, dictation:3 };
+const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, fillin_tsa_2:8, synword:7, dictation:5 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, fillin_tsa_2:4, synword:4, dictation:3 };
 
 const WORD_ENG={
   '汗流浹背':'dripping with sweat','大汗淋漓':'perspiring profusely','揮汗如雨':'sweating like rain','頭昏腦脹':'dizzy and groggy',
@@ -5793,7 +5793,7 @@ function loadQuestion(i){
   // Options vs Fill-in vs Reorder vs FillinModule
   const og=document.getElementById('options-grid');
   const fs=document.getElementById('fill-section');
-  if(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'){
+  if(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2'){
     const mode=q.fillinMode;
     if(mode==='free'){
       og.innerHTML=''; og.style.display='none';
@@ -5863,7 +5863,7 @@ function checkAnswer(chosen){
 
   const isFill=(q.type==='fill');
   const isReorder=(q.type==='reorder');
-  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa');
+  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2');
   const isCorrect=isFill?(chosen==='fill-ok'):isReorder?(chosen==='reorder-ok'):isFillin&&q.fillinMode==='bank'?(chosen===q.ans):isFillin?(chosen==='fillin-ok'):(chosen===q.ans);
   const timedOut=(chosen===-1);
 
@@ -6732,7 +6732,7 @@ function clearReorder(){
    ============================================================ */
 function submitFillin(){
   const q=Q.questions[Q.index];
-  if(!q||q.type!=='fillin'&&q.type!=='fillin2'&&q.type!=='fillin_tsa') return;
+  if(!q||q.type!=='fillin'&&q.type!=='fillin2'&&q.type!=='fillin_tsa'&&q.type!=='fillin_tsa_2') return;
   const fi=document.getElementById('fill-input');
   const typed=(fi.value||'').trim();
   if(!typed) return;
@@ -6747,7 +6747,7 @@ function submitFillin(){
 
 function skipFillin(){
   const q=Q.questions[Q.index];
-  if(!q||q.type!=='fillin'&&q.type!=='fillin2'&&q.type!=='fillin_tsa') return;
+  if(!q||q.type!=='fillin'&&q.type!=='fillin2'&&q.type!=='fillin_tsa'&&q.type!=='fillin_tsa_2') return;
   document.getElementById('fill-input').disabled=true;
   const sb=document.querySelector('.submit-fill-btn'); if(sb) sb.disabled=true;
   const sk=document.querySelector('.skip-fill-btn'); if(sk) sk.disabled=true;
