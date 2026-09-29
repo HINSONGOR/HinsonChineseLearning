@@ -659,6 +659,18 @@
   </div>
 </div>
 
+<!-- Fillin TSA Category Picker -->
+<div class="overlay hidden" id="modal-fillin-tsa-cat">
+  <div class="modal-box tsa-cat-box">
+    <h2 class="modal-title">📝 呈分試不供詞填充</h2>
+    <p class="tsa-cat-desc">選擇詞語組別開始練習：</p>
+    <div class="tsa-cat-grid">
+      <button class="tsa-cat-btn" onclick="launchFillinTsaCat('1')"><span class="tsa-cat-no">1</span>詞語一（40題）</button>
+    </div>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-fillin-tsa-cat')">取消</button>
+  </div>
+</div>
+
 <!-- Fillin Mode Picker -->
 <div class="overlay hidden" id="modal-fillin-mode">
   <div class="modal-box fillin-mode-box">
@@ -837,7 +849,7 @@ window.addEventListener('error', function(e){
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
-<script src="app.js?v=91"></script>
+<script src="app.js?v=92"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

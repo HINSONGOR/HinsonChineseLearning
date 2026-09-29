@@ -4619,7 +4619,7 @@ function launchModule(type){
   if(type==='report'){ showReport(); return; }
   if(type==='wrong'){ showWrongList(); return; }
   if(type==='fillin'||type==='fillin2'){ openModal('modal-fillin-mode'); return; }
-  if(type==='fillin_tsa'){ launchFillinQuizPool('fillin_tsa','free'); return; }
+  if(type==='fillin_tsa'){ openModal('modal-fillin-tsa-cat'); return; }
   if(type==='tsa'){ openModal('modal-tsa-cat'); return; }
   if(type==='dictation'){ openDictationPicker(); return; }
   const qs = buildQuestions(type);
@@ -5352,6 +5352,10 @@ function launchPractice(unit){
 }
 
 function launchFillinQuiz(mode){ launchFillinQuizPool('fillin', mode); }
+function launchFillinTsaCat(cat){
+  closeModal('modal-fillin-tsa-cat');
+  if(cat==='1') launchFillinQuizPool('fillin_tsa','free');
+}
 function launchFillinQuizPool(poolName, mode){
   closeModal('modal-fillin-mode');
   const src = poolName==='fillin2' ? QB.fillin2 : poolName==='fillin_tsa' ? QB.fillin_tsa : QB.fillin;
