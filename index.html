@@ -389,6 +389,23 @@
         </div>
       </div>
 
+      <!-- PINYIN-2 TILE SECTION -->
+      <div class="hidden" id="pinyin2-section">
+        <p class="py2-instr">① 點格填字母　② 揀聲調→點字母上格</p>
+        <div class="py2-tone-pool" id="py2-tone-pool">
+          <button class="py2-tone-chip" data-t="1" onclick="py2SelectTone(1)">ˉ<span class="py2-tc-num">1聲陰平</span></button>
+          <button class="py2-tone-chip" data-t="2" onclick="py2SelectTone(2)">ˊ<span class="py2-tc-num">2聲陽平</span></button>
+          <button class="py2-tone-chip" data-t="3" onclick="py2SelectTone(3)">ˇ<span class="py2-tc-num">3聲上聲</span></button>
+          <button class="py2-tone-chip" data-t="4" onclick="py2SelectTone(4)">ˋ<span class="py2-tc-num">4聲去聲</span></button>
+        </div>
+        <div class="py2-grid-area" id="py2-grid-area"></div>
+        <input id="py2-hidden-inp" type="text" maxlength="1" inputmode="text" autocomplete="off" autocorrect="off" autocapitalize="off" style="position:fixed;top:-999px;left:-999px;opacity:0;width:1px;height:1px">
+        <div class="py2-action-row">
+          <button class="big-btn grey-btn" onclick="skipPinyin2()">跳過</button>
+          <button class="py2-submit-btn" id="py2-submit-btn" onclick="submitPinyin2()" disabled>提交答案</button>
+        </div>
+      </div>
+
       <!-- RESULT BANNER -->
       <div class="result-banner hidden" id="result-banner">
         <div class="result-icon" id="result-icon">✅</div>
@@ -870,7 +887,7 @@ window.addEventListener('error', function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="app.js?v=97"></script>
+<script src="app.js?v=98"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

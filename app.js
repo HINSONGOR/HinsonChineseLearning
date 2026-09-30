@@ -4313,8 +4313,43 @@ fillin_tsa_2:[
 
 dictation:[],
 
-pinyin_1:[],
-pinyin_2:[]
+pinyin_1:[
+{id:'py1_1',word:'慕名',text:'「慕名」的拼音是？',ans:0,
+ opts:['mù míng','mú míng','mù mǐng','mù mín'],
+ expl:'慕 mù（去聲4聲）＋ 名 míng（陽平2聲）'},
+{id:'py1_2',word:'不忿',text:'「不忿」的拼音是？',ans:0,
+ opts:['bù fèn','bú fèn','bù fén','bù fěn'],
+ expl:'不 bù（去聲4聲）＋ 忿 fèn（去聲4聲）'},
+{id:'py1_3',word:'躊躇',text:'「躊躇」的拼音是？',ans:0,
+ opts:['chóu chú','zhōu chú','chōu chú','chóu zhú'],
+ expl:'躊 chóu（陽平2聲）＋ 躇 chú（陽平2聲）'},
+{id:'py1_4',word:'捨棄',text:'「捨棄」的拼音是？',ans:0,
+ opts:['shě qì','shè qì','shě qī','shě qǐ'],
+ expl:'捨 shě（上聲3聲）＋ 棄 qì（去聲4聲）'},
+{id:'py1_5',word:'不約而同',text:'「不約而同」的拼音是？',ans:0,
+ opts:['bù yuē ér tóng','bú yuē ér tóng','bù yuě ér tóng','bù yuē ér tǒng'],
+ expl:'不 bù（4聲）＋ 約 yuē（1聲）＋ 而 ér（2聲）＋ 同 tóng（2聲）'},
+{id:'py1_6',word:'語重心長',text:'「語重心長」的拼音是？',ans:0,
+ opts:['yǔ zhòng xīn cháng','yù zhòng xīn cháng','yǔ zhōng xīn cháng','yǔ zhòng xín cháng'],
+ expl:'語 yǔ（3聲）＋ 重 zhòng（4聲）＋ 心 xīn（1聲）＋ 長 cháng（2聲）'},
+{id:'py1_7',word:'恍然大悟',text:'「恍然大悟」的拼音是？',ans:0,
+ opts:['huǎng rán dà wù','huāng rán dà wù','huǎng rǎn dà wù','huǎng rán dà wú'],
+ expl:'恍 huǎng（3聲）＋ 然 rán（2聲）＋ 大 dà（4聲）＋ 悟 wù（4聲）'},
+{id:'py1_8',word:'漫長',text:'「漫長」的拼音是？',ans:0,
+ opts:['màn cháng','mán cháng','màn chāng','màn chǎng'],
+ expl:'漫 màn（去聲4聲）＋ 長 cháng（陽平2聲）'},
+],
+
+pinyin_2:[
+{id:'py2_1',word:'慕名',  text:'慕名',  syllables:['mu','ming'],           tones:[4,2],expl:'慕 mù（去聲4）＋ 名 míng（陽平2）'},
+{id:'py2_2',word:'不忿',  text:'不忿',  syllables:['bu','fen'],             tones:[4,4],expl:'不 bù（去聲4）＋ 忿 fèn（去聲4）'},
+{id:'py2_3',word:'躊躇',  text:'躊躇',  syllables:['chou','chu'],           tones:[2,2],expl:'躊 chóu（陽平2）＋ 躇 chú（陽平2）'},
+{id:'py2_4',word:'捨棄',  text:'捨棄',  syllables:['she','qi'],             tones:[3,4],expl:'捨 shě（上聲3）＋ 棄 qì（去聲4）'},
+{id:'py2_5',word:'不約而同',text:'不約而同',syllables:['bu','yue','er','tong'],tones:[4,1,2,2],expl:'不 bù（4）約 yuē（1）而 ér（2）同 tóng（2）'},
+{id:'py2_6',word:'語重心長',text:'語重心長',syllables:['yu','zhong','xin','chang'],tones:[3,4,1,2],expl:'語 yǔ（3）重 zhòng（4）心 xīn（1）長 cháng（2）'},
+{id:'py2_7',word:'恍然大悟',text:'恍然大悟',syllables:['huang','ran','da','wu'],tones:[3,2,4,4],expl:'恍 huǎng（3）然 rán（2）大 dà（4）悟 wù（4）'},
+{id:'py2_8',word:'漫長',  text:'漫長',  syllables:['man','chang'],           tones:[4,2],expl:'漫 màn（去聲4）＋ 長 cháng（陽平2）'},
+]
 };
 
 
@@ -4336,6 +4371,7 @@ let G = {
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
           punctuation:{answered:0,correct:0,sessions:0}, tsa:{answered:0,correct:0,sessions:0},
           fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, fillin_tsa:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
+          pinyin_1:{answered:0,correct:0,sessions:0}, pinyin_2:{answered:0,correct:0,sessions:0},
           dictation:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
   customQuestions:[],
@@ -5606,9 +5642,10 @@ function launchFillinTsaCat(cat){
 }
 function launchPinyinCat(cat){
   closeModal('modal-pinyin-cat');
-  const pool = cat==='1' ? QB.pinyin_1 : QB.pinyin_2;
-  if(!pool||!pool.length){ alert('拼音題目尚未加入，請稍後再試！'); return; }
-  launchFillinQuizPool(cat==='1'?'pinyin_1':'pinyin_2','free');
+  const type=cat==='1'?'pinyin_1':'pinyin_2';
+  const qs=buildQuestions(type);
+  if(!qs.length){ alert('拼音題目尚未加入，請稍後再試！'); return; }
+  startQuiz(type, qs, false);
 }
 function launchFillinQuizPool(poolName, mode){
   closeModal('modal-fillin-mode');
@@ -5793,7 +5830,8 @@ function loadQuestion(i){
   typeTag.textContent=q.sub?`【${q.sub}】`:'';
 
   // Reset panels
-  ['result-banner','teacher-panel','fill-section','reorder-section','char-section'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['result-banner','teacher-panel','fill-section','reorder-section','char-section','pinyin2-section'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  qtxtEl.removeAttribute('style');
   document.getElementById('result-banner').className='result-banner hidden';
   document.getElementById('combo-badge').classList.add('hidden');
 
@@ -5846,6 +5884,11 @@ function loadQuestion(i){
     const sk=document.querySelector('.skip-fill-btn');
     if(sk) sk.disabled=false;
     setTimeout(()=>fi.focus(),100);
+  } else if(q.type==='pinyin_2'){
+    og.innerHTML=''; og.style.display='none';
+    fs.classList.add('hidden');
+    qtxtEl.style.cssText='font-size:2rem;text-align:center;letter-spacing:5px;font-weight:600;padding:6px 0';
+    initPinyin2(q);
   } else if(q.type==='reorder'){
     og.innerHTML=''; og.style.display='none';
     fs.classList.add('hidden');
@@ -5875,11 +5918,12 @@ function checkAnswer(chosen){
 
   const isFill=(q.type==='fill');
   const isReorder=(q.type==='reorder');
-  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2'||q.type==='pinyin_1'||q.type==='pinyin_2');
-  const isCorrect=isFill?(chosen==='fill-ok'):isReorder?(chosen==='reorder-ok'):isFillin&&q.fillinMode==='bank'?(chosen===q.ans):isFillin?(chosen==='fillin-ok'):(chosen===q.ans);
+  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2');
+  const isPinyin2=(q.type==='pinyin_2');
+  const isCorrect=isFill?(chosen==='fill-ok'):isReorder?(chosen==='reorder-ok'):isPinyin2?(chosen==='py2-ok'):isFillin&&q.fillinMode==='bank'?(chosen===q.ans):isFillin?(chosen==='fillin-ok'):(chosen===q.ans);
   const timedOut=(chosen===-1);
 
-  if(!isFill && !isReorder && !isFillin){
+  if(!isFill && !isReorder && !isFillin && !isPinyin2){
     document.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
     const btns=document.querySelectorAll('.opt-btn');
     btns[q.ans]?.classList.add('correct');
@@ -5933,9 +5977,9 @@ function checkAnswer(chosen){
 
   // Show teacher
   const tb=document.getElementById('teacher-body');
-  const defaultExpl=isFill?`正確答案是「<strong class="correct-hl">${q.ans}</strong>」。`:isReorder?`正確句子：<strong class="correct-hl">${q.ans}</strong>`:isFillin?`正確詞語：「<strong class="correct-hl">${q.word}</strong>」`:`正確答案是 <strong>${'ABCD'[q.ans]}</strong>。`;
+  const defaultExpl=isFill?`正確答案是「<strong class="correct-hl">${q.ans}</strong>」。`:isReorder?`正確句子：<strong class="correct-hl">${q.ans}</strong>`:isPinyin2?`正確拼音見上方格仔（綠色=對，紅色=錯）`:isFillin?`正確詞語：「<strong class="correct-hl">${q.word}</strong>」`:`正確答案是 <strong>${'ABCD'[q.ans]}</strong>。`;
   tb.innerHTML=`<p>${q.expl||defaultExpl}</p>`;
-  const _strokeText=isFillin?q.word:isFill?q.ans:isReorder?'':q.opts?.[q.ans]||'';
+  const _strokeText=isPinyin2?q.word:isFillin?q.word:isFill?q.ans:isReorder?'':q.opts?.[q.ans]||'';
   if(_strokeText) showStrokeOrder(_strokeText);
   const ww=document.getElementById('wrong-why');
   if(q.why && !isCorrect){
@@ -6097,6 +6141,7 @@ function buildDailyLog(){
     reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', idiom2:'成語2', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
     paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充', synword:'以詞代意', wrong:'錯題重溫',
+    pinyin_1:'拼音一', pinyin_2:'拼音二',
     dictation:'默書練習'
   };
   // group by date, most recent first
@@ -6253,6 +6298,7 @@ function showReport(){
     vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試',
     order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解',
     wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意',
+    pinyin_1:'🔤 拼音一', pinyin_2:'🔤 拼音二',
     dictation:'🖊️ 默書練習'
   };
   const mods=Object.entries(G.stats);
@@ -6821,6 +6867,130 @@ function skipFillin(){
   const sb=document.querySelector('.submit-fill-btn'); if(sb) sb.disabled=true;
   const sk=document.querySelector('.skip-fill-btn'); if(sk) sk.disabled=true;
   checkAnswer('fillin-no');
+}
+
+/* ============================================================
+   PINYIN-2 TILE MODULE
+   ============================================================ */
+const PY2_MARKS=['','ˉ','ˊ','ˇ','ˋ'];
+const PY2_VOWELS=new Set(['a','e','i','o','u']);
+const PY2={selTone:null,placedTones:{},letterState:{},focusedSi:null,focusedCi:null};
+
+function py2MainVowel(syl){
+  if(syl.includes('a')) return syl.indexOf('a');
+  if(syl.includes('e')) return syl.indexOf('e');
+  if(syl.includes('ou')) return syl.indexOf('o');
+  const vis=[...syl].map((c,i)=>PY2_VOWELS.has(c)?i:-1).filter(x=>x>=0);
+  return vis.length?vis[vis.length-1]:-1;
+}
+
+function initPinyin2(q){
+  const sec=document.getElementById('pinyin2-section');
+  sec.classList.remove('hidden');
+  PY2.selTone=null; PY2.placedTones={}; PY2.letterState={}; PY2.focusedSi=null; PY2.focusedCi=null;
+  document.querySelectorAll('.py2-tone-chip').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('py2-submit-btn').disabled=true;
+  const area=document.getElementById('py2-grid-area');
+  area.innerHTML='';
+  q.syllables.forEach((syl,si)=>{
+    const mv=py2MainVowel(syl);
+    const block=document.createElement('div');
+    block.className='py2-syllable';
+    const lrow=document.createElement('div');
+    lrow.className='py2-letter-row';
+    [...syl].forEach((ch,ci)=>{
+      const col=document.createElement('div'); col.className='py2-letter-col';
+      const ts=document.createElement('div');
+      if(ci===mv){ ts.className='py2-tone-slot clickable'; ts.id=`py2ts_${si}`; ts.onclick=()=>py2DropTone(si); }
+      else { ts.className='py2-tone-slot spacer'; }
+      const lb=document.createElement('div');
+      lb.className='py2-letter-box'+(PY2_VOWELS.has(ch)?' vowel':'');
+      lb.id=`py2lb_${si}_${ci}`;
+      lb.onclick=()=>py2FocusBox(si,ci);
+      col.appendChild(ts); col.appendChild(lb); lrow.appendChild(col);
+    });
+    block.appendChild(lrow); area.appendChild(block);
+  });
+  setTimeout(()=>py2FocusBox(0,0),120);
+}
+
+function py2FocusBox(si,ci){
+  document.querySelectorAll('.py2-letter-box').forEach(b=>b.classList.remove('focused'));
+  const lb=document.getElementById(`py2lb_${si}_${ci}`);
+  if(lb) lb.classList.add('focused');
+  PY2.focusedSi=si; PY2.focusedCi=ci;
+  const hi=document.getElementById('py2-hidden-inp');
+  hi.value=''; hi.oninput=null;
+  hi.oninput=()=>{
+    const ch=hi.value.toLowerCase(); hi.value='';
+    if(ch&&/[a-z]/.test(ch)){ py2SetLetter(si,ci,ch); py2AdvanceFocus(si,ci); }
+  };
+  hi.focus();
+}
+
+function py2SetLetter(si,ci,ch){
+  PY2.letterState[`${si}_${ci}`]=ch;
+  const lb=document.getElementById(`py2lb_${si}_${ci}`);
+  if(lb){ lb.textContent=ch; lb.classList.remove('py2-correct','py2-wrong'); }
+  py2CheckAllFilled();
+}
+
+function py2AdvanceFocus(si,ci){
+  const q=Q.questions[Q.index];
+  const syl=q.syllables[si];
+  if(ci+1<syl.length) py2FocusBox(si,ci+1);
+  else if(si+1<q.syllables.length) py2FocusBox(si+1,0);
+}
+
+function py2CheckAllFilled(){
+  const q=Q.questions[Q.index];
+  let allLetters=true;
+  q.syllables.forEach((syl,si)=>{
+    [...syl].forEach((_,ci)=>{ if(!PY2.letterState[`${si}_${ci}`]) allLetters=false; });
+  });
+  const allTones=q.syllables.every((_,si)=>PY2.placedTones[si]!==undefined);
+  document.getElementById('py2-submit-btn').disabled=!(allLetters&&allTones);
+}
+
+function py2SelectTone(t){
+  document.querySelectorAll('.py2-tone-chip').forEach(x=>x.classList.remove('selected'));
+  if(PY2.selTone===t){PY2.selTone=null;return;}
+  PY2.selTone=t;
+  document.querySelector(`.py2-tone-chip[data-t="${t}"]`).classList.add('selected');
+}
+
+function py2DropTone(si){
+  if(!PY2.selTone) return;
+  PY2.placedTones[si]=PY2.selTone;
+  const slot=document.getElementById(`py2ts_${si}`);
+  if(slot){ slot.textContent=PY2_MARKS[PY2.selTone]; slot.className='py2-tone-slot clickable filled'; }
+  PY2.selTone=null;
+  document.querySelectorAll('.py2-tone-chip').forEach(x=>x.classList.remove('selected'));
+  py2CheckAllFilled();
+}
+
+function submitPinyin2(){
+  const q=Q.questions[Q.index];
+  let allOk=true;
+  q.syllables.forEach((syl,si)=>{
+    [...syl].forEach((ch,ci)=>{
+      const lb=document.getElementById(`py2lb_${si}_${ci}`);
+      const typed=(PY2.letterState[`${si}_${ci}`]||'').toLowerCase();
+      const ok=typed===ch; if(!ok) allOk=false;
+      if(lb){ lb.classList.remove('py2-correct','py2-wrong'); lb.classList.add(ok?'py2-correct':'py2-wrong'); lb.style.pointerEvents='none'; }
+    });
+    const ts=document.getElementById(`py2ts_${si}`);
+    const tok=PY2.placedTones[si]===q.tones[si]; if(!tok) allOk=false;
+    if(ts){ ts.className='py2-tone-slot '+(tok?'py2-correct':'py2-wrong'); ts.onclick=null; }
+  });
+  document.querySelectorAll('.py2-tone-chip').forEach(c=>{c.style.pointerEvents='none'; c.classList.remove('selected');});
+  document.getElementById('py2-submit-btn').disabled=true;
+  checkAnswer(allOk?'py2-ok':'py2-no');
+}
+
+function skipPinyin2(){
+  document.getElementById('py2-submit-btn').disabled=true;
+  checkAnswer('py2-no');
 }
 
 function initCharTile(q){
