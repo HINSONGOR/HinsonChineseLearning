@@ -5834,6 +5834,7 @@ function loadQuestion(i){
 
   // Reset panels
   ['result-banner','teacher-panel','fill-section','reorder-section','char-section','pinyin2-section'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  if(PY2.keyHandler){ document.removeEventListener('keydown',PY2.keyHandler); PY2.keyHandler=null; PY2.focusedSi=null; PY2.focusedCi=null; }
   qtxtEl.removeAttribute('style');
   document.getElementById('result-banner').className='result-banner hidden';
   document.getElementById('combo-badge').classList.add('hidden');
@@ -6877,7 +6878,19 @@ function skipFillin(){
    ============================================================ */
 const PY2_MARKS=['','ˉ','ˊ','ˇ','ˋ'];
 const PY2_VOWELS=new Set(['a','e','i','o','u']);
-const PY2={selTone:null,placedTones:{},letterState:{},focusedSi:null,focusedCi:null};
+const PY2={selTone:null,placedTones:{},letterState:{},focusedSi:null,focusedCi:null,keyHandler:null};
+function py2GlobalKeydown(e){
+  if(PY2.focusedSi===null) return;
+  const ch=e.key.toLowerCase();
+  if(/^[a-z]$/.test(ch)){
+    e.preventDefault();
+    py2SetLetter(PY2.focusedSi,PY2.focusedCi,ch);
+    py2AdvanceFocus(PY2.focusedSi,PY2.focusedCi);
+  } else if(e.key==='Backspace'){
+    e.preventDefault();
+    py2SetLetter(PY2.focusedSi,PY2.focusedCi,'');
+  }
+}
 
 function py2MainVowel(syl){
   if(syl.includes('a')) return syl.indexOf('a');
@@ -6891,6 +6904,9 @@ function initPinyin2(q){
   const sec=document.getElementById('pinyin2-section');
   sec.classList.remove('hidden');
   PY2.selTone=null; PY2.placedTones={}; PY2.letterState={}; PY2.focusedSi=null; PY2.focusedCi=null;
+  if(PY2.keyHandler){ document.removeEventListener('keydown',PY2.keyHandler); }
+  PY2.keyHandler=py2GlobalKeydown;
+  document.addEventListener('keydown',PY2.keyHandler);
   document.querySelectorAll('.py2-tone-chip').forEach(c=>c.classList.remove('selected'));
   document.getElementById('py2-submit-btn').disabled=true;
   const area=document.getElementById('py2-grid-area');
