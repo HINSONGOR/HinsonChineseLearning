@@ -6741,20 +6741,27 @@ function showStrokeOrder(text){
   const tb=document.getElementById('teacher-body');
   const sec=document.createElement('div');
   sec.style.cssText='margin-top:12px;border-top:1px solid rgba(255,224,130,0.2);padding-top:10px';
-  sec.innerHTML='<div style="font-size:0.82em;color:#FFE082;font-weight:600;margin-bottom:8px">📝 筆劃寫法</div>'
-    +'<div id="hz-chars-row" style="display:flex;gap:12px;flex-wrap:wrap"></div>';
+  sec.innerHTML='<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+    +'<span style="font-size:0.82em;color:#FFE082;font-weight:600">📝 筆劃寫法</span>'
+    +'<button id="hz-replay-all" style="font-size:0.72em;padding:2px 10px;border-radius:12px;border:1px solid #FFE082;background:transparent;color:#FFE082;cursor:pointer">🔄 全部重播</button>'
+    +'</div>'
+    +'<div id="hz-chars-row" style="display:flex;gap:16px;flex-wrap:wrap"></div>';
   tb.appendChild(sec);
   const row=sec.querySelector('#hz-chars-row');
+  const writers=[];
   chars.forEach(ch=>{
     const wrap=document.createElement('div');
-    wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px';
+    wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:4px';
     const uid='hz_'+(Math.random().toString(36).slice(2));
     const box=document.createElement('div');
     box.id=uid;
     const lbl=document.createElement('div');
     lbl.style.cssText='font-size:0.72em;color:#aaa';
     lbl.textContent=ch;
-    wrap.appendChild(box); wrap.appendChild(lbl);
+    const replayBtn=document.createElement('button');
+    replayBtn.textContent='重播';
+    replayBtn.style.cssText='font-size:0.68em;padding:1px 8px;border-radius:10px;border:1px solid #666;background:transparent;color:#aaa;cursor:pointer';
+    wrap.appendChild(box); wrap.appendChild(lbl); wrap.appendChild(replayBtn);
     row.appendChild(wrap);
     try{
       const w=HanziWriter.create(uid,ch,{
@@ -6767,8 +6774,14 @@ function showStrokeOrder(text){
         onLoadCharDataError:()=>{ box.style.cssText='width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888'; box.textContent=ch; }
       });
       w.animateCharacter();
-    }catch(e){ box.style.cssText='width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888'; box.textContent=ch; }
+      writers.push(w);
+      replayBtn.onclick=()=>w.animateCharacter();
+    }catch(e){
+      box.style.cssText='width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888';
+      box.textContent=ch;
+    }
   });
+  sec.querySelector('#hz-replay-all').onclick=()=>writers.forEach(w=>w.animateCharacter());
 }
 
 /* ============================================================
