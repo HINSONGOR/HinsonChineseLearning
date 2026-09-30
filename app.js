@@ -4755,7 +4755,10 @@ function speakText(type){
   const q = Q.questions[Q.index];
   if(type==='passage' && q?.passage) text=q.passage.title+' '+q.passage.text;
   if(type==='question' && q) text=q.text;
-  if(type==='explanation' && q) text=q.expl.replace(/<[^>]*>/g,'');
+  if(type==='explanation' && q){
+    const isPinyinQ=(q.type==='pinyin_1'||q.type==='pinyin_2');
+    text=isPinyinQ?q.word:q.expl.replace(/<[^>]*>/g,'');
+  }
   if(text) Speech.speak(text, quizLang);
 }
 
