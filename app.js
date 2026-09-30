@@ -4311,7 +4311,10 @@ fillin_tsa_2:[
  expl:'「<strong class="correct-hl">誇張</strong>」指言過其實，描述超出實際情況。'}
 ],
 
-dictation:[]
+dictation:[],
+
+pinyin_1:[],
+pinyin_2:[]
 };
 
 
@@ -4863,6 +4866,7 @@ function launchModule(type){
   if(type==='wrong'){ showWrongList(); return; }
   if(type==='fillin'||type==='fillin2'){ openModal('modal-fillin-mode'); return; }
   if(type==='fillin_tsa'){ openModal('modal-fillin-tsa-cat'); return; }
+  if(type==='pinyin'){ openModal('modal-pinyin-cat'); return; }
   if(type==='tsa'){ openModal('modal-tsa-cat'); return; }
   if(type==='dictation'){ openDictationPicker(); return; }
   const qs = buildQuestions(type);
@@ -5600,11 +5604,19 @@ function launchFillinTsaCat(cat){
   if(cat==='1') launchFillinQuizPool('fillin_tsa','free');
   else if(cat==='2') launchFillinQuizPool('fillin_tsa_2','free');
 }
+function launchPinyinCat(cat){
+  closeModal('modal-pinyin-cat');
+  const pool = cat==='1' ? QB.pinyin_1 : QB.pinyin_2;
+  if(!pool||!pool.length){ alert('拼音題目尚未加入，請稍後再試！'); return; }
+  launchFillinQuizPool(cat==='1'?'pinyin_1':'pinyin_2','free');
+}
 function launchFillinQuizPool(poolName, mode){
   closeModal('modal-fillin-mode');
   const src = poolName==='fillin2' ? QB.fillin2
             : poolName==='fillin_tsa' ? QB.fillin_tsa
             : poolName==='fillin_tsa_2' ? QB.fillin_tsa_2
+            : poolName==='pinyin_1' ? QB.pinyin_1
+            : poolName==='pinyin_2' ? QB.pinyin_2
             : QB.fillin;
   const pool=shuffle([...(src||[])]).slice(0,10);
   if(!pool.length){ alert('暫時沒有題目！'); return; }
@@ -5642,7 +5654,7 @@ function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
-                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練' };
+                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練', pinyin_1:'🔤 拼音天地一', pinyin_2:'🔤 拼音天地二' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;
   const tBtn=document.getElementById('timer-toggle-btn');
   if(tBtn) tBtn.textContent=Q.timerDuration>0?`⏱ ${Q.timerDuration}s`:'⏱ 關';
@@ -5655,8 +5667,8 @@ function startQuiz(type, questions, reviewing){
 /* ============================================================
    QUIZ ENGINE
    ============================================================ */
-const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, fillin_tsa_2:8, synword:7, dictation:5 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, fillin_tsa_2:4, synword:4, dictation:3 };
+const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, fillin_tsa_2:8, synword:7, dictation:5, pinyin_1:8, pinyin_2:8 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, fillin_tsa_2:4, synword:4, dictation:3, pinyin_1:4, pinyin_2:4 };
 
 const WORD_ENG={
   '汗流浹背':'dripping with sweat','大汗淋漓':'perspiring profusely','揮汗如雨':'sweating like rain','頭昏腦脹':'dizzy and groggy',
@@ -5863,7 +5875,7 @@ function checkAnswer(chosen){
 
   const isFill=(q.type==='fill');
   const isReorder=(q.type==='reorder');
-  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2');
+  const isFillin=(q.type==='fillin'||q.type==='fillin2'||q.type==='fillin_tsa'||q.type==='fillin_tsa_2'||q.type==='pinyin_1'||q.type==='pinyin_2');
   const isCorrect=isFill?(chosen==='fill-ok'):isReorder?(chosen==='reorder-ok'):isFillin&&q.fillinMode==='bank'?(chosen===q.ans):isFillin?(chosen==='fillin-ok'):(chosen===q.ans);
   const timedOut=(chosen===-1);
 
@@ -6734,7 +6746,7 @@ function clearReorder(){
    ============================================================ */
 function showStrokeOrder(text){
   if(!window.HanziWriter) return;
-  const mods=['idiom','idiom2','vocab','fillin','fillin2','fillin_tsa','fillin_tsa_2','synword'];
+  const mods=['idiom','idiom2','vocab','fillin','fillin2','fillin_tsa','fillin_tsa_2','synword','pinyin_1','pinyin_2'];
   if(!mods.includes(Q.module)) return;
   const chars=[...text].filter(c=>/[一-鿿]/.test(c));
   if(!chars.length) return;

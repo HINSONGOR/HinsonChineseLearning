@@ -276,6 +276,12 @@
       <div class="mc-xp">動畫示範 · 練習寫法</div>
       <div class="mc-bar"><div class="mc-bar-fill" style="width:100%;background:#FFE082"></div></div>
     </button>
+    <button class="mod-card mc-purple" onclick="launchModule('pinyin')">
+      <div class="mc-icon">🔤</div>
+      <div class="mc-name">拼音天地</div>
+      <div class="mc-xp">+8 XP / 題</div>
+      <div class="mc-bar"><div class="mc-bar-fill" id="pb-pinyin"></div></div>
+    </button>
     <button class="mod-card mc-dark" onclick="launchModule('wrong')">
       <div class="mc-icon">🏆</div>
       <div class="mc-name">錯題重溫中心</div>
@@ -672,6 +678,19 @@
   </div>
 </div>
 
+<!-- Pinyin Category Picker -->
+<div class="overlay hidden" id="modal-pinyin-cat">
+  <div class="modal-box tsa-cat-box">
+    <h2 class="modal-title">🔤 拼音天地</h2>
+    <p class="tsa-cat-desc">選擇拼音組別開始練習：</p>
+    <div class="tsa-cat-grid">
+      <button class="tsa-cat-btn" onclick="launchPinyinCat('1')"><span class="tsa-cat-no">1</span>拼音一</button>
+      <button class="tsa-cat-btn" onclick="launchPinyinCat('2')"><span class="tsa-cat-no">2</span>拼音二</button>
+    </div>
+    <button class="big-btn grey-btn mt8" onclick="closeModal('modal-pinyin-cat')">取消</button>
+  </div>
+</div>
+
 <!-- Fillin Mode Picker -->
 <div class="overlay hidden" id="modal-fillin-mode">
   <div class="modal-box fillin-mode-box">
@@ -851,7 +870,7 @@ window.addEventListener('error', function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="app.js?v=96"></script>
+<script src="app.js?v=97"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
