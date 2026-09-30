@@ -5815,7 +5815,7 @@ function loadQuestion(i){
         btn.className='opt-btn';
         const eng=(Q.module==='fillin'||Q.module==='fillin2')?'':(WORD_ENG[opt]||'');
         btn.innerHTML=`<span class="opt-label">${'ABCDE'[idx]}</span><span class="opt-text">${opt}${eng?`<span class="opt-eng">${eng}</span>`:''}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
-        btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt,quizLang); return; } checkAnswer(idx); };
+        btn.onclick=(e)=>{ Speech.speak(opt,quizLang); if(!e.target.closest('.opt-speak-btn')) checkAnswer(idx); };
         og.appendChild(btn);
       });
     } else if(mode==='char'){
@@ -5845,7 +5845,7 @@ function loadQuestion(i){
       const btn=document.createElement('button');
       btn.className='opt-btn';
       btn.innerHTML=`<span class="opt-label">${'ABCDE'[idx]}</span><span class="opt-text">${opt}</span><span class="opt-speak-btn" title="讀出選項">🔊</span>`;
-      btn.onclick=(e)=>{ if(e.target.closest('.opt-speak-btn')){ Speech.speak(opt,quizLang); return; } checkAnswer(idx); };
+      btn.onclick=(e)=>{ Speech.speak(opt,quizLang); if(!e.target.closest('.opt-speak-btn')) checkAnswer(idx); };
       og.appendChild(btn);
     });
   }
@@ -5923,6 +5923,8 @@ function checkAnswer(chosen){
   const tb=document.getElementById('teacher-body');
   const defaultExpl=isFill?`正確答案是「<strong class="correct-hl">${q.ans}</strong>」。`:isReorder?`正確句子：<strong class="correct-hl">${q.ans}</strong>`:isFillin?`正確詞語：「<strong class="correct-hl">${q.word}</strong>」`:`正確答案是 <strong>${'ABCD'[q.ans]}</strong>。`;
   tb.innerHTML=`<p>${q.expl||defaultExpl}</p>`;
+  const _strokeText=isFillin?q.word:isFill?q.ans:isReorder?'':q.opts?.[q.ans]||'';
+  if(_strokeText) showStrokeOrder(_strokeText);
   const ww=document.getElementById('wrong-why');
   if(q.why && !isCorrect){
     const wrongKeys=Object.keys(q.why).filter(k=>parseInt(k)!==q.ans);
@@ -6725,6 +6727,48 @@ function submitReorder(){
 function clearReorder(){
   const q=Q.questions[Q.index];
   if(q&&q.type==='reorder') initReorder(q);
+}
+
+/* ============================================================
+   STROKE ORDER (HanziWriter)
+   ============================================================ */
+function showStrokeOrder(text){
+  if(!window.HanziWriter) return;
+  const mods=['idiom','idiom2','vocab','fillin','fillin2','fillin_tsa','fillin_tsa_2','synword'];
+  if(!mods.includes(Q.module)) return;
+  const chars=[...text].filter(c=>/[一-鿿]/.test(c));
+  if(!chars.length) return;
+  const tb=document.getElementById('teacher-body');
+  const sec=document.createElement('div');
+  sec.style.cssText='margin-top:12px;border-top:1px solid rgba(255,224,130,0.2);padding-top:10px';
+  sec.innerHTML='<div style="font-size:0.82em;color:#FFE082;font-weight:600;margin-bottom:8px">📝 筆劃寫法</div>'
+    +'<div id="hz-chars-row" style="display:flex;gap:12px;flex-wrap:wrap"></div>';
+  tb.appendChild(sec);
+  const row=sec.querySelector('#hz-chars-row');
+  chars.forEach(ch=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px';
+    const uid='hz_'+(Math.random().toString(36).slice(2));
+    const box=document.createElement('div');
+    box.id=uid;
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-size:0.72em;color:#aaa';
+    lbl.textContent=ch;
+    wrap.appendChild(box); wrap.appendChild(lbl);
+    row.appendChild(wrap);
+    try{
+      const w=HanziWriter.create(uid,ch,{
+        width:80,height:80,padding:6,
+        showOutline:true,
+        strokeColor:'#FFE082',
+        outlineColor:'rgba(255,224,130,0.25)',
+        delayBetweenStrokes:200,
+        strokeAnimationSpeed:1.5,
+        onLoadCharDataError:()=>{ box.style.cssText='width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888'; box.textContent=ch; }
+      });
+      w.animateCharacter();
+    }catch(e){ box.style.cssText='width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888'; box.textContent=ch; }
+  });
 }
 
 /* ============================================================
