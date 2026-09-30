@@ -278,7 +278,7 @@
     </button>
     <button class="mod-card mc-purple" onclick="launchModule('pinyin')">
       <div class="mc-icon">🔤</div>
-      <div class="mc-name">拼音天地</div>
+      <div class="mc-name">拼音一</div>
       <div class="mc-xp">+8 XP / 題</div>
       <div class="mc-bar"><div class="mc-bar-fill" id="pb-pinyin"></div></div>
     </button>
@@ -698,11 +698,11 @@
 <!-- Pinyin Category Picker -->
 <div class="overlay hidden" id="modal-pinyin-cat">
   <div class="modal-box tsa-cat-box">
-    <h2 class="modal-title">🔤 拼音天地</h2>
-    <p class="tsa-cat-desc">選擇拼音組別開始練習：</p>
+    <h2 class="modal-title">🔤 拼音一</h2>
+    <p class="tsa-cat-desc">選擇關卡開始練習：</p>
     <div class="tsa-cat-grid">
-      <button class="tsa-cat-btn" onclick="launchPinyinCat('1')"><span class="tsa-cat-no">1</span>拼音一</button>
-      <button class="tsa-cat-btn" onclick="launchPinyinCat('2')"><span class="tsa-cat-no">2</span>拼音二</button>
+      <button class="tsa-cat-btn" onclick="launchPinyinCat('1')"><span class="tsa-cat-no">1</span>第一關（選擇拼音）</button>
+      <button class="tsa-cat-btn" onclick="launchPinyinCat('2')"><span class="tsa-cat-no">2</span>第二關（拼字＋聲調）</button>
     </div>
     <button class="big-btn grey-btn mt8" onclick="closeModal('modal-pinyin-cat')">取消</button>
   </div>
@@ -887,7 +887,7 @@ window.addEventListener('error', function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="app.js?v=98"></script>
+<script src="app.js?v=99"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){

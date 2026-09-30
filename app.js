@@ -5691,7 +5691,7 @@ function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
-                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練', pinyin_1:'🔤 拼音天地一', pinyin_2:'🔤 拼音天地二' };
+                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', synword:'🔄 以詞代意訓練', pinyin_1:'🔤 拼音一 第一關', pinyin_2:'🔤 拼音一 第二關' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;
   const tBtn=document.getElementById('timer-toggle-btn');
   if(tBtn) tBtn.textContent=Q.timerDuration>0?`⏱ ${Q.timerDuration}s`:'⏱ 關';
