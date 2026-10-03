@@ -5377,6 +5377,8 @@ function loadDictItem(i){
   document.getElementById('dict-selfcheck').classList.add('hidden');
   document.getElementById('dict-next-btn').classList.add('hidden');
   document.getElementById('dict-final-panel').classList.add('hidden');
+  ['dict-ans-stroke-area','dict-final-stroke-area'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
+  ['dict-ans-stroke-btn','dict-final-stroke-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='';});
 
   /* 分句播放區 */
   const clauses=_splitClauses(it.text);
@@ -5516,6 +5518,51 @@ function playClause(clauseIdx, mode){
 function revealDictAnswer(){
   document.getElementById('dict-answer-panel').classList.remove('hidden');
   document.getElementById('dict-selfcheck').classList.remove('hidden');
+}
+
+function showDictStroke(mode){
+  if(!window.HanziWriter) return;
+  const text=mode==='all'
+    ?D.items.map(it=>it.text).join('')
+    :(D.items[D.index]||{}).text||'';
+  const areaId=mode==='all'?'dict-final-stroke-area':'dict-ans-stroke-area';
+  const btnId=mode==='all'?'dict-final-stroke-btn':'dict-ans-stroke-btn';
+  const area=document.getElementById(areaId);
+  if(!area) return;
+  const btn=document.getElementById(btnId);
+  if(btn) btn.style.display='none';
+  area.innerHTML='';
+  const chars=[...text].filter(c=>/[一-鿿]/.test(c));
+  if(!chars.length) return;
+  const row=document.createElement('div');
+  row.className='dict-stroke-row';
+  chars.forEach(ch=>{
+    const wrap=document.createElement('div');
+    wrap.className='dict-stroke-wrap';
+    const uid='dhz_'+Math.random().toString(36).slice(2);
+    const box=document.createElement('div');
+    box.id=uid; box.style.cssText='width:72px;height:72px';
+    const lbl=document.createElement('div');
+    lbl.style.cssText='font-size:0.75em;color:#aaa;text-align:center';
+    lbl.textContent=ch;
+    wrap.appendChild(box); wrap.appendChild(lbl);
+    row.appendChild(wrap);
+    try{
+      HanziWriter.create(uid,ch,{
+        width:72,height:72,padding:5,
+        showOutline:true,
+        strokeColor:'#FFE082',
+        outlineColor:'rgba(255,224,130,0.25)',
+        delayBetweenStrokes:180,
+        strokeAnimationSpeed:1.5,
+        onLoadCharDataError:()=>{
+          box.style.cssText='width:72px;height:72px;display:flex;align-items:center;justify-content:center;font-size:2.2em;color:#888';
+          box.textContent=ch;
+        }
+      }).animateCharacter();
+    }catch(e){}
+  });
+  area.appendChild(row);
 }
 
 function showFinalDictAnswer(){

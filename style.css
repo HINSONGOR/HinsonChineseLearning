@@ -2142,6 +2142,10 @@ u.synword-ul {
   transition: background .15s;
 }
 .dict-stroke-btn:hover { background: rgba(255,224,130,0.22); }
+.dict-stroke-inline-btn{display:block;margin:10px auto 0;padding:8px 20px;border-radius:20px;border:1px solid rgba(255,224,130,0.35);background:rgba(255,224,130,0.08);color:var(--text-gold);font-size:0.88rem;cursor:pointer;transition:background .15s}
+.dict-stroke-inline-btn:hover{background:rgba(255,224,130,0.18)}
+.dict-stroke-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px;padding:10px 0}
+.dict-stroke-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
 .dict-answer-panel {
   width: 100%;
   background: rgba(255,248,220,0.08);

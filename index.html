@@ -485,12 +485,16 @@
         <div class="dict-answer-panel hidden" id="dict-answer-panel">
           <div class="dict-answer-label">📖 正確內容</div>
           <div class="dict-answer-text" id="dict-answer-text"></div>
+          <button class="dict-stroke-inline-btn" id="dict-ans-stroke-btn" onclick="showDictStroke('single')">📝 筆劃順序</button>
+          <div id="dict-ans-stroke-area"></div>
         </div>
 
         <!-- 紙筆模式：最後顯示全部答案 -->
         <div class="dict-final-panel hidden" id="dict-final-panel">
           <div class="dict-answer-label">📖 正確答案（同紙上核對）</div>
           <pre class="dict-answer-text" id="dict-final-text" style="white-space:pre-wrap;word-break:break-all;font-family:inherit"></pre>
+          <button class="dict-stroke-inline-btn" id="dict-final-stroke-btn" onclick="showDictStroke('all')">📝 筆劃順序</button>
+          <div id="dict-final-stroke-area"></div>
         </div>
 
         <!-- 自評（紙筆模式最後） -->
@@ -887,7 +891,7 @@ window.addEventListener('error', function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="app.js?v=102"></script>
+<script src="app.js?v=103"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
