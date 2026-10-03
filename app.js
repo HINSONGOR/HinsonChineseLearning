@@ -5517,7 +5517,8 @@ function revealCurrentDictAnswer(){
   document.getElementById('dict-answer-panel').classList.remove('hidden');
   document.getElementById('dict-selfcheck').classList.remove('hidden');
   const strokeBtn=document.getElementById('dict-ans-stroke-btn');
-  if(strokeBtn) strokeBtn.style.display='';
+  if(strokeBtn) strokeBtn.style.display='none';
+  setTimeout(()=>showDictStroke('single'), 80);
 }
 
 function markDictItem(isCorrect){
@@ -5568,6 +5569,7 @@ function showDictStroke(mode){
   if(!chars.length) return;
   const row=document.createElement('div');
   row.className='dict-stroke-row';
+  area.appendChild(row);
   chars.forEach(ch=>{
     const wrap=document.createElement('div');
     wrap.className='dict-stroke-wrap';
@@ -5594,7 +5596,6 @@ function showDictStroke(mode){
       }).animateCharacter();
     }catch(e){}
   });
-  area.appendChild(row);
 }
 
 function showFinalDictAnswer(){
