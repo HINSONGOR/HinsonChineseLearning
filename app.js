@@ -4958,6 +4958,21 @@ function openDictationPicker(){
   _renderDictPicker();
 }
 
+function launchDictWrongReview(){
+  const wrongDicts=(G.wrongQuestions||[]).filter(q=>q.type==='dictation');
+  if(!wrongDicts.length) return;
+  closeModal('modal-dictation');
+  const items=wrongDicts.map(q=>({id:q.id,text:q.text}));
+  startDictation('錯字重溫', items, true);
+}
+
+function clearDictWrong(){
+  if(!confirm('確定清除所有默書錯字記錄？')) return;
+  G.wrongQuestions=(G.wrongQuestions||[]).filter(q=>q.type!=='dictation');
+  Store.save();
+  _renderDictPicker();
+}
+
 function _renderDictPicker(){
   const body=document.getElementById('dictation-set-list');
   const myDict=G.my_dictation||[];
@@ -4966,11 +4981,32 @@ function _renderDictPicker(){
   const byLesson={};
   all.forEach(s=>{ const l=s.lesson||'其他'; if(!byLesson[l]) byLesson[l]=[]; byLesson[l].push(s); });
   const lessons=Object.entries(byLesson);
+
+  /* 錯字重溫區 */
+  const wrongDicts=(G.wrongQuestions||[]).filter(q=>q.type==='dictation');
+  let wrongSection='';
+  if(wrongDicts.length){
+    const bySet={};
+    wrongDicts.forEach(q=>{ const s=q.setTitle||'未知'; bySet[s]=(bySet[s]||0)+1; });
+    const src=Object.entries(bySet).map(([t,n])=>`${t}(${n})`).join('、');
+    wrongSection=`<div class="dict-wrong-section">
+      <div class="dict-wrong-hd">
+        <span class="dict-wrong-icon">🔁</span>
+        <div class="dict-wrong-info">
+          <div class="dict-wrong-title">錯字重溫</div>
+          <div class="dict-wrong-sub">共 ${wrongDicts.length} 個 · ${src}</div>
+        </div>
+        <button class="dict-wrong-clear-btn" onclick="clearDictWrong()" title="清除記錄">✕</button>
+      </div>
+      <button class="big-btn dict-wrong-start-btn" onclick="launchDictWrongReview()">🔁 開始重溫（${wrongDicts.length} 個）</button>
+    </div>`;
+  }
+
   if(!lessons.length){
-    body.innerHTML='<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容，點「➕ 新增我的默書」開始！</p>';
+    body.innerHTML=wrongSection+'<p style="text-align:center;color:var(--text-dim);padding:10px 0">暫時沒有默書內容，點「➕ 新增我的默書」開始！</p>';
     return;
   }
-  body.innerHTML=lessons.map(([lesson,sets])=>{
+  body.innerHTML=wrongSection+lessons.map(([lesson,sets])=>{
     const setsHtml=sets.map(s=>{
       const type=s.type||'sentences';
       const isOwn=myIds.has(s.id);
