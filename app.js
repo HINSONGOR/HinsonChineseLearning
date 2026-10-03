@@ -5379,6 +5379,7 @@ function loadDictItem(i){
   document.getElementById('dict-final-panel').classList.add('hidden');
   ['dict-ans-stroke-area','dict-final-stroke-area'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML='';});
   ['dict-ans-stroke-btn','dict-final-stroke-btn'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='';});
+  document.getElementById('dict-reveal-btn').style.display='none';
 
   /* 分句播放區 */
   const clauses=_splitClauses(it.text);
@@ -5404,19 +5405,12 @@ function loadDictItem(i){
     document.getElementById('dict-repeat-row').style.display='none';
     document.getElementById('dict-next-sentence-btn').style.display='none';
   } else {
-    /* 紙筆模式：聽 → 寫 → 下一句，最後顯示全部答案 */
+    /* 紙筆模式：聽 → 寫 → 顯示答案 → 自評 → 下一句 */
     document.getElementById('dict-typing-area').style.display='none';
     document.getElementById('dict-play-hint').textContent='聽清楚後，喺紙上寫低。';
     document.getElementById('dict-repeat-row').style.display='flex';
-    const nsBtn=document.getElementById('dict-next-sentence-btn');
-    nsBtn.style.display='';
-    if(isLast){
-      nsBtn.textContent='✅ 默好了，顯示答案';
-      nsBtn.onclick=showFinalDictAnswer;
-    } else {
-      nsBtn.textContent='下一句 →';
-      nsBtn.onclick=advanceDict;
-    }
+    document.getElementById('dict-next-sentence-btn').style.display='none';
+    document.getElementById('dict-reveal-btn').style.display='';
   }
   playDictAudio('pth');
 }
@@ -5515,9 +5509,47 @@ function playClause(clauseIdx, mode){
   Speech.speak(_spellPunct(clause), lang);
 }
 
-function revealDictAnswer(){
+function revealCurrentDictAnswer(){
+  const it=D.items[D.index];
+  document.getElementById('dict-reveal-btn').style.display='none';
+  document.getElementById('dict-repeat-row').style.display='none';
+  document.getElementById('dict-answer-text').textContent=it.text;
   document.getElementById('dict-answer-panel').classList.remove('hidden');
   document.getElementById('dict-selfcheck').classList.remove('hidden');
+  const strokeBtn=document.getElementById('dict-ans-stroke-btn');
+  if(strokeBtn) strokeBtn.style.display='';
+}
+
+function markDictItem(isCorrect){
+  document.getElementById('dict-selfcheck').classList.add('hidden');
+  const it=D.items[D.index];
+  const isLast=(D.index===D.items.length-1);
+  G.totalAnswered++;
+  const mst=G.stats.dictation; if(mst){ mst.answered++; if(isCorrect) mst.correct++; }
+  if(isCorrect){
+    D.correct++; G.totalCorrect++;
+    const xpEarn=XP_TABLE.dictation, coinEarn=COIN_TABLE.dictation;
+    addXP(xpEarn); addCoins(coinEarn);
+    D.sessionXP+=xpEarn; D.sessionCoins+=coinEarn;
+    document.getElementById('dict-live-xp').textContent=D.sessionXP;
+    document.getElementById('dict-live-coins').textContent=D.sessionCoins;
+    sfx('correct'); sfx('coin');
+    if(D.reviewing){ G.wrongRetryCorrect=(G.wrongRetryCorrect||0)+1; G.wrongQuestions=G.wrongQuestions.filter(w=>w.id!==it.id); }
+  } else {
+    D.wrong++; sfx('wrong');
+    const exists=G.wrongQuestions.find(w=>w.id===it.id);
+    if(!exists) G.wrongQuestions.push({id:it.id,type:'dictation',text:it.text,setTitle:D.title,wrongAt:Date.now()});
+  }
+  Store.save(); updateDashboard(); checkBadges();
+  const nsBtn=document.getElementById('dict-next-sentence-btn');
+  nsBtn.style.display='';
+  if(isLast){
+    nsBtn.textContent='🎉 完成默書';
+    nsBtn.onclick=endDictation;
+  } else {
+    nsBtn.textContent='下一句 →';
+    nsBtn.onclick=advanceDict;
+  }
 }
 
 function showDictStroke(mode){

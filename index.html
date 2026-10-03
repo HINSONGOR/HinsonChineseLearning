@@ -479,6 +479,7 @@
           <button class="big-btn grey-btn" id="dict-repeat-btn" onclick="playDictAudio('pth')" style="flex:1;margin:0">🔁 重複聆聽</button>
           <button class="big-btn grey-btn" onclick="playDictSlow()" style="flex:1;margin:0;background:#5D4037">🐢 慢些讀</button>
         </div>
+        <button class="big-btn" id="dict-reveal-btn" style="display:none;background:#E65100;color:#fff" onclick="revealCurrentDictAnswer()">📖 顯示答案</button>
         <button class="big-btn green-btn" id="dict-next-sentence-btn" style="display:none">下一句 →</button>
 
         <!-- 打字模式：每句答案 -->
@@ -497,12 +498,12 @@
           <div id="dict-final-stroke-area"></div>
         </div>
 
-        <!-- 自評（紙筆模式最後） -->
+        <!-- 自評（紙筆模式逐題） -->
         <div class="dict-selfcheck hidden" id="dict-selfcheck">
-          <p class="dict-selfcheck-q">對照答案，整段寫得啱唔啱？</p>
+          <p class="dict-selfcheck-q">對照答案，啱唔啱？</p>
           <div class="dict-selfcheck-btns">
-            <button class="big-btn green-btn" onclick="markDictFinal(true)">✓ 啱哂</button>
-            <button class="big-btn red-btn" onclick="markDictFinal(false)">✗ 有錯</button>
+            <button class="big-btn green-btn" onclick="markDictItem(true)">✓ 啱</button>
+            <button class="big-btn red-btn" onclick="markDictItem(false)">✗ 錯</button>
           </div>
         </div>
 
@@ -891,7 +892,7 @@ window.addEventListener('error', function(e){
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-<script src="app.js?v=103"></script>
+<script src="app.js?v=104"></script>
 <script>
 // Step 2: after app.js loads, check if it parsed correctly
 (function(){
