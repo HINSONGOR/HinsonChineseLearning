@@ -4613,7 +4613,7 @@ let G = {
   stats:{ reading:{answered:0,correct:0,sessions:0}, rhetoric:{answered:0,correct:0,sessions:0},
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
           punctuation:{answered:0,correct:0,sessions:0}, tsa:{answered:0,correct:0,sessions:0},
-          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, fillin_tsa:{answered:0,correct:0,sessions:0}, fillin_tsa_3:{answered:0,correct:0,sessions:0}, fillin_tsa_mix:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
+          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, fillin_tsa:{answered:0,correct:0,sessions:0}, fillin_tsa_2:{answered:0,correct:0,sessions:0}, fillin_tsa_3:{answered:0,correct:0,sessions:0}, fillin_tsa_mix:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
           pinyin_1:{answered:0,correct:0,sessions:0}, pinyin_2:{answered:0,correct:0,sessions:0},
           dictation:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
@@ -4643,7 +4643,7 @@ let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionC
    SUPABASE + MULTI-PLAYER
    ============================================================ */
 const DEFAULT_G_JSON = JSON.stringify(G);
-const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},idiom2:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
+const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},idiom2:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},fillin_tsa:{answered:0,correct:0,sessions:0},fillin_tsa_2:{answered:0,correct:0,sessions:0},fillin_tsa_3:{answered:0,correct:0,sessions:0},fillin_tsa_mix:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
 
 const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
 const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
@@ -6459,7 +6459,7 @@ function showWrongList(){
 
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', synword:'🔁 以詞代意', dictation:'🖊️ 默書練習' };
+  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', fillin_tsa:'📝 呈分試填充一', fillin_tsa_2:'📝 呈分試填充二', fillin_tsa_3:'📝 呈分試填充三', fillin_tsa_mix:'🎲 混合填充', synword:'🔁 以詞代意', dictation:'🖊️ 默書練習' };
 
   body.innerHTML=`<div style="text-align:right;margin-bottom:10px"><button class="wrong-retry-btn" style="background:#c0392b" onclick="clearAllWrong()">🗑️ 清除全部錯題</button></div>`+Object.entries(byMod).map(([mod,qs])=>`
     <div class="wrong-module-group">
@@ -6468,7 +6468,7 @@ function showWrongList(){
         <div class="wrong-item">
           <div class="wrong-item-q">${q.text?.substring(0,80)}${q.text?.length>80?'…':''}</div>
           <div class="wrong-item-meta">
-            <span>${q.type==='dictation'?'🔊 重聽並重寫（見上）':q.type==='fill'?'正確答案：「'+q.ans+'」':'✗ 正確答案：'+('ABCD'[q.ans])+'. '+(q.opts?.[q.ans]||'')}</span>
+            <span>${q.type==='dictation'?'🔊 重聽並重寫（見上）':q.type==='fill'?'正確答案：「'+q.ans+'」':q.word?'✓ 正確答案：「'+q.word+'」':'✗ 正確答案：'+('ABCD'[q.ans])+'. '+(q.opts?.[q.ans]||'')}</span>
             ${q.wrongAt?`<span class="wrong-item-date">📅 ${(()=>{const d=new Date(q.wrongAt);return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日';})()}</span>`:''}
           </div>
           <button class="wrong-retry-btn" onclick="retryWrong(${JSON.stringify(i)}, '${mod}')">🔄 重新練習</button>
@@ -6512,7 +6512,7 @@ function buildDailyLog(){
   const MOD_NAMES={
     reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', idiom2:'成語2', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
-    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充', fillin_tsa_3:'呈分試填充3', fillin_tsa_mix:'混合填充', synword:'以詞代意', wrong:'錯題重溫',
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充一', fillin_tsa_2:'呈分試填充二', fillin_tsa_3:'呈分試填充三', fillin_tsa_mix:'混合填充', synword:'以詞代意', wrong:'錯題重溫',
     pinyin_1:'拼音一', pinyin_2:'拼音二',
     dictation:'默書練習'
   };
