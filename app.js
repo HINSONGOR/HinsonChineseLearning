@@ -4672,7 +4672,7 @@ function updateDashboard(){
   document.getElementById('xp-fill').style.width=pct+'%';
   document.getElementById('xp-label').textContent=`${G.xp} / ${nextXP} XP → Lv.${G.level+1}`;
 
-  ['reading','rhetoric','idiom','idiom2','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','fillin_tsa','fillin_tsa_3','fillin_tsa_mix','synword','dictation','wrong'].forEach(m=>{
+  ['reading','rhetoric','idiom','idiom2','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','fillin_tsa','fillin_tsa_2','fillin_tsa_3','fillin_tsa_mix','synword','dictation','wrong'].forEach(m=>{
     const el=document.getElementById('pb-'+m);
     if(!el) return;
     const st=G.stats[m]||{answered:0,correct:0};
