@@ -5694,6 +5694,15 @@ function buildQuestions(type){
     const p=QB.reading[Math.floor(Math.random()*QB.reading.length)];
     return p.questions.map(q=>shuffleOpts({...q,passage:p,type:q.type||'reading'}));
   }
+  if(type==='idiom'){
+    const target=Math.random()<0.5?2:3;
+    const allCCLD=(QB.idiom||[]).filter(q=>q.opts[q.ans]==='陳腔濫調');
+    const allOthers=(QB.idiom||[]).filter(q=>q.opts[q.ans]!=='陳腔濫調');
+    const ccldPick=shuffle(allCCLD).slice(0,target).map(q=>shuffleOpts({...q,type:'idiom'}));
+    const otherPick=shuffle(allOthers).slice(0,10-target).map(q=>shuffleOpts({...q,type:'idiom'}));
+    const custom=(G.customQuestions||[]).filter(q=>q.type==='idiom').map(q=>shuffleOpts({...q,isCustom:true}));
+    return shuffle([...ccldPick,...otherPick,...custom]);
+  }
   const builtin=(QB[type]||[]).map(q=>shuffleOpts({...q,type}));
   const custom=(G.customQuestions||[]).filter(q=>q.type===type).map(q=>shuffleOpts({...q,isCustom:true}));
   return shuffle([...builtin,...custom]).slice(0,10);
