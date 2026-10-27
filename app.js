@@ -5645,7 +5645,10 @@ function launchFillinTsaCat(cat){
 }
 function launchFillinTsaMix(){
   const combined=[...(QB.fillin_tsa||[]),...(QB.fillin_tsa_2||[]),...(QB.fillin_tsa_3||[])];
-  const pool=shuffle(combined).slice(0,10);
+  const byWord={};
+  combined.forEach(q=>{ if(!byWord[q.word]) byWord[q.word]=[]; byWord[q.word].push(q); });
+  const oneEach=Object.values(byWord).map(arr=>arr[Math.floor(Math.random()*arr.length)]);
+  const pool=shuffle(oneEach).slice(0,20);
   if(!pool.length){ alert('暫時沒有題目！'); return; }
   const qs=pool.map(q=>({...shuffleOpts({...q}), fillinMode:'free', type:'fillin_tsa_mix'}));
   startQuiz('fillin_tsa_mix', qs, false);
