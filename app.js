@@ -4253,7 +4253,7 @@ let G = {
   stats:{ reading:{answered:0,correct:0,sessions:0}, rhetoric:{answered:0,correct:0,sessions:0},
           idiom:{answered:0,correct:0,sessions:0},   vocab:{answered:0,correct:0,sessions:0},
           punctuation:{answered:0,correct:0,sessions:0}, tsa:{answered:0,correct:0,sessions:0},
-          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, fillin_tsa:{answered:0,correct:0,sessions:0}, fillin_tsa_2:{answered:0,correct:0,sessions:0}, fillin_tsa_3:{answered:0,correct:0,sessions:0}, fillin_tsa_mix:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
+          fillin:{answered:0,correct:0,sessions:0}, fillin2:{answered:0,correct:0,sessions:0}, fillin_tsa:{answered:0,correct:0,sessions:0}, fillin_tsa_2:{answered:0,correct:0,sessions:0}, fillin_tsa_3:{answered:0,correct:0,sessions:0}, fillin_tsa_mix:{answered:0,correct:0,sessions:0}, idiom_mix:{answered:0,correct:0,sessions:0}, synword:{answered:0,correct:0,sessions:0},
           pinyin_1:{answered:0,correct:0,sessions:0}, pinyin_2:{answered:0,correct:0,sessions:0},
           dictation:{answered:0,correct:0,sessions:0} },
   wrongQuestions:[],
@@ -4283,7 +4283,7 @@ let D = { title:'', items:[], index:0, correct:0, wrong:0, sessionXP:0, sessionC
    SUPABASE + MULTI-PLAYER
    ============================================================ */
 const DEFAULT_G_JSON = JSON.stringify(G);
-const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},idiom2:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},fillin_tsa:{answered:0,correct:0,sessions:0},fillin_tsa_2:{answered:0,correct:0,sessions:0},fillin_tsa_3:{answered:0,correct:0,sessions:0},fillin_tsa_mix:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
+const DEFAULT_STATS = {reading:{answered:0,correct:0,sessions:0},rhetoric:{answered:0,correct:0,sessions:0},idiom:{answered:0,correct:0,sessions:0},idiom2:{answered:0,correct:0,sessions:0},idiom_mix:{answered:0,correct:0,sessions:0},vocab:{answered:0,correct:0,sessions:0},punctuation:{answered:0,correct:0,sessions:0},tsa:{answered:0,correct:0,sessions:0},order:{answered:0,correct:0,sessions:0},reorder:{answered:0,correct:0,sessions:0},paragraph:{answered:0,correct:0,sessions:0},wordmean:{answered:0,correct:0,sessions:0},fillin:{answered:0,correct:0,sessions:0},fillin2:{answered:0,correct:0,sessions:0},fillin_tsa:{answered:0,correct:0,sessions:0},fillin_tsa_2:{answered:0,correct:0,sessions:0},fillin_tsa_3:{answered:0,correct:0,sessions:0},fillin_tsa_mix:{answered:0,correct:0,sessions:0},synword:{answered:0,correct:0,sessions:0},dictation:{answered:0,correct:0,sessions:0}};
 
 const SUPA_URL='https://jhsdvdyekspplglhqtwe.supabase.co';
 const SUPA_KEY='sb_publishable_tqWi0RHhxpgZVfYeCQHxmQ_CPCTr-fl';
@@ -4672,7 +4672,7 @@ function updateDashboard(){
   document.getElementById('xp-fill').style.width=pct+'%';
   document.getElementById('xp-label').textContent=`${G.xp} / ${nextXP} XP → Lv.${G.level+1}`;
 
-  ['reading','rhetoric','idiom','idiom2','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','fillin_tsa','fillin_tsa_2','fillin_tsa_3','fillin_tsa_mix','synword','dictation','wrong'].forEach(m=>{
+  ['reading','rhetoric','idiom','idiom2','vocab','punctuation','tsa','order','reorder','paragraph','wordmean','fillin','fillin2','fillin_tsa','fillin_tsa_2','fillin_tsa_3','fillin_tsa_mix','idiom_mix','synword','dictation','wrong'].forEach(m=>{
     const el=document.getElementById('pb-'+m);
     if(!el) return;
     const st=G.stats[m]||{answered:0,correct:0};
@@ -5703,6 +5703,13 @@ function buildQuestions(type){
     const custom=(G.customQuestions||[]).filter(q=>q.type==='idiom').map(q=>shuffleOpts({...q,isCustom:true}));
     return shuffle([...ccldPick,...otherPick,...custom]);
   }
+  if(type==='idiom_mix'){
+    const combined=[...(QB.idiom||[]),...(QB.idiom2||[])];
+    const byIdiom={};
+    combined.forEach(q=>{ const w=q.opts[q.ans]; if(!byIdiom[w]) byIdiom[w]=[]; byIdiom[w].push(q); });
+    const oneEach=Object.values(byIdiom).map(arr=>arr[Math.floor(Math.random()*arr.length)]);
+    return shuffle(oneEach).map(q=>shuffleOpts({...q,type:'idiom_mix'}));
+  }
   const builtin=(QB[type]||[]).map(q=>shuffleOpts({...q,type}));
   const custom=(G.customQuestions||[]).filter(q=>q.type===type).map(q=>shuffleOpts({...q,isCustom:true}));
   return shuffle([...builtin,...custom]).slice(0,10);
@@ -5714,7 +5721,7 @@ function startQuiz(type, questions, reviewing){
   Q={ module:type, questions, index:0, correct:0, sessionXP:0, sessionCoins:0, combo:0, reviewing:reviewing||false, timerDuration: type==='tsa' ? 30 : 0, startTime: Date.now() };
   const NAMES={ reading:'📖 閱讀理解王國', rhetoric:'✍️ 修辭大師訓練營', idiom:'🏮 成語挑戰賽', idiom2:'🏮 成語挑戰賽2',
                 vocab:'📚 詞語運用中心', punctuation:'✏️ 標點符號特訓', tsa:'🎯 呈分試挑戰',
-                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', fillin_tsa_3:'📝 呈分試不供詞填充', fillin_tsa_mix:'🎲 混合不供詞填充', synword:'🔄 以詞代意訓練', pinyin_1:'🔤 拼音一 第一關', pinyin_2:'🔤 拼音一 第二關' };
+                wrong:'🏆 錯題重溫', fillin:'✏️ 詞語填充訓練', fillin2:'✏️ 詞語填充訓練2', fillin_tsa:'📝 呈分試不供詞填充', fillin_tsa_2:'📝 呈分試不供詞填充', fillin_tsa_3:'📝 呈分試不供詞填充', fillin_tsa_mix:'🎲 混合不供詞填充', idiom_mix:'🎲 成語混合挑戰', synword:'🔄 以詞代意訓練', pinyin_1:'🔤 拼音一 第一關', pinyin_2:'🔤 拼音一 第二關' };
   document.getElementById('quiz-mod-name').textContent=NAMES[type]||type;
   const tBtn=document.getElementById('timer-toggle-btn');
   if(tBtn) tBtn.textContent=Q.timerDuration>0?`⏱ ${Q.timerDuration}s`:'⏱ 關';
@@ -5727,8 +5734,8 @@ function startQuiz(type, questions, reviewing){
 /* ============================================================
    QUIZ ENGINE
    ============================================================ */
-const XP_TABLE={ reading:10, rhetoric:8, idiom:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, fillin_tsa_2:8, fillin_tsa_3:8, fillin_tsa_mix:8, synword:7, dictation:5, pinyin_1:8, pinyin_2:8 };
-const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, fillin_tsa_2:4, fillin_tsa_3:4, fillin_tsa_mix:4, synword:4, dictation:3, pinyin_1:4, pinyin_2:4 };
+const XP_TABLE={ reading:10, rhetoric:8, idiom:8, idiom2:8, idiom_mix:8, vocab:6, punctuation:6, tsa:15, wrong:12, order:8, reorder:8, paragraph:10, wordmean:6, fillin:7, fillin2:7, fillin_tsa:8, fillin_tsa_2:8, fillin_tsa_3:8, fillin_tsa_mix:8, synword:7, dictation:5, pinyin_1:8, pinyin_2:8 };
+const COIN_TABLE={ reading:5, rhetoric:4, idiom:2, idiom2:2, idiom_mix:2, vocab:3, punctuation:3, tsa:2, wrong:6, order:4, reorder:4, paragraph:5, wordmean:3, fillin:4, fillin2:4, fillin_tsa:4, fillin_tsa_2:4, fillin_tsa_3:4, fillin_tsa_mix:4, synword:4, dictation:3, pinyin_1:4, pinyin_2:4 };
 
 const WORD_ENG={
   '汗流浹背':'dripping with sweat','大汗淋漓':'perspiring profusely','揮汗如雨':'sweating like rain','頭昏腦脹':'dizzy and groggy',
@@ -6111,7 +6118,7 @@ function showWrongList(){
 
   const byMod={};
   G.wrongQuestions.forEach(q=>{ const m=q.type||'other'; if(!byMod[m]) byMod[m]=[]; byMod[m].push(q); });
-  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', fillin_tsa:'📝 呈分試填充一', fillin_tsa_2:'📝 呈分試填充二', fillin_tsa_3:'📝 呈分試填充三', fillin_tsa_mix:'🎲 混合填充', synword:'🔁 以詞代意', dictation:'🖊️ 默書練習' };
+  const NAMES={ reading:'📖 閱讀理解', rhetoric:'✍️ 修辭手法', idiom:'🏮 成語', vocab:'📚 詞語運用', punctuation:'✏️ 標點符號', tsa:'🎯 呈分試', order:'🔢 排句成段', reorder:'🔄 重組句子', paragraph:'📝 段義理解', wordmean:'🔍 詞義辨析', fillin:'✏️ 詞語填充', fillin2:'✏️ 詞語填充2', fillin_tsa:'📝 呈分試填充一', fillin_tsa_2:'📝 呈分試填充二', fillin_tsa_3:'📝 呈分試填充三', fillin_tsa_mix:'🎲 混合填充', idiom_mix:'🎲 成語混合', synword:'🔁 以詞代意', dictation:'🖊️ 默書練習' };
 
   body.innerHTML=`<div style="text-align:right;margin-bottom:10px"><button class="wrong-retry-btn" style="background:#c0392b" onclick="clearAllWrong()">🗑️ 清除全部錯題</button></div>`+Object.entries(byMod).map(([mod,qs])=>`
     <div class="wrong-module-group">
@@ -6164,7 +6171,7 @@ function buildDailyLog(){
   const MOD_NAMES={
     reading:'閱讀理解', rhetoric:'修辭訓練', idiom:'成語', idiom2:'成語2', vocab:'詞語運用',
     punctuation:'標點符號', tsa:'呈分試', order:'排句成段', reorder:'重組句子',
-    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充一', fillin_tsa_2:'呈分試填充二', fillin_tsa_3:'呈分試填充三', fillin_tsa_mix:'混合填充', synword:'以詞代意', wrong:'錯題重溫',
+    paragraph:'段義理解', wordmean:'詞義辨析', fillin:'詞語填充', fillin2:'詞語填充2', fillin_tsa:'呈分試填充一', fillin_tsa_2:'呈分試填充二', fillin_tsa_3:'呈分試填充三', fillin_tsa_mix:'混合填充', idiom_mix:'成語混合', synword:'以詞代意', wrong:'錯題重溫',
     pinyin_1:'拼音一', pinyin_2:'拼音二',
     dictation:'默書練習'
   };
@@ -6816,7 +6823,7 @@ function clearReorder(){
    ============================================================ */
 function showStrokeOrder(text){
   if(!window.HanziWriter) return;
-  const mods=['idiom','idiom2','vocab','fillin','fillin2','fillin_tsa','fillin_tsa_2','fillin_tsa_3','fillin_tsa_mix','synword','pinyin_1','pinyin_2'];
+  const mods=['idiom','idiom2','idiom_mix','vocab','fillin','fillin2','fillin_tsa','fillin_tsa_2','fillin_tsa_3','fillin_tsa_mix','synword','pinyin_1','pinyin_2'];
   if(!mods.includes(Q.module)) return;
   const chars=[...text].filter(c=>/[一-鿿]/.test(c));
   if(!chars.length) return;
