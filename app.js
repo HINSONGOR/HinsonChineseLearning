@@ -5726,6 +5726,7 @@ function launchFillinTsaCat(cat){
   else if(cat==='4') launchFillinQuizPool('fillin_tsa_4','free');
 }
 function launchFillinTsaMix(){
+  closeModal('modal-fillin-tsa-cat');
   const combined=[...(QB.fillin_tsa||[]),...(QB.fillin_tsa_2||[]),...(QB.fillin_tsa_3||[]),...(QB.fillin_tsa_4||[])];
   const byWord={};
   combined.forEach(q=>{ if(!byWord[q.word]) byWord[q.word]=[]; byWord[q.word].push(q); });
