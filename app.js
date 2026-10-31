@@ -4099,6 +4099,16 @@ fillin_tsa_2:[
 {id:'ws2q77',word:'破爛',text:'小狗把我的布娃娃咬得（　　）。',expl:'「<strong class="correct-hl">破爛</strong>」形容殘破不堪、損壞嚴重。'},
 {id:'ws2q78',word:'熱烈',text:'這項活動得到市民（　　）的支持，報名人數超出預期。',expl:'「<strong class="correct-hl">熱烈</strong>」形容情感高漲、氣氛活躍。'},
 {id:'ws2q79',word:'賺錢',text:'他想出了一個（　　）的好方法：把自家種的蔬菜拿到市集出售。',expl:'「<strong class="correct-hl">賺錢</strong>」指獲取金錢利益。'},
+{id:'ws2q81',word:'誇獎',text:'老師（　　）小明的作文寫得出色，還把它貼在班上的板報上。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q82',word:'誇獎',text:'爸爸（　　）我這次考試進步很大，帶我去吃了一頓豐盛的晚餐。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q83',word:'誇獎',text:'在頒獎典禮上，校長當衆（　　）這位同學為學校爭了光。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q84',word:'誇獎',text:'媽媽（　　）妹妹的圖畫畫得漂亮，妹妹高興得跳了起來。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q85',word:'誇獎',text:'客人不停地（　　）主人家廚藝精湛，令主人感到非常高興。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q86',word:'誇獎',text:'教練（　　）隊員今天練習認真，表現比上次進步了不少。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q87',word:'誇獎',text:'同學們都（　　）他樂於助人的精神，認為他是大家的好榜樣。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q88',word:'誇獎',text:'得到老師的（　　），她下定決心繼續努力，把書法練得更好。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q89',word:'誇獎',text:'評審（　　）這位作家的新作感人至深，文筆細膩出色。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
+{id:'ws2q90',word:'誇獎',text:'受到大家的（　　），他更加努力，立志要為社會作出貢獻。',expl:'「<strong class="correct-hl">誇獎</strong>」指稱讚別人的優點或成就。'},
 ],
 
 fillin_tsa_3:[
